@@ -50,8 +50,8 @@ REM ======================
 REM = Print Informations =
 REM ======================
 
-REM The commands to the associated generated files
-if %GEN_INFO_FILES% == 1 (
+REM The commands to print the associated generated files
+if %LOG_INFO_FILES% == 1 (
     DIR %TARGET_PATH%%TARGET_NAME%*
     DIR %OBJECT_PATH%%TARGET_NAME%*
     DIR %OUTPUT_PATH%%TARGET_NAME%*
@@ -59,9 +59,12 @@ if %GEN_INFO_FILES% == 1 (
 
 
 REM ==================
-REM = ENDING PROCESS =
+REM = Ending Process =
 REM ==================
 
-ENDLOCAL
 :terminate
-pause
+if %END_PAUSE% == 1 (
+    pause
+)
+
+ENDLOCAL
