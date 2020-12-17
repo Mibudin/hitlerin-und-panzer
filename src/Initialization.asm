@@ -7,7 +7,7 @@ TITLE Initialization (Initialization.asm)
 ; The major initialization part of the game
 
 
-; = InitHandle
+;;  InitHandle
 InitHandle PROC USES eax
     INVOKE GetStdHandle, STD_OUTPUT_HANDLE
     mov stdOutputHandle, eax
@@ -17,7 +17,7 @@ InitHandle PROC USES eax
     ret
 InitHandle ENDP
 
-; = InitScreen
+;;  InitScreen
 InitScreen PROC
     ; TODO: preset cosole font etc.
     INVOKE SetConsoleScreenBufferSize, stdOutputHandle, screenBufferSize
@@ -29,7 +29,7 @@ InitScreen PROC
     ret
 InitScreen ENDP
 
-; = InitGame
+;;  InitGame
 InitGame PROC
     call InitHandle
     call InitScreen

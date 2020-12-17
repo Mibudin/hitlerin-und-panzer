@@ -6,7 +6,8 @@ REM =   The simple run file for this project   =
 REM =                                          =
 REM ============================================
 
-REM TODO: Description
+REM This is a simple run file to run the target excutable file for this project.
+REM This script will start a new CMD window to run the target excutable file.
 
 REM Parameters:
 REM - %1: (Optional) The specified name of the target file
