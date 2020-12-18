@@ -31,12 +31,12 @@ INCLUDE Renderer.inc
 main EQU start@0
 
 ; The size of the screen buffer
-SCREEN_BUFFER_WIDTH  EQU <128>  ; 128 chars, 64 blocks
-SCREEN_BUFFER_HEIGHT EQU <32>   ;  32 chars, 32 blocks
+SCREEN_BUFFER_WIDTH  EQU <128>  ; 128 (2^7) chars, 64 (2^6) blocks
+SCREEN_BUFFER_HEIGHT EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
 
 ; The size of the window size
-WINDOW_WIDTH         EQU <128>  ; 128 chars, 64 blocks
-WINDOW_HEIGHT        EQU <32>   ;  32 chars, 32 blocks
+WINDOW_WIDTH         EQU <128>  ; 128 (2^7) chars, 64 (2^6) blocks
+WINDOW_HEIGHT        EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
 
 ; Texts
 CRLF_C   EQU <0dh, 0ah>   ; CR and LF
@@ -51,15 +51,23 @@ COLOR_BG EQU <00100000b>  ; BACKGROUND_GREEN     EQU <00100000b>
 COLOR_BR EQU <01000000b>  ; BACKGROUND_RED       EQU <01000000b>
 COLOR_BI EQU <10000000b>  ; BACKGROUND_INTENSITY EQU <10000000b>
 
-; Render
-RENDER_BUFFER_LAYERS EQU <3>
-
 
 
 ; ==============
 ; = Structures =
 ; ==============
-; TODO:
+
+; Render buffer
+RENDER_BUFFER STRUCT
+    characters BYTE SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
+    attributes WORD SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
+RENDER_BUFFER ENDS
+
+CMD_IMAGE STRUCT
+    imageSize  COORD <>
+    characters BYTE  <>
+    attributes WORD  <>
+CMD_IMAGE ENDS
 
 
 ; ================
@@ -81,8 +89,8 @@ windowSize             COORD                      <WINDOW_WIDTH, WINDOW_HEIGHT>
 windowPosition         SMALL_RECT                 <0, 0, WINDOW_WIDTH - 1, WINDOW_HEIGHT - 1>
 
 ; The render buffer
-renderBufferCharacters BYTE RENDER_BUFFER_LAYERS DUP(SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(0))
-renderBufferAttributes WORD RENDER_BUFFER_LAYERS DUP(SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(0))
+stdRenderBuffer RENDER_BUFFER <>
+stdRenderOrigin COORD         <0, 0>
 
 ; Test
 testString BYTE CRLF_C
@@ -109,13 +117,17 @@ Main PROC
     mov edx, OFFSET testString
     call WriteString
 
-    mov pos.x, 117
-    mov pos.y, 17
-    INVOKE RenderBufferIndex, 2, pos
+    call WaitMsg
+
     call WriteInt
     call CRlf
 
-    call WaitMsg
+    INVOKE Render
+
+    call WriteInt
+    call CRlf
+
+    call WaitMsg 
 
     exit
 Main ENDP

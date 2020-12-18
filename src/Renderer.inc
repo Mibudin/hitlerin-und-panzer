@@ -6,5 +6,10 @@ TITLE Renderer (Renderer.inc)
 
 ; The major rendering part of the game
 
-RenderBufferIndex PROTO,
-    layer:WORD, position:COORD
+GetRenderBufferIndex PROTO,
+    position:COORD
+
+CoverRenderBuffer PROTO,
+    renderBuffer:PTR RENDER_BUFFER
+
+Render PROTO

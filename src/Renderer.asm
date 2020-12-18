@@ -6,32 +6,72 @@ TITLE Renderer (Renderer.asm)
 
 ; The major rendering part of the game
 
-;;  RenderBufferIndex
+
+;;  GetRenderBufferIndex
 ;;  To find the corresponging index to a coordinate of the render buffer
 ;;  Parameters:
-;;      layer:WORD: The index of the layer
 ;;      position:COORD: The coordination to be caculated
 ;;  Returns:
 ;;       EAX: The corresponging index of the render buffer
-RenderBufferIndex PROC USES cx,
-    layer:WORD, position:COORD
+GetRenderBufferIndex PROC,
+    position:COORD
 
-    ; layer * (SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT)
-    ; + position.y * SCREEN_BUFFER_WIDTH
-    ; + position.x
+    ; position.y * SCREEN_BUFFER_WIDTH + position.x
 
     ; In default
     ; SCREEN_BUFFER_WIDTH  = 128 = 2^7
     ; SCREEN_BUFFER_HEIGHT =  32 = 2^5
 
-    movzx eax, layer
-    shl ax, 12
-
-    mov cx, position.y
-    shl cx, 7
-    add ax, cx
-
+    movzx eax, position.y
+    shl ax, 7
     add ax, position.x
 
     ret
-RenderBufferIndex ENDP
+GetRenderBufferIndex ENDP
+
+;; CoverRenderBuffer
+CoverRenderBuffer PROC USES ecx esi edi,
+    renderBuffer:PTR RENDER_BUFFER
+
+    cld
+
+    mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
+    lea esi, stdRenderBuffer.characters
+    lea edi, (RENDER_BUFFER PTR [renderBuffer]).characters
+    rep movsb
+
+    mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
+    lea esi, stdRenderBuffer.attributes
+    lea edi, (RENDER_BUFFER PTR [renderBuffer]).attributes
+    rep movsw
+
+    ret
+CoverRenderBuffer ENDP
+
+;; ClearRenderBuffer
+ClearRenderBuffer PROC
+    ; TODO:
+
+    ret
+ClearRenderBuffer ENDP
+
+;; Render
+Render PROC
+    LOCAL outputCount:DWORD
+
+    INVOKE WriteConsoleOutputCharacter,
+        stdOutputHandle,
+        ADDR stdRenderBuffer.characters,
+        SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT,
+        stdRenderOrigin,
+        ADDR outputCount
+
+    INVOKE WriteConsoleOutputAttribute,
+        stdOutputHandle,
+        ADDR stdRenderBuffer.attributes,
+        SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT,
+        stdRenderOrigin,
+        ADDR outputCount
+
+    ret
+Render ENDP
