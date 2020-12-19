@@ -18,7 +18,7 @@ InitHandle PROC USES eax
 InitHandle ENDP
 
 ;;  InitScreen
-InitScreen PROC
+InitScreen PROC USES eax
     ; TODO: preset cosole font etc.
     INVOKE SetConsoleScreenBufferSize, stdOutputHandle, screenBufferSize
     INVOKE SetConsoleWindowInfo, stdOutputHandle, TRUE, ADDR screenBufferInfo.srWindow

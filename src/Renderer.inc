@@ -9,7 +9,15 @@ TITLE Renderer (Renderer.inc)
 GetRenderBufferIndex PROTO,
     position:COORD
 
+GetRenderBufferCoord PROTO,
+    index:WORD,
+    position:PTR COORD
+
 CoverRenderBuffer PROTO,
     renderBuffer:PTR RENDER_BUFFER
 
+ClearRenderBuffer PROTO
+
 Render PROTO
+
+RenderDiscardable PROTO

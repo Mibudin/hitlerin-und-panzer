@@ -51,6 +51,8 @@ COLOR_BG EQU <00100000b>  ; BACKGROUND_GREEN     EQU <00100000b>
 COLOR_BR EQU <01000000b>  ; BACKGROUND_RED       EQU <01000000b>
 COLOR_BI EQU <10000000b>  ; BACKGROUND_INTENSITY EQU <10000000b>
 
+; Render
+RENDER_DISCARD EQU <0>  ; TODO:
 
 
 ; ==============
@@ -122,12 +124,17 @@ Main PROC
     call WriteInt
     call CRlf
 
-    INVOKE Render
+    call ClearRenderBuffer
+
+    mov stdRenderBuffer.characters[77], RENDER_DISCARD
+
+    ; INVOKE Render
+    INVOKE RenderDiscardable
 
     call WriteInt
     call CRlf
 
-    call WaitMsg 
+    call WaitMsg
 
     exit
 Main ENDP
