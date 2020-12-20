@@ -126,7 +126,7 @@ Main PROC
 
     call ClearRenderBuffer
 
-    mov stdRenderBuffer.characters[77], RENDER_DISCARD
+    mov stdRenderBuffer.characters[SCREEN_BUFFER_WIDTH + 4], RENDER_DISCARD
 
     ; INVOKE Render
     INVOKE RenderDiscardable

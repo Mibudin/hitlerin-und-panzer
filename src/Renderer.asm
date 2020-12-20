@@ -30,19 +30,25 @@ GetRenderBufferIndex PROC,
 GetRenderBufferIndex ENDP
 
 ;; GetRenderBufferCoord
-GetRenderBufferCoord PROC USES ax cx,
+GetRenderBufferCoord PROC USES ax cx esi,
     index:WORD,
     position:PTR COORD
 
+    ; x = index - y * SCREEN_BUFFER_WIDTH
+    ; y = index / SCREEN_BUFFER_WIDTH
+
+    ; In default
+    ; SCREEN_BUFFER_WIDTH  = 128 = 2^7
+    ; SCREEN_BUFFER_HEIGHT =  32 = 2^5
+
     mov ax, index
-    mov cl, SCREEN_BUFFER_WIDTH
-    div cl
+    and ax, 007Fh
+    mov cx, index
+    shr cx, 7
 
-    movzx cx, ah
-    movzx ax, al
-
-    mov (COORD PTR [position]).x, cx
-    mov (COORD PTR [position]).y, ax
+    mov esi, position
+    mov (COORD PTR [esi]).x, ax
+    mov (COORD PTR [esi]).y, cx
 
     ret
 GetRenderBufferCoord ENDP
@@ -104,50 +110,57 @@ Render PROC USES eax
 Render ENDP
 
 ;; RenderDiscardable
+;; TODO: Improve?
 RenderDiscardable PROC USES eax ebx ecx edx esi edi
-    LOCAL outputCount:DWORD
-    LOCAL renderStart:COORD
+    LOCAL outputCount:DWORD,
+          renderStart:COORD
 
     cld
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
     mov esi, OFFSET stdRenderBuffer.characters
     mov edx, OFFSET stdRenderBuffer.attributes
-    xor ebx, ebx
     xor edi, edi
+    xor ebx, ebx
 
 RenderDiscardable_ScanAll:
-    mov al, RENDER_DISCARD
 
     add esi, edi
-    add edx, edi
     add ebx, edi
+    shl edi, 1
+    add edx, edi
     mov edi, esi
 
+    mov al, RENDER_DISCARD
     repne scasb
     jnz RenderDiscardable_End
-    sub edi, 2
+    dec edi
 RenderDiscardable_End:
     sub edi, esi
 
-    ; TODO:
     INVOKE GetRenderBufferCoord, bx, ADDR renderStart
 
+    push ecx
+    push edx
     INVOKE WriteConsoleOutputCharacter,
         stdOutputHandle,
         esi,
         edi,
         renderStart,
         ADDR outputCount
-    
-   INVOKE WriteConsoleOutputAttribute,
+    pop edx
+
+    push edx
+    INVOKE WriteConsoleOutputAttribute,
         stdOutputHandle,
         edx,
         edi,
         renderStart,
         ADDR outputCount
+    pop edx
+    pop ecx
 
+    inc edi
     inc ecx
-    add edi, 2
     loop RenderDiscardable_ScanAll
 
     ret
