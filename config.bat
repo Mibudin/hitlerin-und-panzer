@@ -25,7 +25,10 @@ REM - A boolean should be either `1`(mean TRUE) or `0`(mean FALSE)
 REM The default name of the target file
 REM Not including the extension filename
 REM May be used as names of generated associated files
-SET TARGET_NAME=Main
+SET TARGET_NAME=HUP
+
+REM The program entry of the target file
+SET PROGRAM_ENTRY=_start
 
 REM The path of the target file
 SET TARGET_PATH=.\src\
@@ -34,13 +37,13 @@ SET OBJECT_PATH=.\obj\
 REM The path of the output files
 SET OUTPUT_PATH=.\bin\
 
-REM The path of the MASM binaries
-SET MASM=.\make\masm32\
-
 REM The path of the include files
 SET INCLUDE=.\inc\
 REM The path if the library files
 SET LIB=.\lib\
+
+REM The path of the MASM binaries
+SET MASM=.\make\masm32\
 
 REM Whether to generate the PDB debug file
 SET GEN_PDB=0

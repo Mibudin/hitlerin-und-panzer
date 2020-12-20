@@ -6,6 +6,7 @@ TITLE Renderer (Renderer.inc)
 
 ; The major rendering part of the game
 
+
 GetRenderBufferIndex PROTO,
     position:COORD
 
@@ -16,8 +17,14 @@ GetRenderBufferCoord PROTO,
 CoverRenderBuffer PROTO,
     renderBuffer:PTR RENDER_BUFFER
 
+SetRenderBuffer PROTO,
+    characterValue:BYTE,
+    attributeValue:WORD
+
 ClearRenderBuffer PROTO
 
 Render PROTO
 
 RenderDiscardable PROTO
+
+RenderImage PROTO

@@ -12,7 +12,7 @@ TITLE Renderer (Renderer.asm)
 ;;  Parameters:
 ;;      position:COORD: The coordination to be caculated
 ;;  Returns:
-;;       AX: The corresponging index of the render buffer
+;;      AX: The corresponging index of the render buffer
 GetRenderBufferIndex PROC,
     position:COORD
 
@@ -22,7 +22,7 @@ GetRenderBufferIndex PROC,
     ; SCREEN_BUFFER_WIDTH  = 128 = 2^7
     ; SCREEN_BUFFER_HEIGHT =  32 = 2^5
 
-    movzx eax, position.y
+    mov ax, position.y
     shl ax, 7
     add ax, position.x
 
@@ -72,24 +72,35 @@ CoverRenderBuffer PROC USES ecx esi edi,
     ret
 CoverRenderBuffer ENDP
 
-;; ClearRenderBuffer
-ClearRenderBuffer PROC USES ax ecx edi
-    cld
-    mov ax, 49
+;; SetRenderBuffer
+SetRenderBuffer PROC USES ax ecx edi,
+    characterValue:BYTE,
+    attributeValue:WORD
 
+    cld
+
+    mov al, characterValue
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
     mov edi, OFFSET stdRenderBuffer.characters
     rep stosb
 
+    mov ax, attributeValue
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
     mov edi, OFFSET stdRenderBuffer.attributes
     rep stosw
 
     ret
+SetRenderBuffer ENDP
+
+;; ClearRenderBuffer
+ClearRenderBuffer PROC
+    INVOKE SetRenderBuffer, RENDER_BUFFER_CLEAR_CHAR, RENDER_BUFFER_CLEAR_ATTR
+
+    ret
 ClearRenderBuffer ENDP
 
 ;; Render
-Render PROC USES eax
+Render PROC USES eax ecx edx
     LOCAL outputCount:DWORD
 
     INVOKE WriteConsoleOutputCharacter,
@@ -123,19 +134,19 @@ RenderDiscardable PROC USES eax ebx ecx edx esi edi
     xor ebx, ebx
 
 RenderDiscardable_ScanAll:
-
     add esi, edi
     add ebx, edi
     shl edi, 1
     add edx, edi
     mov edi, esi
 
-    mov al, RENDER_DISCARD
+    mov al, RENDER_BUFFER_DISCARD
     repne scasb
     jnz RenderDiscardable_End
     dec edi
 RenderDiscardable_End:
     sub edi, esi
+    jz RenderDiscardable_Continued
 
     INVOKE GetRenderBufferCoord, bx, ADDR renderStart
 
@@ -159,9 +170,17 @@ RenderDiscardable_End:
     pop edx
     pop ecx
 
+RenderDiscardable_Continued:
     inc edi
     inc ecx
     loop RenderDiscardable_ScanAll
 
     ret
 RenderDiscardable ENDP
+
+;; RenderImage
+RenderImage PROC
+    ; TODO:
+
+    ret
+RenderImage ENDP

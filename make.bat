@@ -38,10 +38,10 @@ if errorlevel 1 goto terminate
 
 REM The command to link the target object file to the excutable file
 if %GEN_PDB% == 1 (
-    %MASM%LINK /INCREMENTAL:no /debug /pdb:%OUTPUT_PATH%%TARGET_NAME%.pdb /subsystem:console /entry:start /out:%OUTPUT_PATH%%TARGET_NAME%.exe %OBJECT_PATH%%TARGET_NAME%.obj
+    %MASM%LINK /INCREMENTAL:no /debug /pdb:%OUTPUT_PATH%%TARGET_NAME%.pdb /subsystem:console /entry:%PROGRAM_ENTRY% /out:%OUTPUT_PATH%%TARGET_NAME%.exe %OBJECT_PATH%%TARGET_NAME%.obj
 ) ^
 else (
-    %MASM%LINK /INCREMENTAL:no /subsystem:console /entry:start /out:%OUTPUT_PATH%%TARGET_NAME%.exe %OBJECT_PATH%%TARGET_NAME%.obj
+    %MASM%LINK /INCREMENTAL:no /subsystem:console /entry:%PROGRAM_ENTRY% /out:%OUTPUT_PATH%%TARGET_NAME%.exe %OBJECT_PATH%%TARGET_NAME%.obj
 )
 if errorlevel 1 goto terminate
 
