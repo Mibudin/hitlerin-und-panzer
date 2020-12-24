@@ -28,9 +28,10 @@ INCLUDELIB user32.lib
 ProgramEntry EQU _start@0
 
 ; The main game loop state
-GAME_STATE_INIT         EQU <0>
-GAME_STATE_INTRO_SCREEN EQU <1>
-GAME_STATE_START_MENU   EQU <2>
+GAME_STATE_TEST         EQU <0>
+GAME_STATE_INIT         EQU <1>
+GAME_STATE_INTRO_SCREEN EQU <2>
+GAME_STATE_START_MENU   EQU <3>
 
 ; The size of the screen buffer
 SCREEN_BUFFER_WIDTH  EQU <128>  ; 128 (2^7) chars, 64 (2^6) blocks
@@ -60,7 +61,7 @@ RENDER_BUFFER_CLEAR_ATTR EQU <00001111b>              ; Black background and whi
 CRLF_C   EQU <0dh, 0ah>   ; CR and LF characters
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <500>  ; in milliseconds
+MAIN_GAME_TURN_INTERVAL EQU <500>  ; in milliseconds  ; TODO: Test value
 
 
 ; ==============
@@ -113,7 +114,7 @@ stdRenderBuffer  RENDER_BUFFER <>
 stdRenderOrigin  COORD         <0, 0>
 
 ; The main game logic
-gameState     BYTE  GAME_STATE_INIT
+gameState     BYTE  GAME_STATE_TEST
 gameTickCount DWORD ?
 
 ; Test

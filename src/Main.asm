@@ -75,26 +75,31 @@ MainGameLoop ENDP
 ;;          1: True; 0: False
 MainGameTurn PROC USES ebx
     ; Initialization
+    ; call Clrscr
     call ClearRenderBuffer
 
     ; The game state
-    .IF     gameState == GAME_STATE_INIT
+    .IF     gameState == GAME_STATE_TEST
         ; mov ebx, gameTickCount
         ; INVOKE SetRenderBuffer, bl, bx
         INVOKE PushRenderBufferImage, ADDR testImage, testPosition
+        add testPosition.x, 7
 
         mov eax, TRUE
 
-        jmp MainGameLoop_PostProcess
+        jmp MainGameTurn_PostProcess
+
+    .ELSEIF gameState == GAME_STATE_INIT
+        jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_INTRO_SCREEN
-        jmp MainGameLoop_PostProcess
+        jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_START_MENU
-        jmp MainGameLoop_PostProcess
+        jmp MainGameTurn_PostProcess
     .ENDIF
 
-MainGameLoop_PostProcess:
+MainGameTurn_PostProcess:
     ; call Render
     call RenderDiscardable
 

@@ -100,6 +100,7 @@ ClearRenderBuffer PROC
 ClearRenderBuffer ENDP
 
 ;; PushRenderBufferImage
+;; TODO: Improvement? Very need!
 PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
     cmdImage:PTR CMD_IMAGE,
     position:COORD
@@ -112,8 +113,11 @@ PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
     add ax, position.x
     .IF ax <= SCREEN_BUFFER_WIDTH
         mov ax, (CMD_IMAGE PTR [edx]).imageSize.x
+    .ELSEIF position.x < SCREEN_BUFFER_WIDTH
+        mov ax, SCREEN_BUFFER_WIDTH
+        sub ax, position.x
     .ELSE
-        sub ax, SCREEN_BUFFER_WIDTH
+        jmp PushRenderBufferImage_AllDiscard
     .ENDIF
     mov renderSize.x, ax
 
@@ -121,46 +125,56 @@ PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
     add ax, position.y
     .IF ax <= SCREEN_BUFFER_HEIGHT
         mov ax, (CMD_IMAGE PTR [edx]).imageSize.y
+    .ELSEIF position.y < SCREEN_BUFFER_HEIGHT
+        mov ax, SCREEN_BUFFER_HEIGHT
+        sub ax, position.y
     .ELSE
-        sub ax, SCREEN_BUFFER_HEIGHT
+        jmp PushRenderBufferImage_AllDiscard
     .ENDIF
     mov renderSize.y, ax
 
+    ; Characters
     INVOKE GetRenderBufferIndex, position
     movzx eax, ax
-    mov ebx, eax
-
-    ; Characters
-    lea esi, (CMD_IMAGE PTR [edx]).characters
+    xor ebx, ebx
     movzx ecx, renderSize.y
 PushRenderBufferImage_ColumnLoop_Characters:
     push ecx
 
     movzx ecx, renderSize.x
-    lea edi, stdRenderBuffer.characters[ebx]
+    lea esi, (CMD_IMAGE PTR [edx]).characters[ebx]
+    lea edi, stdRenderBuffer.characters[eax]
     rep movsb
 
-    add ebx, SCREEN_BUFFER_WIDTH
+    add eax, SCREEN_BUFFER_WIDTH
+    add bx, (CMD_IMAGE PTR [edx]).imageSize.x
 
     pop ecx
     loop PushRenderBufferImage_ColumnLoop_Characters
 
     ; Attributes
+    INVOKE GetRenderBufferIndex, position
+    movzx eax, ax
     shl eax, 1
-    lea esi, (CMD_IMAGE PTR [edx]).attributes
+    xor ebx, ebx
     movzx ecx, renderSize.y
 PushRenderBufferImage_ColumnLoop_Attributes:
-    mov ebx, ecx
+    push ecx
 
     movzx ecx, renderSize.x
+    lea esi, (CMD_IMAGE PTR [edx]).attributes[ebx]
     lea edi, stdRenderBuffer.attributes[eax]
     rep movsw
 
     add eax, SCREEN_BUFFER_WIDTH * 2
+    shr ebx, 1
+    add bx, (CMD_IMAGE PTR [edx]).imageSize.x
+    shl ebx, 1
 
-    mov ecx, ebx
+    pop ecx
     loop PushRenderBufferImage_ColumnLoop_Attributes
 
+PushRenderBufferImage_AllDiscard:
     ret
 PushRenderBufferImage ENDP
 
