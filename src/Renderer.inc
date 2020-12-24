@@ -23,8 +23,10 @@ SetRenderBuffer PROTO,
 
 ClearRenderBuffer PROTO
 
+PushRenderBufferImage PROTO,
+    cmdImage:PTR CMD_IMAGE,
+    position:COORD
+
 Render PROTO
 
 RenderDiscardable PROTO
-
-RenderImage PROTO

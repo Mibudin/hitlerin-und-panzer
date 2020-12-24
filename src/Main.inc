@@ -9,4 +9,10 @@ TITLE Main (Main.inc)
 
 Main PROTO
 
+MainGameInit PROTO
+
 MainGameLoop PROTO
+
+MainGameTurn PROTO
+
+MainGameExit PROTO

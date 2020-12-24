@@ -7,9 +7,9 @@ TITLE HUP (HUP.asm)
 ; The major entry and declarations of this project.
 
 
-; ===========
-; = Include =
-; ===========
+; =================
+; = Include Outer =
+; =================
 
 ; Include outer include files
 INCLUDE Irvine32.inc
@@ -19,11 +19,6 @@ INCLUDELIB Kernel32.lib
 INCLUDELIB irvine32.lib
 INCLUDELIB user32.lib
 
-; Include inner include files
-INCLUDE Main.inc
-INCLUDE Initialization.inc
-INCLUDE Renderer.inc
-
 
 ; ===========
 ; = Equates =
@@ -32,6 +27,11 @@ INCLUDE Renderer.inc
 ; The program entry
 ProgramEntry EQU _start@0
 
+; The main game loop state
+GAME_STATE_INIT         EQU <0>
+GAME_STATE_INTRO_SCREEN EQU <1>
+GAME_STATE_START_MENU   EQU <2>
+
 ; The size of the screen buffer
 SCREEN_BUFFER_WIDTH  EQU <128>  ; 128 (2^7) chars, 64 (2^6) blocks
 SCREEN_BUFFER_HEIGHT EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
@@ -39,11 +39,6 @@ SCREEN_BUFFER_HEIGHT EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
 ; The size of the window size
 WINDOW_WIDTH         EQU <128>  ; 128 (2^7) chars, 64 (2^6) blocks
 WINDOW_HEIGHT        EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
-
-; Render
-RENDER_BUFFER_CLEAR_CHAR EQU <49>   ; TODO: Test value
-RENDER_BUFFER_CLEAR_ATTR EQU <49>   ; TODO: Test value
-RENDER_BUFFER_DISCARD    EQU <0>    ; TODO: Test value
 
 ; CMD color codes
 ; (Combinable by the operation `OR`)
@@ -56,8 +51,16 @@ COLOR_BG EQU <00100000b>  ; BACKGROUND_GREEN     EQU <00100000b>
 COLOR_BR EQU <01000000b>  ; BACKGROUND_RED       EQU <01000000b>
 COLOR_BI EQU <10000000b>  ; BACKGROUND_INTENSITY EQU <10000000b>
 
+; Render
+RENDER_BUFFER_DISCARD    EQU <0>                      ; Null character
+RENDER_BUFFER_CLEAR_CHAR EQU <RENDER_BUFFER_DISCARD>  ; Use space character to clear render buffer
+RENDER_BUFFER_CLEAR_ATTR EQU <00001111b>              ; Black background and white foreground
+
 ; Texts
 CRLF_C   EQU <0dh, 0ah>   ; CR and LF characters
+
+; The main game logic
+MAIN_GAME_TURN_INTERVAL EQU <500>  ; in milliseconds
 
 
 ; ==============
@@ -72,9 +75,19 @@ RENDER_BUFFER ENDS
 
 CMD_IMAGE STRUCT
     imageSize  COORD <>
-    characters BYTE  <>
-    attributes WORD  <>
+    characters BYTE SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
+    attributes WORD SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
 CMD_IMAGE ENDS
+
+
+; =================
+; = Include Inner =
+; =================
+
+; Include inner include files
+INCLUDE Main.inc
+INCLUDE Initialization.inc
+INCLUDE Renderer.inc
 
 
 ; ================
@@ -99,12 +112,22 @@ windowPosition   SMALL_RECT                 <0, 0, WINDOW_WIDTH - 1, WINDOW_HEIG
 stdRenderBuffer  RENDER_BUFFER <>
 stdRenderOrigin  COORD         <0, 0>
 
+; The main game logic
+gameState     BYTE  GAME_STATE_INIT
+gameTickCount DWORD ?
+
 ; Test
 testString BYTE CRLF_C
            BYTE "~~~ HITLERIN und PANZER ~~~", CRLF_C
            BYTE CRLF_C
            BYTE "Battle City x Waifu x Console x MASM", CRLF_C
            BYTE CRLF_C, 0
+
+testImageChars BYTE "123456789"
+testImageAttrs WORD 9 DUP(49)
+
+testImage CMD_IMAGE <<5, 6>, "123456789012345678901234567890", 30 DUP(49)>
+testPosition COORD <4, 7>
 
 
 ; ================

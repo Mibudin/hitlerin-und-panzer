@@ -7,12 +7,12 @@ TITLE Renderer (Renderer.asm)
 ; The major rendering part of the game
 
 
-;;  GetRenderBufferIndex
-;;  To find the corresponging index to a coordinate of the render buffer
-;;  Parameters:
-;;      position:COORD: The coordination to be caculated
-;;  Returns:
-;;      AX: The corresponging index of the render buffer
+;; GetRenderBufferIndex
+;; To find the corresponging index to a coordinate of the render buffer
+;; Parameters:
+;;     position:COORD: The coordination to be caculated
+;; Returns:
+;;     AX: The corresponging index of the render buffer
 GetRenderBufferIndex PROC,
     position:COORD
 
@@ -99,6 +99,71 @@ ClearRenderBuffer PROC
     ret
 ClearRenderBuffer ENDP
 
+;; PushRenderBufferImage
+PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
+    cmdImage:PTR CMD_IMAGE,
+    position:COORD
+    LOCAL renderSize:COORD
+
+    cld
+    mov edx, cmdImage
+
+    mov ax, (CMD_IMAGE PTR [edx]).imageSize.x
+    add ax, position.x
+    .IF ax <= SCREEN_BUFFER_WIDTH
+        mov ax, (CMD_IMAGE PTR [edx]).imageSize.x
+    .ELSE
+        sub ax, SCREEN_BUFFER_WIDTH
+    .ENDIF
+    mov renderSize.x, ax
+
+    mov ax, (CMD_IMAGE PTR [edx]).imageSize.y
+    add ax, position.y
+    .IF ax <= SCREEN_BUFFER_HEIGHT
+        mov ax, (CMD_IMAGE PTR [edx]).imageSize.y
+    .ELSE
+        sub ax, SCREEN_BUFFER_HEIGHT
+    .ENDIF
+    mov renderSize.y, ax
+
+    INVOKE GetRenderBufferIndex, position
+    movzx eax, ax
+    mov ebx, eax
+
+    ; Characters
+    lea esi, (CMD_IMAGE PTR [edx]).characters
+    movzx ecx, renderSize.y
+PushRenderBufferImage_ColumnLoop_Characters:
+    push ecx
+
+    movzx ecx, renderSize.x
+    lea edi, stdRenderBuffer.characters[ebx]
+    rep movsb
+
+    add ebx, SCREEN_BUFFER_WIDTH
+
+    pop ecx
+    loop PushRenderBufferImage_ColumnLoop_Characters
+
+    ; Attributes
+    shl eax, 1
+    lea esi, (CMD_IMAGE PTR [edx]).attributes
+    movzx ecx, renderSize.y
+PushRenderBufferImage_ColumnLoop_Attributes:
+    mov ebx, ecx
+
+    movzx ecx, renderSize.x
+    lea edi, stdRenderBuffer.attributes[eax]
+    rep movsw
+
+    add eax, SCREEN_BUFFER_WIDTH * 2
+
+    mov ecx, ebx
+    loop PushRenderBufferImage_ColumnLoop_Attributes
+
+    ret
+PushRenderBufferImage ENDP
+
 ;; Render
 Render PROC USES eax ecx edx
     LOCAL outputCount:DWORD
@@ -177,10 +242,3 @@ RenderDiscardable_Continued:
 
     ret
 RenderDiscardable ENDP
-
-;; RenderImage
-RenderImage PROC
-    ; TODO:
-
-    ret
-RenderImage ENDP
