@@ -82,7 +82,7 @@ MainGameTurn PROC USES ebx
     .IF     gameState == GAME_STATE_TEST
         ; mov ebx, gameTickCount
         ; INVOKE SetRenderBuffer, bl, bx
-        INVOKE PushRenderBufferImage, ADDR testImage, testPosition
+        INVOKE PushRenderBufferImageDiscardable, ADDR testImage, testPosition
         add testPosition.x, 7
 
         mov eax, TRUE

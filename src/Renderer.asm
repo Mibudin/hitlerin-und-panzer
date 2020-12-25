@@ -6,6 +6,22 @@ TITLE Renderer (Renderer.asm)
 
 ; The major rendering part of the game
 
+;; mGetCutSizeAxis
+;; Inner Regs:
+;;     AX
+mGetCutSizeAxis MACRO positionAxisWord, sizeAxisWord, limitAxisWord
+    mov ax, sizeAxisWord
+    add ax, positionAxisWord
+    .IF ax <= limitAxisWord
+        mov ax, sizeAxisWord
+    .ELSEIF positionAxisWord < limitAxisWord
+        mov ax, SCREEN_BUFFER_WIDTH
+        sub ax, positionAxisWord
+    .ELSE
+        xor ax, ax
+    .ENDIF
+ENDM
+
 
 ;; GetRenderBufferIndex
 ;; To find the corresponging index to a coordinate of the render buffer
@@ -100,7 +116,7 @@ ClearRenderBuffer PROC
 ClearRenderBuffer ENDP
 
 ;; PushRenderBufferImage
-;; TODO: Improvement? Very need!
+;; TODO: Improvement?
 PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
     cmdImage:PTR CMD_IMAGE,
     position:COORD
@@ -109,36 +125,19 @@ PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
     cld
     mov edx, cmdImage
 
-    mov ax, (CMD_IMAGE PTR [edx]).imageSize.x
-    add ax, position.x
-    .IF ax <= SCREEN_BUFFER_WIDTH
-        mov ax, (CMD_IMAGE PTR [edx]).imageSize.x
-    .ELSEIF position.x < SCREEN_BUFFER_WIDTH
-        mov ax, SCREEN_BUFFER_WIDTH
-        sub ax, position.x
-    .ELSE
-        jmp PushRenderBufferImage_AllDiscard
-    .ENDIF
+    mGetCutSizeAxis position.x, (CMD_IMAGE PTR [edx]).imageSize.x, SCREEN_BUFFER_WIDTH
     mov renderSize.x, ax
-
-    mov ax, (CMD_IMAGE PTR [edx]).imageSize.y
-    add ax, position.y
-    .IF ax <= SCREEN_BUFFER_HEIGHT
-        mov ax, (CMD_IMAGE PTR [edx]).imageSize.y
-    .ELSEIF position.y < SCREEN_BUFFER_HEIGHT
-        mov ax, SCREEN_BUFFER_HEIGHT
-        sub ax, position.y
-    .ELSE
+    mGetCutSizeAxis position.y, (CMD_IMAGE PTR [edx]).imageSize.y, SCREEN_BUFFER_HEIGHT
+    mov renderSize.y, ax
+    .IF renderSize.x <= 0 || renderSize.y <= 0
         jmp PushRenderBufferImage_AllDiscard
     .ENDIF
-    mov renderSize.y, ax
 
-    ; Characters
     INVOKE GetRenderBufferIndex, position
     movzx eax, ax
     xor ebx, ebx
     movzx ecx, renderSize.y
-PushRenderBufferImage_ColumnLoop_Characters:
+PushRenderBufferImage_ColumnLoop:
     push ecx
 
     movzx ecx, renderSize.x
@@ -146,37 +145,80 @@ PushRenderBufferImage_ColumnLoop_Characters:
     lea edi, stdRenderBuffer.characters[eax]
     rep movsb
 
-    add eax, SCREEN_BUFFER_WIDTH
-    add bx, (CMD_IMAGE PTR [edx]).imageSize.x
-
-    pop ecx
-    loop PushRenderBufferImage_ColumnLoop_Characters
-
-    ; Attributes
-    INVOKE GetRenderBufferIndex, position
-    movzx eax, ax
+    shl ebx, 1
     shl eax, 1
-    xor ebx, ebx
-    movzx ecx, renderSize.y
-PushRenderBufferImage_ColumnLoop_Attributes:
-    push ecx
-
     movzx ecx, renderSize.x
     lea esi, (CMD_IMAGE PTR [edx]).attributes[ebx]
     lea edi, stdRenderBuffer.attributes[eax]
     rep movsw
-
-    add eax, SCREEN_BUFFER_WIDTH * 2
     shr ebx, 1
+    shr eax, 1
+
+    add eax, SCREEN_BUFFER_WIDTH
     add bx, (CMD_IMAGE PTR [edx]).imageSize.x
-    shl ebx, 1
 
     pop ecx
-    loop PushRenderBufferImage_ColumnLoop_Attributes
+    loop PushRenderBufferImage_ColumnLoop
 
 PushRenderBufferImage_AllDiscard:
     ret
 PushRenderBufferImage ENDP
+
+;; PushRenderBufferImageDiscardable
+;; TODO: Improvement? Check correctness?
+PushRenderBufferImageDiscardable PROC USES eax ebx ecx edx esi edi,
+    cmdImage:PTR CMD_IMAGE,
+    position:COORD
+    LOCAL renderSize:COORD
+
+    cld
+    mov esi, cmdImage
+
+    mGetCutSizeAxis position.x, (CMD_IMAGE PTR [esi]).imageSize.x, SCREEN_BUFFER_WIDTH
+    mov renderSize.x, ax
+    mGetCutSizeAxis position.y, (CMD_IMAGE PTR [esi]).imageSize.y, SCREEN_BUFFER_HEIGHT
+    mov renderSize.y, ax
+    .IF renderSize.x <= 0 || renderSize.y <= 0
+        jmp PushRenderBufferImageDiscardable_AllDiscard
+    .ENDIF
+
+    INVOKE GetRenderBufferIndex, position
+    movzx eax, ax
+    xor ebx, ebx
+    movzx ecx, renderSize.y
+PushRenderBufferImageDiscardable_ColumnLoop:
+    mov edi, ecx
+    movzx ecx, renderSize.x
+PushRenderBufferImageDiscardable_ColumnLoop_OneCell:
+
+    mov dl, (CMD_IMAGE PTR [esi]).characters[ebx]
+    .IF BYTE PTR [esi] == RENDER_BUFFER_DISCARD
+        loop PushRenderBufferImageDiscardable_ColumnLoop_OneCell_Discard
+    .ENDIF
+    mov BYTE PTR stdRenderBuffer.characters[eax], dl
+
+    shl ebx, 1
+    shl eax, 1
+    mov dx, (CMD_IMAGE PTR [esi]).attributes[ebx]
+    mov WORD PTR stdRenderBuffer.attributes[eax], dx
+    shr ebx, 1
+    shr eax, 1
+
+PushRenderBufferImageDiscardable_ColumnLoop_OneCell_Discard:
+    inc ebx
+    inc eax
+    loop PushRenderBufferImageDiscardable_ColumnLoop_OneCell
+
+    add eax, SCREEN_BUFFER_WIDTH
+    movzx edx, renderSize.x
+    sub eax, edx
+
+    mov ecx, edi
+    loop PushRenderBufferImageDiscardable_ColumnLoop
+
+PushRenderBufferImageDiscardable_AllDiscard:
+    ret
+PushRenderBufferImageDiscardable ENDP
 
 ;; Render
 Render PROC USES eax ecx edx

@@ -27,6 +27,10 @@ PushRenderBufferImage PROTO,
     cmdImage:PTR CMD_IMAGE,
     position:COORD
 
+PushRenderBufferImageDiscardable PROTO,
+    cmdImage:PTR CMD_IMAGE,
+    position:COORD
+
 Render PROTO
 
 RenderDiscardable PROTO
