@@ -53,9 +53,12 @@ COLOR_BR EQU <01000000b>  ; BACKGROUND_RED       EQU <01000000b>
 COLOR_BI EQU <10000000b>  ; BACKGROUND_INTENSITY EQU <10000000b>
 
 ; Render
-RENDER_BUFFER_DISCARD    EQU <0>                      ; Null character
-RENDER_BUFFER_CLEAR_CHAR EQU <RENDER_BUFFER_DISCARD>  ; Use space character to clear render buffer
-RENDER_BUFFER_CLEAR_ATTR EQU <00001111b>              ; Black background and white foreground
+RENDER_BUFFER_LAYERS     EQU <4>                         ; The amount of layers ; TODO: Test value
+RENDER_BUFFER_DISCARD    EQU <0>                         ; Null character
+RENDER_BUFFER_CLEAR_CHAR EQU <RENDER_BUFFER_DISCARD>     ; Use space character to clear render buffer
+RENDER_BUFFER_CLEAR_ATTR EQU <00001111b>                 ; Black background and white foreground
+RENDER_BUFFER_BLANK_CHAR EQU <20h>                       ; A space
+RENDER_BUFFER_BLANK_ATTR EQU <RENDER_BUFFER_CLEAR_ATTR>  ; Black background and white foreground
 
 ; Texts
 CRLF_C   EQU <0dh, 0ah>   ; CR and LF characters
@@ -69,9 +72,9 @@ MAIN_GAME_TURN_INTERVAL EQU <500>  ; in milliseconds  ; TODO: Test value
 ; ==============
 
 ; Render buffer
-RENDER_BUFFER STRUCT
-    characters BYTE SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
-    attributes WORD SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
+RENDER_BUFFER STRUCT                                                   ; Size: 3000h (= 3 * 2^12 = 12288) Bytes
+    characters BYTE SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)  ; Size: 1000h Bytes
+    attributes WORD SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)  ; Size: 2000h Bytes
 RENDER_BUFFER ENDS
 
 CMD_IMAGE STRUCT
@@ -110,8 +113,8 @@ windowSize       COORD                      <WINDOW_WIDTH, WINDOW_HEIGHT>
 windowPosition   SMALL_RECT                 <0, 0, WINDOW_WIDTH - 1, WINDOW_HEIGHT - 1>
 
 ; The render buffer
-stdRenderBuffer  RENDER_BUFFER <>
-stdRenderOrigin  COORD         <0, 0>
+stdRenderBuffer RENDER_BUFFER RENDER_BUFFER_LAYERS DUP(<>)
+stdRenderOrigin COORD         <0, 0>
 
 ; The main game logic
 gameState     BYTE  GAME_STATE_TEST

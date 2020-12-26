@@ -6,22 +6,54 @@ TITLE Renderer (Renderer.asm)
 
 ; The major rendering part of the game
 
+
 ;; mGetCutSizeAxis
-;; Inner Regs:
-;;     AX
-mGetCutSizeAxis MACRO positionAxisWord, sizeAxisWord, limitAxisWord
-    mov ax, sizeAxisWord
-    add ax, positionAxisWord
-    .IF ax <= limitAxisWord
-        mov ax, sizeAxisWord
-    .ELSEIF positionAxisWord < limitAxisWord
-        mov ax, SCREEN_BUFFER_WIDTH
-        sub ax, positionAxisWord
+mGetCutSizeAxis MACRO regWord, innerPositionAxisWord, innerSizeAxisWord, outerLimitAxisWord
+    mov regWord, innerSizeAxisWord
+    add regWord, innerPositionAxisWord
+    .IF regWord <= outerLimitAxisWord
+        mov regWord, innerSizeAxisWord
     .ELSE
-        xor ax, ax
+        mov regWord, innerPositionAxisWord
+        .IF regWord < outerLimitAxisWord
+            mov regWord, outerLimitAxisWord
+            sub regWord, innerPositionAxisWord
+        .ELSE
+            xor regWord, regWord
+        .ENDIF
     .ENDIF
 ENDM
 
+;; GetCutSize
+GetCutSize PROC USES ax edi,
+    innerPosition:COORD,
+    innerSize:COORD,
+    outerlimit:COORD,
+    renderSize:PTR COORD
+
+    mov edi, renderSize
+
+    mGetCutSizeAxis ax, innerPosition.x, innerSize.x, outerlimit.x
+    mov (COORD PTR[edi]).x, ax
+    mGetCutSizeAxis ax, innerPosition.y, innerSize.y, outerlimit.y
+    mov (COORD PTR[edi]).y, ax
+
+    ret
+GetCutSize ENDP
+
+;; mGetRenderBufferLayerIndex
+mGetRenderBufferLayerIndex MACRO regDWord, layerDWord
+    ; reg = layer * 3 * 2 ^ 12
+
+    mov regDWord, layerDWord
+
+    ; * 3
+    shl regDWord, 1
+    inc regDWord
+
+    ; * 1000h
+    shl regDWord, 12
+ENDM
 
 ;; GetRenderBufferIndex
 ;; To find the corresponging index to a coordinate of the render buffer
@@ -70,18 +102,20 @@ GetRenderBufferCoord PROC USES ax cx esi,
 GetRenderBufferCoord ENDP
 
 ;; CoverRenderBuffer
-CoverRenderBuffer PROC USES ecx esi edi,
+CoverRenderBuffer PROC USES eax ecx esi edi,
+    layer:DWORD,
     renderBuffer:PTR RENDER_BUFFER
 
     cld
+    mGetRenderBufferLayerIndex eax, layer
 
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
-    lea esi, stdRenderBuffer.characters
+    lea esi, stdRenderBuffer[eax].characters
     lea edi, (RENDER_BUFFER PTR [renderBuffer]).characters
     rep movsb
 
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
-    lea esi, stdRenderBuffer.attributes
+    lea esi, stdRenderBuffer[eax].attributes
     lea edi, (RENDER_BUFFER PTR [renderBuffer]).attributes
     rep movsw
 
@@ -89,35 +123,49 @@ CoverRenderBuffer PROC USES ecx esi edi,
 CoverRenderBuffer ENDP
 
 ;; SetRenderBuffer
-SetRenderBuffer PROC USES ax ecx edi,
+SetRenderBuffer PROC USES ax ebx ecx edi,
+    layer:DWORD,
     characterValue:BYTE,
     attributeValue:WORD
 
     cld
+    mGetRenderBufferLayerIndex ebx, layer
 
     mov al, characterValue
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
-    mov edi, OFFSET stdRenderBuffer.characters
+    lea edi, stdRenderBuffer[ebx].characters
     rep stosb
 
     mov ax, attributeValue
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
-    mov edi, OFFSET stdRenderBuffer.attributes
+    lea edi, stdRenderBuffer[ebx].attributes
     rep stosw
 
     ret
 SetRenderBuffer ENDP
 
 ;; ClearRenderBuffer
-ClearRenderBuffer PROC
-    INVOKE SetRenderBuffer, RENDER_BUFFER_CLEAR_CHAR, RENDER_BUFFER_CLEAR_ATTR
+ClearRenderBuffer PROC,
+    layer:DWORD
+
+    INVOKE SetRenderBuffer, layer, RENDER_BUFFER_CLEAR_CHAR, RENDER_BUFFER_CLEAR_ATTR
 
     ret
 ClearRenderBuffer ENDP
 
+;; BlankRenderBuffer
+BlankRenderBuffer PROC,
+    layer:DWORD
+
+    INVOKE SetRenderBuffer, layer, RENDER_BUFFER_BLANK_CHAR, RENDER_BUFFER_BLANK_ATTR
+
+    ret
+BlankRenderBuffer ENDP
+
 ;; PushRenderBufferImage
 ;; TODO: Improvement?
 PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
+    layer:DWORD,
     cmdImage:PTR CMD_IMAGE,
     position:COORD
     LOCAL renderSize:COORD
@@ -125,10 +173,15 @@ PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
     cld
     mov edx, cmdImage
 
-    mGetCutSizeAxis position.x, (CMD_IMAGE PTR [edx]).imageSize.x, SCREEN_BUFFER_WIDTH
-    mov renderSize.x, ax
-    mGetCutSizeAxis position.y, (CMD_IMAGE PTR [edx]).imageSize.y, SCREEN_BUFFER_HEIGHT
-    mov renderSize.y, ax
+    ; INVOKE GetCutSizeAxis, position.x, (CMD_IMAGE PTR [edx]).imageSize.x, SCREEN_BUFFER_WIDTH
+    ; mov renderSize.x, ax
+    ; INVOKE GetCutSizeAxis, position.y, (CMD_IMAGE PTR [edx]).imageSize.y, SCREEN_BUFFER_HEIGHT
+    ; mov renderSize.y, ax
+    INVOKE GetCutSize,
+        position,
+        (CMD_IMAGE PTR [edx]).imageSize,
+        screenBufferSize,
+        ADDR renderSize
     .IF renderSize.x <= 0 || renderSize.y <= 0
         jmp PushRenderBufferImage_AllDiscard
     .ENDIF
@@ -140,16 +193,18 @@ PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
 PushRenderBufferImage_ColumnLoop:
     push ecx
 
-    movzx ecx, renderSize.x
+    mGetRenderBufferLayerIndex ecx, layer
     lea esi, (CMD_IMAGE PTR [edx]).characters[ebx]
-    lea edi, stdRenderBuffer.characters[eax]
+    lea edi, stdRenderBuffer[ecx].characters[eax]
+    movzx ecx, renderSize.x
     rep movsb
 
     shl ebx, 1
     shl eax, 1
-    movzx ecx, renderSize.x
+    mGetRenderBufferLayerIndex ecx, layer
     lea esi, (CMD_IMAGE PTR [edx]).attributes[ebx]
-    lea edi, stdRenderBuffer.attributes[eax]
+    lea edi, stdRenderBuffer[ecx].attributes[eax]
+    movzx ecx, renderSize.x
     rep movsw
     shr ebx, 1
     shr eax, 1
@@ -167,17 +222,23 @@ PushRenderBufferImage ENDP
 ;; PushRenderBufferImageDiscardable
 ;; TODO: Improvement? Check correctness?
 PushRenderBufferImageDiscardable PROC USES eax ebx ecx edx esi edi,
+    layer:DWORD,
     cmdImage:PTR CMD_IMAGE,
     position:COORD
     LOCAL renderSize:COORD
 
-    cld
     mov esi, cmdImage
+    mGetRenderBufferLayerIndex edi, layer
 
-    mGetCutSizeAxis position.x, (CMD_IMAGE PTR [esi]).imageSize.x, SCREEN_BUFFER_WIDTH
-    mov renderSize.x, ax
-    mGetCutSizeAxis position.y, (CMD_IMAGE PTR [esi]).imageSize.y, SCREEN_BUFFER_HEIGHT
-    mov renderSize.y, ax
+    ; INVOKE GetCutSizeAxis, position.x, (CMD_IMAGE PTR [esi]).imageSize.x, SCREEN_BUFFER_WIDTH
+    ; mov renderSize.x, ax
+    ; INVOKE GetCutSizeAxis, position.y, (CMD_IMAGE PTR [esi]).imageSize.y, SCREEN_BUFFER_HEIGHT
+    ; mov renderSize.y, ax
+    INVOKE GetCutSize,
+        position,
+        (CMD_IMAGE PTR [esi]).imageSize,
+        screenBufferSize,
+        ADDR renderSize
     .IF renderSize.x <= 0 || renderSize.y <= 0
         jmp PushRenderBufferImageDiscardable_AllDiscard
     .ENDIF
@@ -187,20 +248,20 @@ PushRenderBufferImageDiscardable PROC USES eax ebx ecx edx esi edi,
     xor ebx, ebx
     movzx ecx, renderSize.y
 PushRenderBufferImageDiscardable_ColumnLoop:
-    mov edi, ecx
+    push ecx
     movzx ecx, renderSize.x
-PushRenderBufferImageDiscardable_ColumnLoop_OneCell:
 
+PushRenderBufferImageDiscardable_ColumnLoop_OneCell:
     mov dl, (CMD_IMAGE PTR [esi]).characters[ebx]
     .IF BYTE PTR [esi] == RENDER_BUFFER_DISCARD
         loop PushRenderBufferImageDiscardable_ColumnLoop_OneCell_Discard
     .ENDIF
-    mov BYTE PTR stdRenderBuffer.characters[eax], dl
+    mov BYTE PTR stdRenderBuffer[edi].characters[eax], dl
 
     shl ebx, 1
     shl eax, 1
     mov dx, (CMD_IMAGE PTR [esi]).attributes[ebx]
-    mov WORD PTR stdRenderBuffer.attributes[eax], dx
+    mov WORD PTR stdRenderBuffer[edi].attributes[eax], dx
     shr ebx, 1
     shr eax, 1
 
@@ -213,7 +274,7 @@ PushRenderBufferImageDiscardable_ColumnLoop_OneCell_Discard:
     movzx edx, renderSize.x
     sub eax, edx
 
-    mov ecx, edi
+    pop ecx
     loop PushRenderBufferImageDiscardable_ColumnLoop
 
 PushRenderBufferImageDiscardable_AllDiscard:
@@ -221,19 +282,22 @@ PushRenderBufferImageDiscardable_AllDiscard:
 PushRenderBufferImageDiscardable ENDP
 
 ;; Render
-Render PROC USES eax ecx edx
+Render PROC USES eax ecx edx,
+    layer:DWORD
     LOCAL outputCount:DWORD
 
+    mGetRenderBufferLayerIndex edx, layer
     INVOKE WriteConsoleOutputCharacter,
         stdOutputHandle,
-        ADDR stdRenderBuffer.characters,
+        ADDR stdRenderBuffer[edx].characters,
         SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT,
         stdRenderOrigin,
         ADDR outputCount
 
+    mGetRenderBufferLayerIndex edx, layer
     INVOKE WriteConsoleOutputAttribute,
         stdOutputHandle,
-        ADDR stdRenderBuffer.attributes,
+        ADDR stdRenderBuffer[edx].attributes,
         SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT,
         stdRenderOrigin,
         ADDR outputCount
@@ -243,14 +307,16 @@ Render ENDP
 
 ;; RenderDiscardable
 ;; TODO: Improve?
-RenderDiscardable PROC USES eax ebx ecx edx esi edi
+RenderDiscardable PROC USES eax ebx ecx edx esi edi,
+    layer:DWORD
     LOCAL outputCount:DWORD,
           renderStart:COORD
 
     cld
+    mGetRenderBufferLayerIndex eax, layer
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
-    mov esi, OFFSET stdRenderBuffer.characters
-    mov edx, OFFSET stdRenderBuffer.attributes
+    lea esi, stdRenderBuffer[eax].characters
+    lea edx, stdRenderBuffer[eax].attributes
     xor edi, edi
     xor ebx, ebx
 

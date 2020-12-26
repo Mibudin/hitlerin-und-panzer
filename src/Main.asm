@@ -10,26 +10,9 @@ TITLE Main (Main.asm)
 ;; Main
 ;; TODO:
 Main PROC
-    ; LOCAL pos:COORD
-
     call MainGameInit
 
     call MainGameLoop
-
-    ; mov edx, OFFSET testString
-    ; call WriteString
-
-    ; call WaitMsg
-    ; call Crlf
-
-    ; call ClearRenderBuffer
-
-    ; mov stdRenderBuffer.characters[SCREEN_BUFFER_WIDTH + 4], RENDER_BUFFER_DISCARD
-
-    ; ; INVOKE Render
-    ; INVOKE RenderDiscardable
-
-    ; call WaitMsg
 
     call MainGameExit
 
@@ -42,8 +25,7 @@ MainGameInit PROC
     call InitGame
 
     call Clrscr
-    call ClearRenderBuffer
-    call RenderDiscardable
+    INVOKE ClearRenderBuffer, 0
 
     ret
 MainGameInit ENDP
@@ -62,6 +44,7 @@ MainGameLoop_Loop:
     mov ebx, eax
 
     call MainGameTurn
+    ; mov eax, TRUE
     cmp eax, TRUE
     je MainGameLoop_Loop
 
@@ -76,14 +59,18 @@ MainGameLoop ENDP
 MainGameTurn PROC USES ebx
     ; Initialization
     ; call Clrscr
-    call ClearRenderBuffer
+    ; call ClearRenderBuffer
 
-    ; The game state
+    ; The game states
     .IF     gameState == GAME_STATE_TEST
+        INVOKE ClearRenderBuffer, 3
+
         ; mov ebx, gameTickCount
         ; INVOKE SetRenderBuffer, bl, bx
-        INVOKE PushRenderBufferImageDiscardable, ADDR testImage, testPosition
+        INVOKE PushRenderBufferImageDiscardable, 3, ADDR testImage, testPosition
         add testPosition.x, 7
+
+        INVOKE RenderDiscardable, 3
 
         mov eax, TRUE
 
@@ -101,7 +88,6 @@ MainGameTurn PROC USES ebx
 
 MainGameTurn_PostProcess:
     ; call Render
-    call RenderDiscardable
 
 MainGameTurn_End:
     ret
