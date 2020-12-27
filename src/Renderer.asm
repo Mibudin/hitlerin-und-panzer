@@ -11,34 +11,19 @@ TITLE Renderer (Renderer.asm)
 InitRenderer PROC USES ecx
     call Clrscr
 
+    ; Clear all render buffer layers
     mov ecx, RENDER_BUFFER_LAYERS
 InitRenderer_ClearRenderBufferLayersAll:
     dec ecx
-    INVOKE ClearRenderBuffer, ecx
+    mClearRenderBuffer ecx
     cmp ecx, 0
     jbe InitRenderer_ClearRenderBufferLayersAll
 
+    ; Set default cursor style
     INVOKE SetConsoleCursorInfo, stdOutputHandle, ADDR stdConsoleCursorInfo
 
     ret
 InitRenderer ENDP
-
-;; mGetCutSizeAxis
-mGetCutSizeAxis MACRO regWord, innerPositionAxisWord, innerSizeAxisWord, outerLimitAxisWord
-    mov regWord, innerSizeAxisWord
-    add regWord, innerPositionAxisWord
-    .IF regWord <= outerLimitAxisWord
-        mov regWord, innerSizeAxisWord
-    .ELSE
-        mov regWord, innerPositionAxisWord
-        .IF regWord < outerLimitAxisWord
-            mov regWord, outerLimitAxisWord
-            sub regWord, innerPositionAxisWord
-        .ELSE
-            xor regWord, regWord
-        .ENDIF
-    .ENDIF
-ENDM
 
 ;; GetCutSize
 GetCutSize PROC USES ax edi,
@@ -56,20 +41,6 @@ GetCutSize PROC USES ax edi,
 
     ret
 GetCutSize ENDP
-
-;; mGetRenderBufferLayerIndex
-mGetRenderBufferLayerIndex MACRO regDWord, layerDWord
-    ; reg = layer * 3 * 2 ^ 12
-
-    mov regDWord, layerDWord
-
-    ; * 3
-    shl regDWord, 1
-    inc regDWord
-
-    ; * 1000h
-    shl regDWord, 12
-ENDM
 
 ;; GetRenderBufferIndex
 ;; To find the corresponging index to a coordinate of the render buffer
@@ -160,24 +131,6 @@ SetRenderBuffer PROC USES ax ebx ecx edi,
     ret
 SetRenderBuffer ENDP
 
-;; ClearRenderBuffer
-ClearRenderBuffer PROC,
-    layer:DWORD
-
-    INVOKE SetRenderBuffer, layer, RENDER_BUFFER_CLEAR_CHAR, RENDER_BUFFER_CLEAR_ATTR
-
-    ret
-ClearRenderBuffer ENDP
-
-;; BlankRenderBuffer
-BlankRenderBuffer PROC,
-    layer:DWORD
-
-    INVOKE SetRenderBuffer, layer, RENDER_BUFFER_BLANK_CHAR, RENDER_BUFFER_BLANK_ATTR
-
-    ret
-BlankRenderBuffer ENDP
-
 ;; PushRenderBufferImage
 ;; TODO: Improvement?
 PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
@@ -231,6 +184,21 @@ PushRenderBufferImage_AllDiscard:
     ret
 PushRenderBufferImage ENDP
 
+;; PushRenderBufferImageBlank
+PushRenderBufferImageBlank PROC USES ax,
+    layer:DWORD,
+    position:COORD,
+    blankSize:COORD
+
+    mov ax, blankSize.x
+    mov blankCmdImage.imageSize.x, ax
+    mov ax, blankSize.y
+    mov blankCmdImage.imageSize.y, ax
+    INVOKE PushRenderBufferImage, layer, ADDR blankCmdImage, position
+
+    ret
+PushRenderBufferImageBlank ENDP
+
 ;; PushRenderBufferImageDiscardable
 ;; TODO: Improvement? Check correctness?
 PushRenderBufferImageDiscardable PROC USES eax ebx ecx edx esi edi,
@@ -261,9 +229,8 @@ PushRenderBufferImageDiscardable_ColumnLoop:
 
 PushRenderBufferImageDiscardable_ColumnLoop_OneCell:
     mov dl, (CMD_IMAGE PTR [esi]).characters[ebx]
-    .IF BYTE PTR [esi] == RENDER_BUFFER_DISCARD
-        loop PushRenderBufferImageDiscardable_ColumnLoop_OneCell_Discard
-    .ENDIF
+    cmp dl, RENDER_BUFFER_DISCARD
+    je PushRenderBufferImageDiscardable_ColumnLoop_OneCell_Discard
     mov BYTE PTR stdRenderBuffer[edi].characters[eax], dl
 
     shl ebx, 1

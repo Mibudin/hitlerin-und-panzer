@@ -7,6 +7,10 @@ TITLE Tank (Tank.inc)
 ; The main handler of the tanks
 
 
+; ==========
+; = PROTOS =
+; ==========
+
 PrintTank PROTO,
     thisOutputHandle: DWORD,
     thisTank: PTR Tank,

@@ -57,7 +57,7 @@ COLOR_BR EQU <01000000b>  ; BACKGROUND_RED       EQU <01000000b>
 COLOR_BI EQU <10000000b>  ; BACKGROUND_INTENSITY EQU <10000000b>
 
 ; Render settings
-RENDER_BUFFER_DISCARD    EQU <0>                         ; Null character
+RENDER_BUFFER_DISCARD    EQU <0h>                         ; Null character
 RENDER_BUFFER_CLEAR_CHAR EQU <RENDER_BUFFER_DISCARD>     ; Use space character to clear render buffer
 RENDER_BUFFER_CLEAR_ATTR EQU <00001111b>                 ; Black background and white foreground
 RENDER_BUFFER_BLANK_CHAR EQU <20h>                       ; A space
@@ -67,14 +67,20 @@ RENDER_BUFFER_BLANK_ATTR EQU <RENDER_BUFFER_CLEAR_ATTR>  ; Black background and 
 RENDER_BUFFER_LAYERS         EQU <4>  ; The amount of layers ; TODO: Test value
 RENDER_BUFFER_LAYER_0        EQU <0>
 RENDER_BUFFER_LAYER_GAME_MAP EQU <1>  ; The game map
-RENDER_BUFFER_LAYER_2        EQU <2>
-RENDER_BUFFER_LAYER_3        EQU <3>
+RENDER_BUFFER_LAYER_TANKS    EQU <2>  ; The panzers (tanks)
+RENDER_BUFFER_LAYER_BULLETS  EQU <3>  ; The bullets
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <500>  ; in milliseconds  ; TODO: Test value
+MAIN_GAME_TURN_INTERVAL EQU <200>  ; in milliseconds  ; TODO: Test value
 
 ; Texts
 CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
+
+; Panzer (Tank)
+TANK_FACE_UP    EQU <1>
+TANK_FACE_RIGHT EQU <2>
+TANK_FACE_DOWN  EQU <3>
+TANK_FACE_LEFT  EQU <4>
 
 
 
@@ -99,14 +105,14 @@ GAME_MAP STRUCT
 GAME_MAP ENDS
 
 TANK STRUCT 
-    firstLine   BYTE  ' ', 7Ch, ' '  ;  |
-    secondLine  BYTE  23h, 2Bh, 23h  ; #+#
-    thirdLine   BYTE  23h, 2Bh, 23h  ; #+#
-    firstColor  WORD  6h, 6h, 6h     ; brown
-    secondColor WORD  6h, 0ch, 6h    ; brown red brown
-    threeWhite  BYTE  3 DUP(' ')     ; for EraseTank
+    ; firstLine   BYTE  ' ', 7Ch, ' '  ;  |
+    ; secondLine  BYTE  23h, 2Bh, 23h  ; #+#
+    ; thirdLine   BYTE  23h, 2Bh, 23h  ; #+#
+    ; firstColor  WORD  6h, 6h, 6h     ; brown
+    ; secondColor WORD  6h, 0ch, 6h    ; brown red brown
+    ; threeWhite  BYTE  3 DUP(' ')     ; for EraseTank
     position    COORD <1, 1>         ; left up
-    faceTo      BYTE  1              ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
+    faceTo      BYTE  TANK_FACE_UP   ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
 TANK ENDS
 
 
@@ -136,7 +142,11 @@ stdInputHandle   DWORD ?
 
 ; The screen buffer and window data
 screenBufferSize COORD                      <SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>
-screenBufferInfo CONSOLE_SCREEN_BUFFER_INFO <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>, <0, 0>, 0, <0, 0, WINDOW_WIDTH - 1, WINDOW_HEIGHT - 1>, <WINDOW_WIDTH, WINDOW_HEIGHT>>
+screenBufferInfo CONSOLE_SCREEN_BUFFER_INFO <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>, \
+                                             <0, 0>,                                      \
+                                             0,                                           \
+                                             <0, 0, WINDOW_WIDTH - 1, WINDOW_HEIGHT - 1>, \
+                                             <WINDOW_WIDTH, WINDOW_HEIGHT>>
 windowSize       COORD                      <WINDOW_WIDTH, WINDOW_HEIGHT>
 windowPosition   SMALL_RECT                 <0, 0, WINDOW_WIDTH - 1, WINDOW_HEIGHT - 1>
 
@@ -148,6 +158,29 @@ stdConsoleCursorInfo CONSOLE_CURSOR_INFO <100, FALSE>
 ; The main game logic
 gameState     BYTE  GAME_STATE_TEST
 gameTickCount DWORD ?
+
+; The CMD images
+blankCmdImage     CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
+                             SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_CHAR), \
+                             SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+tankCmdImageUp    CMD_IMAGE <<3, 3>,                                        \
+                             { 0h, 7Ch,  0h, 23h, 2Bh, 23h, 23h, 2Bh, 23h}, \
+                             { 6h,  6h,  6h,  6h, 0Ch,  6h,  6h, 0Ch,  6h}>
+tankCmdImageRight CMD_IMAGE <<3, 3>,                                        \
+                             {23h, 23h,  0h, 2Bh, 2Bh, 2Dh, 23h, 23h,  0h}, \
+                             { 6h,  6h,  6h, 0Ch, 0Ch,  6h,  6h,  6h,  6h}>
+tankCmdImageDown  CMD_IMAGE <<3, 3>,                                        \
+                             {23h, 2Bh, 23h, 23h, 2Bh, 23h,  0h, 7Ch,  0h}, \
+                             { 6h, 0Ch,  6h,  6h, 0Ch,  6h,  6h,  6h,  6h}>
+tankCmdImageLeft  CMD_IMAGE <<3, 3>,                                        \
+                             { 0h, 23h, 23h, 2Dh, 2Bh, 2Bh,  0h, 23h, 23h}, \
+                             { 6h,  6h,  6h,  6h, 0Ch, 0Ch,  6h,  6h,  6h}>
+
+; Tank settings
+tankSize COORD <3, 3>
+
+; The trash bus
+trashBus DWORD ?
 
 ; Test
 testString BYTE CRLF_C
@@ -161,6 +194,8 @@ testImageAttrs WORD 9 DUP(49)
 
 testImage CMD_IMAGE <<5, 6>, "123456789012345678901234567890", 30 DUP(49)>
 testPosition COORD <4, 7>
+
+testTank TANK <>
 
 
 ; ================

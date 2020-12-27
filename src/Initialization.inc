@@ -7,6 +7,10 @@ TITLE Initialization (Initialization.inc)
 ; The major initialization part of the game
 
 
+; ==========
+; = PROTOS =
+; ==========
+
 InitHandle PROTO
 
 InitScreen PROTO

@@ -54,21 +54,19 @@ MainGameLoop ENDP
 ;; Returns:
 ;;     EAX: Whether to continue the main game loop
 ;;          1: True; 0: False
-MainGameTurn PROC USES ebx
+MainGameTurn PROC USES ebx edx
     ; Initialization
     ; call Clrscr
     ; call ClearRenderBuffer
 
     ; The game states
     .IF     gameState == GAME_STATE_TEST
-        INVOKE ClearRenderBuffer, RENDER_BUFFER_LAYER_GAME_MAP
+        mClearRenderBuffer RENDER_BUFFER_LAYER_TANKS
 
-        ; mov ebx, gameTickCount
-        ; INVOKE SetRenderBuffer, bl, bx
-        INVOKE PushRenderBufferImageDiscardable, RENDER_BUFFER_LAYER_GAME_MAP, ADDR testImage, testPosition
-        add testPosition.x, 7
+        call ReadKey
+        INVOKE MoveTank, stdOutputHandle, ADDR testTank, ax, ADDR trashBus
 
-        INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
+        INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
 
         mov eax, TRUE
 

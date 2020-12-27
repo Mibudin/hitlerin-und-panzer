@@ -7,6 +7,10 @@ TITLE Main (Main.inc)
 ; The main program file of this project
 
 
+; ==========
+; = PROTOS =
+; ==========
+
 Main PROTO
 
 MainGameInit PROTO
