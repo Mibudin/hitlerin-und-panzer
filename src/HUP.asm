@@ -82,9 +82,14 @@ FACE_RIGHT EQU <2>
 FACE_DOWN  EQU <3>
 FACE_LEFT  EQU <4>
 
-; The game map
-GAME_MAP_CHAR_EMPTY EQU <' '>
+; Tank role
+ROLE_PLAYER EQU <0>
+ROLE_ENEMY  EQU <1>
 
+; The game map
+GAME_MAP_CHAR_EMPTY  EQU <' '>
+GAME_MAP_CHAR_PALYER EQU <'#'>
+GAME_MAP_CHAR_ENEMY  EQU <'*'>
 
 
 ; ==============
@@ -112,6 +117,7 @@ TANK STRUCT
     ; threeWhite  BYTE  3 DUP(' ')     ; for EraseTank
     position    COORD <1, 1>         ; left up
     faceTo      BYTE  FACE_UP        ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
+    role        BYTE  ROLE_PLAYER
 TANK ENDS
 
 BULLET STRUCT
@@ -202,9 +208,10 @@ bulletSize COORD <1, 1>
 trashBus DWORD ?
 
 ; Texts
-StartS BYTE "					        Press SPACE to start", 0
-RuleS BYTE "					    Press R to see the game rule", 0
+StartS  BYTE "					        Press SPACE to start", 0
+RuleS   BYTE "					    Press R to see the game rule", 0
 MemberS BYTE "					     Press M to see member list", 0
+
 CloseRS BYTE "	   	Press X to close the game rule", 0
 CloseMS BYTE "					     Press X to close member list", 0
 

@@ -14,11 +14,13 @@ TITLE Tank (Tank.inc)
 PrintTank PROTO,
     thisOutputHandle: DWORD,
     thisTank: PTR Tank,
+	gameMap: PTR BYTE,
     countWord: PTR DWORD
 
 EraseTank PROTO,
     thisOutputHandle: DWORD,
     thisTank: PTR Tank,
+	gameMap: PTR BYTE,
     countWord: PTR DWORD
 
 ChangeFaceTo PROTO,

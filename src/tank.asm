@@ -12,6 +12,7 @@ TITLE Tank (Tank.asm)
 PrintTank PROC USES eax ecx esi edi,
     thisOutputHandle: DWORD,
     thisTank: PTR Tank,
+	gameMap: PTR BYTE,
     countWord: PTR DWORD
 
     mov esi, thisTank
@@ -31,6 +32,55 @@ PrintTank PROC USES eax ecx esi edi,
         RENDER_BUFFER_LAYER_TANKS,
         edi,
         (TANK PTR [esi]).position
+    
+    mov edi, gameMap
+    INVOKE GetRenderBufferIndex, (TANK PTR [esi]).position
+    movzx eax, ax
+    movzx ebx, (TANK PTR [esi]).role
+    .IF     ebx == ROLE_PLAYER
+        ; add eax, 128*(PTR Tank [esi]).position.y)+(PTR Tank [esi]).position.x
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        inc eax
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        inc eax
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+
+        add eax, GAME_MAP_WIDTH - 2    ; 128-2
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        inc eax
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        inc eax
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+
+        add eax, GAME_MAP_WIDTH - 2    ; 128-2
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        inc eax
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        inc eax
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+
+    .ELSEIF ebx == ROLE_ENEMY
+        ; add eax, 128*(PTR Tank [esi]).position.y)+(PTR Tank [esi]).position.x
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+        inc eax
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+        inc eax
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+
+        add eax, GAME_MAP_WIDTH - 2    ; 128-2
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+        inc eax
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+        inc eax
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+
+        add eax, GAME_MAP_WIDTH - 2    ; 128-2
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+        inc eax
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+        inc eax
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    .ENDIF
 
     ; INVOKE WriteConsoleOutputAttribute,  ; set color
     ;     thisOutputHandle,
@@ -81,9 +131,10 @@ PrintTank ENDP
 
 ;; EraseTank
 ;; clear the tank in order to move
-EraseTank PROC USES ecx esi,
+EraseTank PROC USES eax ecx esi,
     thisOutputHandle: DWORD,
     thisTank: PTR TANK,
+	gameMap: PTR BYTE,
     countWord: PTR DWORD
 
     mov esi, thisTank
@@ -92,6 +143,31 @@ EraseTank PROC USES ecx esi,
         RENDER_BUFFER_LAYER_TANKS,
         (TANK PTR [esi]).position,
         tankSize
+
+    mov edi, GameMap
+    INVOKE GetRenderBufferIndex, (TANK PTR [esi]).position
+    movzx eax, ax
+    ; add eax, 128*(PTR Tank [esi]).position.y)+(PTR Tank [esi]).position.x
+
+	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    inc eax
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    inc eax
+	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+
+    add eax, 126    ; 128-2
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    inc eax
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    inc eax
+	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+
+    add eax, 126    ; 128-2
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    inc eax
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    inc eax
+	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
 
 ;     mov ecx, 3
 ; EraseTank_ClearRow:
@@ -207,7 +283,7 @@ MoveTank PROC USES eax esi,
     direction: WORD, 
     countWord: PTR DWORD
 
-    INVOKE EraseTank, thisOutputHandle, thisTank, countWord
+    INVOKE EraseTank, thisOutputHandle, thisTank, ADDR gameMapRecord, countWord
     mov ax, direction
     mov esi, thisTank
     
@@ -274,6 +350,6 @@ MoveTank_SubX:
     .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_PrintMove:
-    INVOKE PrintTank, thisOutputHandle, thisTank, countWord
+    INVOKE PrintTank, thisOutputHandle, thisTank, ADDR gameMapRecord, countWord
     ret
 MoveTank ENDP
