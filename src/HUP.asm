@@ -135,6 +135,7 @@ INCLUDE GameMapHandler.inc  ; The main handler of the game map
 INCLUDE Tank.inc            ; The main handler of the tanks
 INCLUDE Bullet.inc          ; The main handler of the bullets
 INCLUDE ControlEnemy.inc    ; The main handler of controling enemies
+INCLUDE HomePage.inc        ; The main handler of the home page
 
 
 ; ================
@@ -200,6 +201,35 @@ bulletSize COORD <1, 1>
 ; The common trash bus
 trashBus DWORD ?
 
+; Texts
+StartS BYTE "					        Press SPACE to start", 0
+RuleS BYTE "					    Press R to see the game rule", 0
+MemberS BYTE "					     Press M to see member list", 0
+CloseRS BYTE "	   	Press X to close the game rule", 0
+CloseMS BYTE "					     Press X to close member list", 0
+
+GameRuleS1_1 BYTE "	   	- Player's Panzer", 0
+GameRuleS1_2 BYTE "		  	- Have one panzer", 0
+GameRuleS1_3 BYTE "		  	- Control the direction with ARROW KEYS", 0
+GameRuleS1_4 BYTE "		   	- Fire a bullet with SPACE ( fire one per 2 seconds, accumulate three ones at most )", 0
+GameRuleS1_5 BYTE "		   	- Have three lives", 0
+
+GameRuleS2_1 BYTE "	   	- Enemy's Panzers",0 
+GameRuleS2_2 BYTE "		   	- Have three panzers", 0
+GameRuleS2_3 BYTE "		   	- Automatically move and fire through certain rules", 0
+GameRuleS2_4 BYTE "		   	- Have one life", 0
+
+GameRuleS3_1 BYTE "	   	- Victory Condition", 0
+GameRuleS3_2 BYTE "		   	- Destroy all panzers of the enemy", 0
+
+GameRuleS4_1 BYTE "	  	- Failure Condition", 0
+GameRuleS4_2 BYTE "		   	- Run out of all three lives", 0
+
+MemberListS1 BYTE "					     HONG, YU-XIANG", 0				; 洪裕翔
+MemberListS2 BYTE "					     LIU, ZI-YONG", 0				; 劉子雍
+MemberListS3 BYTE "					     PETER", 0						; 林緯翔
+MemberListS4 BYTE "					     QIN, CHENG-YE", 0				; 秦承業
+
 ; TODO: Test
 testString BYTE CRLF_C
            BYTE "~~~ HITLERIN und PANZER ~~~", CRLF_C
@@ -232,6 +262,7 @@ INCLUDE GameMapHandler.asm  ; The main handler of the game map
 INCLUDE Tank.asm            ; The main handler of the tanks
 INCLUDE Bullet.asm          ; The main handler of the bullets
 INCLUDE ControlEnemy.asm    ; The main handler of controling enemies
+INCLUDE HomePage.asm        ; The main handler of the home page
 
 ; The end of the program entry
 END ProgramEntry

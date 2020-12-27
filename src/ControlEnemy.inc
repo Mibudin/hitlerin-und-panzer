@@ -7,6 +7,10 @@ TITLE ControlEnemy (ControlEnemy.inc)
 ; The main handler of controling enemies
 
 
+; ==========
+; = PROTOS =
+; ==========
+
 GetDirection PROTO,
     thisTank: PTR Tank,
 

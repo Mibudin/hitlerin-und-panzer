@@ -25,6 +25,8 @@ MainGameInit PROC
     call InitGame
     call InitRenderer
 
+    mov gameState, GAME_STATE_START
+
     ret
 MainGameInit ENDP
 
@@ -73,7 +75,11 @@ MainGameTurn PROC
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_START
-        mov gameState, GAME_STATE_GAME_MAP
+        call Home    
+
+        ; mov gameState, GAME_STATE_GAME_MAP
+        mov gameState, GAME_STATE_TEST
+        call Clrscr
 
         mov eax, TRUE
 
