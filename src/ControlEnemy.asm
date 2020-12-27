@@ -77,6 +77,7 @@ MoveRandom_Check:
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
         jne MoveRandom_Return
 
+		mov ax, 4800h
         jmp MoveRandom_Move
 
     .ELSEIF (al == FACE_RIGHT)
@@ -99,6 +100,7 @@ MoveRandom_Check:
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
         jne MoveRandom_Return
 
+		mov ax, 4D00h
         jmp MoveRandom_Move
 
     .ELSEIF (al == FACE_DOWN)
@@ -121,6 +123,7 @@ MoveRandom_Check:
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
         jne MoveRandom_Return
 
+		mov ax, 5000h
         jmp MoveRandom_Move
 
     .ELSEIF (al == FACE_LEFT)
@@ -143,6 +146,7 @@ MoveRandom_Check:
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
         jne MoveRandom_Return
 
+		mov ax, 4B00h
         jmp MoveRandom_Move
 
     .ELSE
@@ -161,7 +165,7 @@ MoveRandom_Check:
     ; .ELSE
     ;     jmp MoveRandom_Return
 MoveRandom_Move:
-    INVOKE MoveTank, thisOutputHandle, thisTank, ADDR gameMapRecord, (TANK PTR [esi]).faceTo, countWord
+    INVOKE MoveTank, thisOutputHandle, thisTank, ax, countWord
 MoveRandom_Loop:
     loop MoveRandom_Move
 MoveRandom_Return:
