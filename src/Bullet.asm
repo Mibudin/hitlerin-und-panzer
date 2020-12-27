@@ -1,4 +1,4 @@
-TITLE bullet (bullet.asm)
+TITLE Bullet (Bullet.asm)
 
 INCLUDE Irvine32.inc
 
