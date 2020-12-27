@@ -50,7 +50,7 @@ main PROC
 	call Home
 main ENDP
 
-Home PROC
+Home PROC USES eax edx
 	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
 	mov consoleHandle, eax
 	call Clrscr
@@ -91,7 +91,7 @@ Home PROC
 	call Home
 Home ENDP
 
-Rule PROC
+Rule PROC USES eax edx
 	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
 	mov consoleHandle, eax
 	call Clrscr
@@ -153,7 +153,7 @@ Rule PROC
 	call Rule
 Rule ENDP
 
-Member PROC
+Member PROC USES eax edx
 	INVOKE GetStdHandle, STD_OUTPUT_HANDLE
 	mov consoleHandle, eax
 	call Clrscr
