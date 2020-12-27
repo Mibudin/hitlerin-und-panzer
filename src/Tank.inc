@@ -30,5 +30,6 @@ ChangeFaceTo PROTO,
 MoveTank PROTO, 
     thisOutputHandle: DWORD, 
     thisTank: PTR Tank,
+    gameMap: PTR BYTE,
     direction: WORD, 
     countWord: PTR DWORD

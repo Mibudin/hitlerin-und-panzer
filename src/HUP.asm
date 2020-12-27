@@ -179,7 +179,7 @@ gameState     BYTE  GAME_STATE_TEST
 gameTickCount DWORD ?
 
 ; The game map record
-gameMapRecord BYTE GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(?)
+gameMapRecord BYTE GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(GAME_MAP_CHAR_EMPTY)
 
 ; The CMD images
 blankCmdImage     CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \

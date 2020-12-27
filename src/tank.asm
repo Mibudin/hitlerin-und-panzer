@@ -280,10 +280,11 @@ ChangeFaceTo ENDP
 MoveTank PROC USES eax esi, 
     thisOutputHandle: DWORD, 
     thisTank: PTR Tank,
-    direction: WORD, 
+	gameMap: PTR BYTE,
+    direction: WORD,
     countWord: PTR DWORD
 
-    INVOKE EraseTank, thisOutputHandle, thisTank, ADDR gameMapRecord, countWord
+    INVOKE EraseTank, thisOutputHandle, thisTank, gameMap, countWord
     mov ax, direction
     mov esi, thisTank
     
@@ -350,6 +351,6 @@ MoveTank_SubX:
     .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_PrintMove:
-    INVOKE PrintTank, thisOutputHandle, thisTank, ADDR gameMapRecord, countWord
+    INVOKE PrintTank, thisOutputHandle, thisTank, gameMap, countWord
     ret
 MoveTank ENDP

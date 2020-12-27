@@ -161,7 +161,7 @@ MoveRandom_Check:
     ; .ELSE
     ;     jmp MoveRandom_Return
 MoveRandom_Move:
-    INVOKE MoveTank, thisOutputHandle, thisTank, (TANK PTR [esi]).faceTo, countWord
+    INVOKE MoveTank, thisOutputHandle, thisTank, ADDR gameMapRecord, (TANK PTR [esi]).faceTo, countWord
 MoveRandom_Loop:
     loop MoveRandom_Move
 MoveRandom_Return:

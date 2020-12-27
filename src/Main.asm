@@ -63,37 +63,22 @@ MainGameTurn PROC
 
     ; The game states
     .IF     gameState == GAME_STATE_TEST
-        mClearRenderBuffer RENDER_BUFFER_LAYER_TANKS
-
-        call ReadKey
-        INVOKE MoveTank, stdOutputHandle, ADDR testTank, ax, ADDR trashBus
-
-        INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
-
-        mov eax, TRUE
+        mMainGameTurn_GameStateTest
 
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_START
-        call Home    
-
-        ; mov gameState, GAME_STATE_GAME_MAP
-        mov gameState, GAME_STATE_TEST
-        call Clrscr
-
-        mov eax, TRUE
+        mMainGameTurn_GameStateStart
 
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_GAME_MAP
-        mov gameState, GAME_STATE_END
-
-        mov eax, TRUE
+        mMainGameTurn_GameStateGameMap
 
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_END
-        mov eax, TRUE
+        mMainGameTurn_GameStateEnd
 
         jmp MainGameTurn_PostProcess
 
