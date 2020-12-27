@@ -4,7 +4,7 @@ TITLE Main (Main.asm)
 ; = Main =
 ; ========
 
-; The main program file of this project.
+; The main program file of this project
 
 
 ;; Main
@@ -23,9 +23,7 @@ Main ENDP
 ;; MainGameInit
 MainGameInit PROC
     call InitGame
-
-    call Clrscr
-    INVOKE ClearRenderBuffer, 0
+    call InitRenderer
 
     ret
 MainGameInit ENDP
@@ -63,27 +61,28 @@ MainGameTurn PROC USES ebx
 
     ; The game states
     .IF     gameState == GAME_STATE_TEST
-        INVOKE ClearRenderBuffer, 3
+        INVOKE ClearRenderBuffer, RENDER_BUFFER_LAYER_GAME_MAP
 
         ; mov ebx, gameTickCount
         ; INVOKE SetRenderBuffer, bl, bx
-        INVOKE PushRenderBufferImageDiscardable, 3, ADDR testImage, testPosition
+        INVOKE PushRenderBufferImageDiscardable, RENDER_BUFFER_LAYER_GAME_MAP, ADDR testImage, testPosition
         add testPosition.x, 7
 
-        INVOKE RenderDiscardable, 3
+        INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
 
         mov eax, TRUE
 
         jmp MainGameTurn_PostProcess
 
-    .ELSEIF gameState == GAME_STATE_INIT
+    .ELSEIF gameState == GAME_STATE_START
         jmp MainGameTurn_PostProcess
 
-    .ELSEIF gameState == GAME_STATE_INTRO_SCREEN
+    .ELSEIF gameState == GAME_STATE_GAME_MAP
         jmp MainGameTurn_PostProcess
 
-    .ELSEIF gameState == GAME_STATE_START_MENU
+    .ELSEIF gameState == GAME_STATE_END
         jmp MainGameTurn_PostProcess
+
     .ENDIF
 
 MainGameTurn_PostProcess:

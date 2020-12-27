@@ -7,6 +7,8 @@ TITLE Renderer (Renderer.inc)
 ; The major rendering part of the game
 
 
+InitRenderer PROTO
+
 ; mGetCutSizeAxis MACRO
 ;     regWord,
 ;     innerPositionAxisWord,

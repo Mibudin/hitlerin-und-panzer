@@ -28,10 +28,10 @@ INCLUDELIB user32.lib
 ProgramEntry EQU _start@0
 
 ; The main game loop state
-GAME_STATE_TEST         EQU <0>
-GAME_STATE_INIT         EQU <1>
-GAME_STATE_INTRO_SCREEN EQU <2>
-GAME_STATE_START_MENU   EQU <3>
+GAME_STATE_TEST     EQU <0>
+GAME_STATE_START    EQU <1>
+GAME_STATE_GAME_MAP EQU <2>
+GAME_STATE_END      EQU <3>
 
 ; The size of the screen buffer
 SCREEN_BUFFER_WIDTH  EQU <128>  ; 128 (2^7) chars, 64 (2^6) blocks
@@ -40,6 +40,10 @@ SCREEN_BUFFER_HEIGHT EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
 ; The size of the window size
 WINDOW_WIDTH         EQU <128>  ; 128 (2^7) chars, 64 (2^6) blocks
 WINDOW_HEIGHT        EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
+
+; The size of the map
+GAME_MAP_WIDTH  EQU <SCREEN_BUFFER_WIDTH>
+GAME_MAP_HEIGHT EQU <SCREEN_BUFFER_HEIGHT>
 
 ; CMD color codes
 ; (Combinable by the operation `OR`)
@@ -52,19 +56,26 @@ COLOR_BG EQU <00100000b>  ; BACKGROUND_GREEN     EQU <00100000b>
 COLOR_BR EQU <01000000b>  ; BACKGROUND_RED       EQU <01000000b>
 COLOR_BI EQU <10000000b>  ; BACKGROUND_INTENSITY EQU <10000000b>
 
-; Render
-RENDER_BUFFER_LAYERS     EQU <4>                         ; The amount of layers ; TODO: Test value
+; Render settings
 RENDER_BUFFER_DISCARD    EQU <0>                         ; Null character
 RENDER_BUFFER_CLEAR_CHAR EQU <RENDER_BUFFER_DISCARD>     ; Use space character to clear render buffer
 RENDER_BUFFER_CLEAR_ATTR EQU <00001111b>                 ; Black background and white foreground
 RENDER_BUFFER_BLANK_CHAR EQU <20h>                       ; A space
 RENDER_BUFFER_BLANK_ATTR EQU <RENDER_BUFFER_CLEAR_ATTR>  ; Black background and white foreground
 
-; Texts
-CRLF_C   EQU <0dh, 0ah>   ; CR and LF characters
+; Render layers
+RENDER_BUFFER_LAYERS         EQU <4>  ; The amount of layers ; TODO: Test value
+RENDER_BUFFER_LAYER_0        EQU <0>
+RENDER_BUFFER_LAYER_GAME_MAP EQU <1>  ; The game map
+RENDER_BUFFER_LAYER_2        EQU <2>
+RENDER_BUFFER_LAYER_3        EQU <3>
 
 ; The main game logic
 MAIN_GAME_TURN_INTERVAL EQU <500>  ; in milliseconds  ; TODO: Test value
+
+; Texts
+CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
+
 
 
 ; ==============
@@ -79,9 +90,24 @@ RENDER_BUFFER ENDS
 
 CMD_IMAGE STRUCT
     imageSize  COORD <>
-    characters BYTE SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
-    attributes WORD SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
+    characters BYTE  SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
+    attributes WORD  SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
 CMD_IMAGE ENDS
+
+GAME_MAP STRUCT
+    mapRecord BYTE GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(?)
+GAME_MAP ENDS
+
+TANK STRUCT 
+    firstLine   BYTE  ' ', 7Ch, ' '  ;  |
+    secondLine  BYTE  23h, 2Bh, 23h  ; #+#
+    thirdLine   BYTE  23h, 2Bh, 23h  ; #+#
+    firstColor  WORD  6h, 6h, 6h     ; brown
+    secondColor WORD  6h, 0ch, 6h    ; brown red brown
+    threeWhite  BYTE  3 DUP(' ')     ; for EraseTank
+    position    COORD <1, 1>         ; left up
+    faceTo      BYTE  1              ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
+TANK ENDS
 
 
 ; =================
@@ -89,9 +115,11 @@ CMD_IMAGE ENDS
 ; =================
 
 ; Include inner include files
-INCLUDE Main.inc
-INCLUDE Initialization.inc
-INCLUDE Renderer.inc
+INCLUDE Main.inc            ; The main program file of this project. (Must be the first)
+INCLUDE Initialization.inc  ; The major initialization part of the game
+INCLUDE Renderer.inc        ; The major rendering part of the game
+INCLUDE GameMapHandler.inc  ; The main handler of the game map
+INCLUDE Tank.inc            ; The main handler of the tanks
 
 
 ; ================
@@ -112,9 +140,10 @@ screenBufferInfo CONSOLE_SCREEN_BUFFER_INFO <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER
 windowSize       COORD                      <WINDOW_WIDTH, WINDOW_HEIGHT>
 windowPosition   SMALL_RECT                 <0, 0, WINDOW_WIDTH - 1, WINDOW_HEIGHT - 1>
 
-; The render buffer
-stdRenderBuffer RENDER_BUFFER RENDER_BUFFER_LAYERS DUP(<>)
-stdRenderOrigin COORD         <0, 0>
+; The render settings
+stdRenderBuffer      RENDER_BUFFER       RENDER_BUFFER_LAYERS DUP(<>)
+stdRenderOrigin      COORD               <0, 0>
+stdConsoleCursorInfo CONSOLE_CURSOR_INFO <100, FALSE>
 
 ; The main game logic
 gameState     BYTE  GAME_STATE_TEST
@@ -143,9 +172,11 @@ testPosition COORD <4, 7>
 ProgramEntry:
 
 ; Include sources
-INCLUDE Main.asm           ; The main program file of this project. (Must be the first)
-INCLUDE Initialization.asm ; The major initialization part of the game
-INCLUDE Renderer.asm       ; The major rendering part of the game
+INCLUDE Main.asm            ; The main program file of this project. (Must be the first)
+INCLUDE Initialization.asm  ; The major initialization part of the game
+INCLUDE Renderer.asm        ; The major rendering part of the game
+INCLUDE GameMapHandler.asm  ; The main handler of the game map
+INCLUDE Tank.asm            ; The main handler of the tanks
 
 ; The end of the program entry
 END ProgramEntry

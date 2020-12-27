@@ -7,6 +7,22 @@ TITLE Renderer (Renderer.asm)
 ; The major rendering part of the game
 
 
+;; InitRenderer
+InitRenderer PROC USES ecx
+    call Clrscr
+
+    mov ecx, RENDER_BUFFER_LAYERS
+InitRenderer_ClearRenderBufferLayersAll:
+    dec ecx
+    INVOKE ClearRenderBuffer, ecx
+    cmp ecx, 0
+    jbe InitRenderer_ClearRenderBufferLayersAll
+
+    INVOKE SetConsoleCursorInfo, stdOutputHandle, ADDR stdConsoleCursorInfo
+
+    ret
+InitRenderer ENDP
+
 ;; mGetCutSizeAxis
 mGetCutSizeAxis MACRO regWord, innerPositionAxisWord, innerSizeAxisWord, outerLimitAxisWord
     mov regWord, innerSizeAxisWord
@@ -173,10 +189,6 @@ PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
     cld
     mov edx, cmdImage
 
-    ; INVOKE GetCutSizeAxis, position.x, (CMD_IMAGE PTR [edx]).imageSize.x, SCREEN_BUFFER_WIDTH
-    ; mov renderSize.x, ax
-    ; INVOKE GetCutSizeAxis, position.y, (CMD_IMAGE PTR [edx]).imageSize.y, SCREEN_BUFFER_HEIGHT
-    ; mov renderSize.y, ax
     INVOKE GetCutSize,
         position,
         (CMD_IMAGE PTR [edx]).imageSize,
@@ -230,10 +242,6 @@ PushRenderBufferImageDiscardable PROC USES eax ebx ecx edx esi edi,
     mov esi, cmdImage
     mGetRenderBufferLayerIndex edi, layer
 
-    ; INVOKE GetCutSizeAxis, position.x, (CMD_IMAGE PTR [esi]).imageSize.x, SCREEN_BUFFER_WIDTH
-    ; mov renderSize.x, ax
-    ; INVOKE GetCutSizeAxis, position.y, (CMD_IMAGE PTR [esi]).imageSize.y, SCREEN_BUFFER_HEIGHT
-    ; mov renderSize.y, ax
     INVOKE GetCutSize,
         position,
         (CMD_IMAGE PTR [esi]).imageSize,

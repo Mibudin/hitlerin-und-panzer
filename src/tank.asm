@@ -1,261 +1,255 @@
-TITLE control tank                (car.ASM)
+TITLE Tank (Tank.asm)
 
-INCLUDE Irvine32.inc
+; ========
+; = Tank =
+; ========
 
-main          EQU start@
+; The main handler of the tanks
 
-Tank STRUCT 
-	firstLine BYTE ' ', 7Ch, ' '		;  |
-	secondLine BYTE 23h, 2Bh, 23h 		; #+#
-	thirdLine BYTE 23h, 2Bh, 23h		; #+#
-	firstColor WORD 6h, 6h, 6h 			; brown	
-	secondColor WORD 6h, 0ch, 6h		; brown red brown
-	threeWhite BYTE 3 DUP (' ')			; for EraseTank
-	position COORD <1,1>				; left up
-	faceTo BYTE 1               		; 1 : face up, 2 : face right, 3 : face down, 4 : face left 
-Tank ENDS
 
-; print tank
+;; PrintTank
+;; print tank
 PrintTank PROC USES eax ecx esi,
-	thisOutputHandle: DWORD,
-	thisTank: PTR Tank,
-	countWord: PTR DWORD
+    thisOutputHandle: DWORD,
+    thisTank: PTR Tank,
+    countWord: PTR DWORD
 
-	mov esi, thisTank
+    mov esi, thisTank
 
-	INVOKE WriteConsoleOutputAttribute,			; set color
-		thisOutputHandle,
-		ADDR (Tank PTR [esi]).firstColor,
-		3,
-		(Tank PTR [esi]).position,
-		countWord
-	INVOKE WriteConsoleOutputCharacter,			; 設定字母
-		thisOutputHandle, 
-		ADDR (Tank PTR [esi]).firstLine,
-		3,
-		(Tank PTR [esi]).position,
-		countWord
-	
-	inc (Tank PTR [esi]).position.Y 
+    INVOKE WriteConsoleOutputAttribute,  ; set color
+        thisOutputHandle,
+        ADDR (Tank PTR [esi]).firstColor,
+        3,
+        (Tank PTR [esi]).position,
+        countWord
+    INVOKE WriteConsoleOutputCharacter,  ; 設定字母
+        thisOutputHandle, 
+        ADDR (Tank PTR [esi]).firstLine,
+        3,
+        (Tank PTR [esi]).position,
+        countWord
+    
+    inc (Tank PTR [esi]).position.Y 
 
-	INVOKE WriteConsoleOutputAttribute,			; set color
-		thisOutputHandle,
-		ADDR (Tank PTR [esi]).secondColor,
-		3,
-		(Tank PTR [esi]).position,
-		countWord
-	INVOKE WriteConsoleOutputCharacter,			; 設定字母
-		thisOutputHandle, 
-		ADDR (Tank PTR [esi]).secondLine,
-		3,
-		(Tank PTR [esi]).position,
-		countWord
+    INVOKE WriteConsoleOutputAttribute,  ; set color
+        thisOutputHandle,
+        ADDR (Tank PTR [esi]).secondColor,
+        3,
+        (Tank PTR [esi]).position,
+        countWord
+    INVOKE WriteConsoleOutputCharacter,  ; 設定字母
+        thisOutputHandle, 
+        ADDR (Tank PTR [esi]).secondLine,
+        3,
+        (Tank PTR [esi]).position,
+        countWord
 
-	inc (Tank PTR [esi]).position.Y
+    inc (Tank PTR [esi]).position.Y
 
-	INVOKE WriteConsoleOutputAttribute,			; set color
-		thisOutputHandle,
-		ADDR (Tank PTR [esi]).firstColor,
-		3,
-		(Tank PTR [esi]).position,
-		countWord
-	INVOKE WriteConsoleOutputCharacter,			; 設定字母
-		thisOutputHandle, 
-		ADDR (Tank PTR [esi]).thirdLine,
-		3,
-		(Tank PTR [esi]).position,
-		countWord
+    INVOKE WriteConsoleOutputAttribute,  ; set color
+        thisOutputHandle,
+        ADDR (Tank PTR [esi]).firstColor,
+        3,
+        (Tank PTR [esi]).position,
+        countWord
+    INVOKE WriteConsoleOutputCharacter,  ; 設定字母
+        thisOutputHandle, 
+        ADDR (Tank PTR [esi]).thirdLine,
+        3,
+        (Tank PTR [esi]).position,
+        countWord
 
-	sub (Tank PTR [esi]).position.Y, 2
-	ret
+    sub (Tank PTR [esi]).position.Y, 2
+    ret
 PrintTank ENDP
-	
-	
-; clear the tank in order to move
+
+;; EraseTank
+;; clear the tank in order to move
 EraseTank PROC USES ecx esi,
-	thisOutputHandle: DWORD,
-	thisTank: PTR Tank,
-	countWord: PTR DWORD
+    thisOutputHandle: DWORD,
+    thisTank: PTR Tank,
+    countWord: PTR DWORD
 
-	mov esi, thisTank
-	mov ecx, 3
-clearRow:
-	push ecx
-	INVOKE WriteConsoleOutputAttribute,			; set color
-		thisOutputHandle,
-		ADDR (Tank PTR [esi]).firstColor,
-		3,
-		(Tank PTR [esi]).position,
-		countWord
+    mov esi, thisTank
+    mov ecx, 3
+EraseTank_ClearRow:
+    push ecx
+    INVOKE WriteConsoleOutputAttribute,  ; set color
+        thisOutputHandle,
+        ADDR (Tank PTR [esi]).firstColor,
+        3,
+        (Tank PTR [esi]).position,
+        countWord
 
-	INVOKE WriteConsoleOutputCharacter,			; 設定字母
-		thisOutputHandle, 
-		ADDR (Tank PTR [esi]).threeWhite,
-		3,
-		(Tank PTR [esi]).position,
-		countWord
-	add (Tank PTR [esi]).position.Y, 1
-	pop ecx
-	loop clearRow
+    INVOKE WriteConsoleOutputCharacter,  ; 設定字母
+        thisOutputHandle, 
+        ADDR (Tank PTR [esi]).threeWhite,
+        3,
+        (Tank PTR [esi]).position,
+        countWord
+    add (Tank PTR [esi]).position.Y, 1
+    pop ecx
+    loop EraseTank_ClearRow
 
-	sub (Tank PTR [esi]).position.Y, 3
-	ret
+    sub (Tank PTR [esi]).position.Y, 3
+    ret
 EraseTank ENDP
 
+;; ChangeFaceTo
 ; change direction 
 ChangeFaceTo PROC USES eax ecx esi,
-	thisTank: PTR Tank,
-	newFaceTo: BYTE
+    thisTank: PTR Tank,
+    newFaceTo: BYTE
 
-	mov al, newFaceTo
-	mov esi, thisTank
+    mov al, newFaceTo
+    mov esi, thisTank
 
-	cmp al, 1h				
-	je changeToFaceUP
-	cmp al, 2h
-	je changeToFaceRight
-	cmp al, 3h
-	je changeToFaceDown
-	jmp changeToFaceLeft
+    cmp al, 1h				
+    je ChangeFaceTo_ChangeToFaceUP
+    cmp al, 2h
+    je ChangeFaceTo_ChangeToFaceRight
+    cmp al, 3h
+    je ChangeFaceTo_ChangeToFaceDown
+    jmp ChangeFaceTo_ChangeToFaceLeft
 
 
-changeToFaceUP:
-	mov (Tank PTR [esi]).firstLine[0], ' '
-	mov (Tank PTR [esi]).firstLine[1], 7Ch
-	mov (Tank PTR [esi]).firstLine[2], ' '
+ChangeFaceTo_ChangeToFaceUP:
+    mov (Tank PTR [esi]).firstLine[0], ' '
+    mov (Tank PTR [esi]).firstLine[1], 7Ch
+    mov (Tank PTR [esi]).firstLine[2], ' '
 
-	mov (Tank PTR [esi]).secondLine[0], 23h
-	mov (Tank PTR [esi]).secondLine[2], 23h
-	
-	mov (Tank PTR [esi]).thirdLine[0], 23h
-	mov (Tank PTR [esi]).thirdLine[1], 2Bh
-	mov (Tank PTR [esi]).thirdLine[2], 23h
-	mov (Tank PTR [esi]).faceTo, 1h
+    mov (Tank PTR [esi]).secondLine[0], 23h
+    mov (Tank PTR [esi]).secondLine[2], 23h
+    
+    mov (Tank PTR [esi]).thirdLine[0], 23h
+    mov (Tank PTR [esi]).thirdLine[1], 2Bh
+    mov (Tank PTR [esi]).thirdLine[2], 23h
+    mov (Tank PTR [esi]).faceTo, 1h
 
-	jmp ChangeEnd
-changeToFaceRight:
-	mov (Tank PTR [esi]).firstLine[0], 23h
-	mov (Tank PTR [esi]).firstLine[1], 23h
-	mov (Tank PTR [esi]).firstLine[2], ' '
+    jmp ChangeFaceTo_ChangeEnd
+ChangeFaceTo_ChangeToFaceRight:
+    mov (Tank PTR [esi]).firstLine[0], 23h
+    mov (Tank PTR [esi]).firstLine[1], 23h
+    mov (Tank PTR [esi]).firstLine[2], ' '
 
-	mov (Tank PTR [esi]).secondLine[0], 2Bh
-	mov (Tank PTR [esi]).secondLine[2], 2Dh
-	
-	mov (Tank PTR [esi]).thirdLine[0], 23h
-	mov (Tank PTR [esi]).thirdLine[1], 23h
-	mov (Tank PTR [esi]).thirdLine[2], ' '
-	mov (Tank PTR [esi]).faceTo, 2h
+    mov (Tank PTR [esi]).secondLine[0], 2Bh
+    mov (Tank PTR [esi]).secondLine[2], 2Dh
+    
+    mov (Tank PTR [esi]).thirdLine[0], 23h
+    mov (Tank PTR [esi]).thirdLine[1], 23h
+    mov (Tank PTR [esi]).thirdLine[2], ' '
+    mov (Tank PTR [esi]).faceTo, 2h
 
-	jmp ChangeEnd
-changeToFaceDown:
-	mov (Tank PTR [esi]).firstLine[0], 23h
-	mov (Tank PTR [esi]).firstLine[1], 2Bh
-	mov (Tank PTR [esi]).firstLine[2], 23h
+    jmp ChangeFaceTo_ChangeEnd
+ChangeFaceTo_ChangeToFaceDown:
+    mov (Tank PTR [esi]).firstLine[0], 23h
+    mov (Tank PTR [esi]).firstLine[1], 2Bh
+    mov (Tank PTR [esi]).firstLine[2], 23h
 
-	mov (Tank PTR [esi]).secondLine[0], 23h
-	mov (Tank PTR [esi]).secondLine[2], 23h
-	
-	mov (Tank PTR [esi]).thirdLine[0], ' '
-	mov (Tank PTR [esi]).thirdLine[1], 7Ch
-	mov (Tank PTR [esi]).thirdLine[2], ' '
-	
-	mov (Tank PTR [esi]).faceTo, 3h
+    mov (Tank PTR [esi]).secondLine[0], 23h
+    mov (Tank PTR [esi]).secondLine[2], 23h
+    
+    mov (Tank PTR [esi]).thirdLine[0], ' '
+    mov (Tank PTR [esi]).thirdLine[1], 7Ch
+    mov (Tank PTR [esi]).thirdLine[2], ' '
+    
+    mov (Tank PTR [esi]).faceTo, 3h
 
-	jmp ChangeEnd
-changeToFaceLeft:
-	mov (Tank PTR [esi]).firstLine[0], ' '
-	mov (Tank PTR [esi]).firstLine[1], 23h
-	mov (Tank PTR [esi]).firstLine[2], 23h
+    jmp ChangeFaceTo_ChangeEnd
+ChangeFaceTo_ChangeToFaceLeft:
+    mov (Tank PTR [esi]).firstLine[0], ' '
+    mov (Tank PTR [esi]).firstLine[1], 23h
+    mov (Tank PTR [esi]).firstLine[2], 23h
 
-	mov (Tank PTR [esi]).secondLine[0], 2Dh
-	mov (Tank PTR [esi]).secondLine[2], 2Bh
-	
-	mov (Tank PTR [esi]).thirdLine[0], ' '
-	mov (Tank PTR [esi]).thirdLine[1], 23h
-	mov (Tank PTR [esi]).thirdLine[2], 23h
+    mov (Tank PTR [esi]).secondLine[0], 2Dh
+    mov (Tank PTR [esi]).secondLine[2], 2Bh
+    
+    mov (Tank PTR [esi]).thirdLine[0], ' '
+    mov (Tank PTR [esi]).thirdLine[1], 23h
+    mov (Tank PTR [esi]).thirdLine[2], 23h
 
-	mov (Tank PTR [esi]).faceTo, 4h
+    mov (Tank PTR [esi]).faceTo, 4h
 
-	jmp ChangeEnd
-changeEnd:
-	ret
+    jmp ChangeFaceTo_ChangeEnd
+ChangeFaceTo_ChangeEnd:
+    ret
 ChangeFaceTo ENDP
 
-
+;; MoveTank
 ; move tank
-moveTank PROC USES eax esi, 
-	thisOutputHandle: DWORD, 
-	thisTank: PTR Tank,
-	direction: WORD, 
-	countWord: PTR DWORD
+MoveTank PROC USES eax esi, 
+    thisOutputHandle: DWORD, 
+    thisTank: PTR Tank,
+    direction: WORD, 
+    countWord: PTR DWORD
 
-	INVOKE EraseTank, thisOutputHandle, thisTank, countWord
-	mov ax, direction
-	mov esi, thisTank
-	
-	cmp ax, 4800h		; move up
-	je moveUp
-	cmp ax, 4D00h       ; move right 
-	je moveRight
-	cmp ax, 5000h
-	je moveDown
-	cmp ax, 4B00h
-	je moveLeft
-	jmp printMove
+    INVOKE EraseTank, thisOutputHandle, thisTank, countWord
+    mov ax, direction
+    mov esi, thisTank
+    
+    cmp ax, 4800h  ; move up
+    je MoveTank_MoveUp
+    cmp ax, 4D00h  ; move right 
+    je MoveTank_MoveRight
+    cmp ax, 5000h
+    je MoveTank_MoveDown
+    cmp ax, 4B00h
+    je MoveTank_MoveLeft
+    jmp MoveTank_PrintMove
 
-moveUp:
-	mov al, (Tank PTR [esi]).faceTo
-	cmp al, 1h
-	je subY
-	INVOKE ChangeFaceTo, thisTank, 1h
-	jmp  printMove
-subY:
-	sub (Tank PTR [esi]).position.Y, 1
-	mov ax, (Tank PTR [esi]).position.Y
-	.IF ax == 0h 										
-		add (Tank PTR [esi]).position.Y, 1 										
-	.ENDIF
-	jmp  printMove
-moveRight:
-	mov al, (Tank PTR [esi]).faceTo
-	cmp al, 2h
-	je addX
-	INVOKE ChangeFaceTo, thisTank, 2h
-	jmp  printMove
-addX:
-	add (Tank PTR [esi]).position.X, 1
-	mov ax, (Tank PTR [esi]).position.X
-	.IF ax == 7Dh 			; 125									
-		sub (Tank PTR [esi]).position.X, 1 										
-	.ENDIF
-	jmp  printMove
-moveDown:
-	mov al, (Tank PTR [esi]).faceTo
-	cmp al, 3h
-	je addY
-	INVOKE ChangeFaceTo, thisTank, 3h
-	jmp  printMove
-addY:
-	add (Tank PTR [esi]).position.Y, 1
-	mov ax, (Tank PTR [esi]).position.Y
-	.IF ax == 1Dh 										
-		sub (Tank PTR [esi]).position.Y, 1 										
-	.ENDIF
-	jmp  printMove
-moveLeft:
-	mov al, (Tank PTR [esi]).faceTo
-	cmp al, 4h
-	je subX
-	INVOKE ChangeFaceTo, thisTank, 4h
-	jmp  printMove
-subX:
-	sub (Tank PTR [esi]).position.X, 1
-	mov ax, (Tank PTR [esi]).position.X
-	.IF ax == 0h 										
-		add (Tank PTR [esi]).position.X, 1 										
-	.ENDIF
-	jmp  printMove
-printMove:
-	INVOKE PrintTank, thisOutputHandle, thisTank, countWord
-	ret
-moveTank ENDP
+MoveTank_MoveUp:
+    mov al, (Tank PTR [esi]).faceTo
+    cmp al, 1h
+    je MoveTank_SubY
+    INVOKE ChangeFaceTo, thisTank, 1h
+    jmp  MoveTank_PrintMove
+MoveTank_SubY:
+    sub (Tank PTR [esi]).position.Y, 1
+    mov ax, (Tank PTR [esi]).position.Y
+    .IF ax == 0h 										
+        add (Tank PTR [esi]).position.Y, 1 										
+    .ENDIF
+    jmp  MoveTank_PrintMove
+MoveTank_MoveRight:
+    mov al, (Tank PTR [esi]).faceTo
+    cmp al, 2h
+    je MoveTank_AddX
+    INVOKE ChangeFaceTo, thisTank, 2h
+    jmp  MoveTank_PrintMove
+MoveTank_AddX:
+    add (Tank PTR [esi]).position.X, 1
+    mov ax, (Tank PTR [esi]).position.X
+    .IF ax == 7Dh 			; 125									
+        sub (Tank PTR [esi]).position.X, 1 										
+    .ENDIF
+    jmp  MoveTank_PrintMove
+MoveTank_MoveDown:
+    mov al, (Tank PTR [esi]).faceTo
+    cmp al, 3h
+    je MoveTank_AddY
+    INVOKE ChangeFaceTo, thisTank, 3h
+    jmp  MoveTank_PrintMove
+MoveTank_AddY:
+    add (Tank PTR [esi]).position.Y, 1
+    mov ax, (Tank PTR [esi]).position.Y
+    .IF ax == 1Dh 										
+        sub (Tank PTR [esi]).position.Y, 1 										
+    .ENDIF
+    jmp  MoveTank_PrintMove
+MoveTank_MoveLeft:
+    mov al, (Tank PTR [esi]).faceTo
+    cmp al, 4h
+    je MoveTank_SubX
+    INVOKE ChangeFaceTo, thisTank, 4h
+    jmp  MoveTank_PrintMove
+MoveTank_SubX:
+    sub (Tank PTR [esi]).position.X, 1
+    mov ax, (Tank PTR [esi]).position.X
+    .IF ax == 0h 										
+        add (Tank PTR [esi]).position.X, 1 										
+    .ENDIF
+    jmp  MoveTank_PrintMove
+MoveTank_PrintMove:
+    INVOKE PrintTank, thisOutputHandle, thisTank, countWord
+    ret
+MoveTank ENDP
