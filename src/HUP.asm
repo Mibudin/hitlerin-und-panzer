@@ -65,22 +65,22 @@ RENDER_BUFFER_BLANK_ATTR EQU <RENDER_BUFFER_CLEAR_ATTR>  ; Black background and 
 
 ; Render layers
 RENDER_BUFFER_LAYERS         EQU <4>  ; The amount of layers ; TODO: Test value
-RENDER_BUFFER_LAYER_0        EQU <0>
+RENDER_BUFFER_LAYER_0        EQU <0>  ; The game map record temporary
 RENDER_BUFFER_LAYER_GAME_MAP EQU <1>  ; The game map
 RENDER_BUFFER_LAYER_TANKS    EQU <2>  ; The panzers (tanks)
 RENDER_BUFFER_LAYER_BULLETS  EQU <3>  ; The bullets
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <200>  ; in milliseconds  ; TODO: Test value
+MAIN_GAME_TURN_INTERVAL EQU <100>  ; in milliseconds  ; TODO: Test value
 
 ; Texts
 CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
 
 ; Panzer (Tank)
-TANK_FACE_UP    EQU <1>
-TANK_FACE_RIGHT EQU <2>
-TANK_FACE_DOWN  EQU <3>
-TANK_FACE_LEFT  EQU <4>
+FACE_UP    EQU <1>
+FACE_RIGHT EQU <2>
+FACE_DOWN  EQU <3>
+FACE_LEFT  EQU <4>
 
 ; The game map
 GAME_MAP_CHAR_EMPTY EQU <' '>
@@ -103,10 +103,6 @@ CMD_IMAGE STRUCT
     attributes WORD  SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
 CMD_IMAGE ENDS
 
-GAME_MAP STRUCT
-    mapRecord BYTE GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(?)
-GAME_MAP ENDS
-
 TANK STRUCT 
     ; firstLine   BYTE  ' ', 7Ch, ' '  ;  |
     ; secondLine  BYTE  23h, 2Bh, 23h  ; #+#
@@ -115,14 +111,14 @@ TANK STRUCT
     ; secondColor WORD  6h, 0ch, 6h    ; brown red brown
     ; threeWhite  BYTE  3 DUP(' ')     ; for EraseTank
     position    COORD <1, 1>         ; left up
-    faceTo      BYTE  TANK_FACE_UP   ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
+    faceTo      BYTE  FACE_UP        ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
 TANK ENDS
 
 BULLET STRUCT
     ; symbol    BYTE  '@'
     ; white     BYTE  ' '
     ; color     WORD  0Eh
-    direction BYTE  1
+    direction BYTE  FACE_UP
     position  COORD <1, 1>
 BULLET ENDS
 
@@ -171,6 +167,9 @@ stdConsoleCursorInfo CONSOLE_CURSOR_INFO <100, FALSE>
 ; The main game logic
 gameState     BYTE  GAME_STATE_TEST
 gameTickCount DWORD ?
+
+; The game map record
+gameMapRecord BYTE GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(?)
 
 ; The CMD images
 blankCmdImage     CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \

@@ -27,25 +27,25 @@ MoveRandom PROC USES eax ecx esi edi, thisOutputHandle: DWORD, thisTank: PTR TAN
 MoveRandom_Set:
     xor eax, eax
     mov al, (TANK PTR [esi]).faceTo
-    .IF     (al == TANK_FACE_UP)
+    .IF     (al == FACE_UP)
         mov ax, ((TANK PTR [esi]).position.y - 1)           ; 0 is boundary, so Y need to - 1
-    .ELSEIF (al == TANK_FACE_RIGHT)
+    .ELSEIF (al == FACE_RIGHT)
         mov ax, GAME_MAP_WIDTH - 2                          ; 127 is boundary, so 127 need to - 1
         sub ax, (TANK PTR [esi]).position.x
-    .ELSEIF (al == TANK_FACE_DOWN)
+    .ELSEIF (al == FACE_DOWN)
         mov ax, GAME_MAP_HEIGHT - 2                         ; 31 is boundary, so 31 need to - 1
         sub ax, (TANK PTR [esi]).position.y
-    .ELSEIF (al == TANK_FACE_LEFT)
+    .ELSEIF (al == FACE_LEFT)
         mov ax, ((TANK PTR [esi]).position.x - 1)           ; 0 is boundary, so X need to - 1
     .ENDIF
 
-    ; .IF ((TANK PTR [esi]).faceTo == TANK_FACE_UP)
+    ; .IF ((TANK PTR [esi]).faceTo == FACE_UP)
     ;     mov eax, ((TANK PTR [esi]).Y - 1)           ; 0 is boundary, so Y need to - 1
-    ; .ELSEIF ((TANK PTR [esi]).faceTo == TANK_FACE_RIGHT)
+    ; .ELSEIF ((TANK PTR [esi]).faceTo == FACE_RIGHT)
     ;     mov eax, (126 - (TANK PTR [esi]).X)         ; 127 is boundary, so 127 need to - 1
-    ; .ELSEIF ((TANK PTR [esi]).faceTo == TANK_FACE_DOWN)
+    ; .ELSEIF ((TANK PTR [esi]).faceTo == FACE_DOWN)
     ;     mov eax, (30 - (TANK PTR [esi]).Y)          ; 31 is boundary, so 31 need to - 1
-    ; .ELSEIF ((TANK PTR [esi]).faceTo == TANK_FACE_LEFT)
+    ; .ELSEIF ((TANK PTR [esi]).faceTo == FACE_LEFT)
     ;     mov eax, ((TANK PTR [esi]).X - 1)           ; 0 is boundary, so X need to - 1
     ; .ENDIF
 MoveRandom_Random:
@@ -54,9 +54,10 @@ MoveRandom_Random:
     inc eax
     mov ecx, eax
 MoveRandom_Check:
+    ;; Use GetRenderBufferIndex temporarily (perhaps)
     xor eax, eax
     mov al, (TANK PTR [esi]).faceTo
-    .IF     (al == TANK_FACE_UP)
+    .IF     (al == FACE_UP)
         mov ax, (TANK PTR [esi]).position.y
         dec ax
         mov checkPosition.y, ax
@@ -78,7 +79,7 @@ MoveRandom_Check:
 
         jmp MoveRandom_Move
 
-    .ELSEIF (al == TANK_FACE_RIGHT)
+    .ELSEIF (al == FACE_RIGHT)
         mov ax, (TANK PTR [esi]).position.x
         add ax, 3
         mov checkPosition.x, ax
@@ -100,7 +101,7 @@ MoveRandom_Check:
 
         jmp MoveRandom_Move
 
-    .ELSEIF (al == TANK_FACE_DOWN)
+    .ELSEIF (al == FACE_DOWN)
         mov ax, (TANK PTR [esi]).position.y
         add ax, 3
         mov checkPosition.y, ax
@@ -122,7 +123,7 @@ MoveRandom_Check:
 
         jmp MoveRandom_Move
 
-    .ELSEIF (al == TANK_FACE_LEFT)
+    .ELSEIF (al == FACE_LEFT)
         mov ax, (TANK PTR [esi]).position.x
         dec ax
         mov checkPosition.x, ax
@@ -182,11 +183,11 @@ DetectShoot PROC USES ax bx cx dx esi edi, thisTank: PTR TANK, playerTank: PTR T
         sub cx, ax
         sub dx, bx
         .IF cx < dx
-            mov (TANK PTR [esi]).faceTo, TANK_FACE_DOWN
+            mov (TANK PTR [esi]).faceTo, FACE_DOWN
             INVOKE ChangeFaceTo, thisTank, (TANK PTR [esi]).faceTo
             ; 射一發子彈
         .ELSE
-            mov (TANK PTR [esi]).faceTo, TANK_FACE_RIGHT
+            mov (TANK PTR [esi]).faceTo, FACE_RIGHT
             INVOKE ChangeFaceTo, thisTank, (TANK PTR [esi]).faceTo
             ; 射一發子彈
         .ENDIF
@@ -194,11 +195,11 @@ DetectShoot PROC USES ax bx cx dx esi edi, thisTank: PTR TANK, playerTank: PTR T
         sub ax, cx
         sub dx, bx
         .IF ax < dx
-            mov (TANK PTR [esi]).faceTo, TANK_FACE_DOWN
+            mov (TANK PTR [esi]).faceTo, FACE_DOWN
             INVOKE ChangeFaceTo, thisTank, (TANK PTR [esi]).faceTo
             ; 射一發子彈
         .ELSE
-            mov (TANK PTR [esi]).faceTo, TANK_FACE_LEFT
+            mov (TANK PTR [esi]).faceTo, FACE_LEFT
             INVOKE ChangeFaceTo, thisTank, (TANK PTR [esi]).faceTo
             ; 射一發子彈
         .ENDIF
@@ -206,11 +207,11 @@ DetectShoot PROC USES ax bx cx dx esi edi, thisTank: PTR TANK, playerTank: PTR T
         sub cx, ax
         sub bx, dx
         .IF cx < bx
-            mov (TANK PTR [esi]).faceTo, TANK_FACE_UP
+            mov (TANK PTR [esi]).faceTo, FACE_UP
             INVOKE ChangeFaceTo, thisTank, (TANK PTR [esi]).faceTo
             ; 射一發子彈
         .ELSE
-            mov (TANK PTR [esi]).faceTo, TANK_FACE_RIGHT
+            mov (TANK PTR [esi]).faceTo, FACE_RIGHT
             INVOKE ChangeFaceTo, thisTank, (TANK PTR [esi]).faceTo
             ; 射一發子彈
         .ENDIF
@@ -218,11 +219,11 @@ DetectShoot PROC USES ax bx cx dx esi edi, thisTank: PTR TANK, playerTank: PTR T
         sub ax, cx
         sub bx, dx
         .IF ax < bx
-            mov (TANK PTR [esi]).faceTo, TANK_FACE_UP
+            mov (TANK PTR [esi]).faceTo, FACE_UP
             INVOKE ChangeFaceTo, thisTank, (TANK PTR [esi]).faceTo
             ; 射一發子彈
         .ELSE
-            mov (TANK PTR [esi]).faceTo, TANK_FACE_LEFT
+            mov (TANK PTR [esi]).faceTo, FACE_LEFT
             INVOKE ChangeFaceTo, thisTank, (TANK PTR [esi]).faceTo
             ; 射一發子彈
         .ENDIF

@@ -17,13 +17,13 @@ PrintTank PROC USES eax ecx esi edi,
     mov esi, thisTank
 
     movzx edi, (TANK PTR [esi]).faceTo
-    .IF     edi == TANK_FACE_UP
+    .IF     edi == FACE_UP
         mov edi, OFFSET tankCmdImageUp
-    .ELSEIF edi == TANK_FACE_RIGHT
+    .ELSEIF edi == FACE_RIGHT
         mov edi, OFFSET tankCmdImageRight
-    .ELSEIF edi == TANK_FACE_DOWN
+    .ELSEIF edi == FACE_DOWN
         mov edi, OFFSET tankCmdImageDown
-    .ELSEIF edi == TANK_FACE_LEFT
+    .ELSEIF edi == FACE_LEFT
         mov edi, OFFSET tankCmdImageLeft
     .ENDIF
 

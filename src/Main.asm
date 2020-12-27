@@ -73,12 +73,22 @@ MainGameTurn PROC
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_START
+        mov gameState, GAME_STATE_GAME_MAP
+
+        mov eax, TRUE
+
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_GAME_MAP
+        mov gameState, GAME_STATE_END
+
+        mov eax, TRUE
+
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_END
+        mov eax, TRUE
+
         jmp MainGameTurn_PostProcess
 
     .ENDIF
