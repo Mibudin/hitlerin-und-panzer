@@ -11,7 +11,30 @@ TITLE Bullet (Bullet.inc)
 ; = PROTOS =
 ; ==========
 
-printBullet PROTO,
+PrintBullet PROTO,
     thisOutputHandle: DWORD,
-    thisBullet: PTR bullet,
+    thisBullet: PTR BULLET,
+    thisGameMap: PTR BYTE,
     countWord: PTR DWORD
+
+EraseBullet PROTO, 
+    thisOutputHandle: DWORD,
+    thisBullet: PTR BULLET,
+    thisGameMap: PTR BYTE,
+    countWord: PTR DWORD
+
+BulletMove PROTO,
+    thisOutputHandle: DWORD, 
+    thisBullet: PTR BULLET,
+    thisGameMap: PTR BYTE,
+    countWord: PTR DWORD
+
+NewBullet PROTO,
+    thisTank: PTR TANK,
+    bulletAmount: PTR BYTE,
+    bulletList: PTR BULLET
+
+BulletHit PROTO,
+    thisBullet: PTR BULLET,
+    thisBulletAmount: PTR BYTE, 
+    thisGameMap: PTR BYTE

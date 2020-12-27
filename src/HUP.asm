@@ -83,13 +83,15 @@ FACE_DOWN  EQU <3>
 FACE_LEFT  EQU <4>
 
 ; Tank role
-ROLE_PLAYER EQU <0>
-ROLE_ENEMY  EQU <1>
+ROLE_PLAYER EQU <1>
+ROLE_ENEMY  EQU <2>
 
 ; The game map
-GAME_MAP_CHAR_EMPTY  EQU <' '>
-GAME_MAP_CHAR_PALYER EQU <'#'>
-GAME_MAP_CHAR_ENEMY  EQU <'*'>
+GAME_MAP_CHAR_EMPTY         EQU <' '>
+GAME_MAP_CHAR_PALYER        EQU <'#'>
+GAME_MAP_CHAR_ENEMY         EQU <'*'>
+GAME_MAP_CHAR_PLAYER_BULLET EQU <'@'>
+GAME_MAP_CHAR_ENEMY_BULLET  EQU <'%'>
 
 
 ; ==============
@@ -125,6 +127,7 @@ BULLET STRUCT
     ; white     BYTE  ' '
     ; color     WORD  0Eh
     direction BYTE  FACE_UP
+    owner     BYTE  ROLE_PLAYER
     position  COORD <1, 1>
 BULLET ENDS
 

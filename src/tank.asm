@@ -149,25 +149,25 @@ EraseTank PROC USES eax ecx esi,
     movzx eax, ax
     ; add eax, 128*(PTR Tank [esi]).position.y)+(PTR Tank [esi]).position.x
 
-	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
     inc eax
-    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
     inc eax
-	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
 
-    add eax, 126    ; 128-2
-    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    add eax, GAME_MAP_WIDTH - 2    ; 128-2
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
     inc eax
-    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
     inc eax
-	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
 
-    add eax, 126    ; 128-2
-    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    add eax, GAME_MAP_WIDTH - 2    ; 128-2
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
     inc eax
-    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
     inc eax
-	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY
+	mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
 
 ;     mov ecx, 3
 ; EraseTank_ClearRow:
