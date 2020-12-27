@@ -54,7 +54,7 @@ MainGameLoop ENDP
 ;; Returns:
 ;;     EAX: Whether to continue the main game loop
 ;;          1: True; 0: False
-MainGameTurn PROC USES ebx edx
+MainGameTurn PROC
     ; Initialization
     ; call Clrscr
     ; call ClearRenderBuffer

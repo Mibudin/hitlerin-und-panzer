@@ -8,7 +8,7 @@ TITLE Bullet (Bullet.asm)
 
 
 ;; PrintBullet
-; print bullet
+;; print bullet
 PrintBullet PROC USES esi,
     thisOutputHandle: DWORD,
     thisBullet: PTR BULLET,
@@ -38,7 +38,7 @@ PrintBullet PROC USES esi,
 PrintBullet ENDP
 
 ;; EraseBullet
-; before print new bullet, remove the old bullet 
+;; before print new bullet, remove the old bullet 
 EraseBullet PROC USES esi, 
     thisOutputHandle: DWORD,
     thisBullet: PTR BULLET,
@@ -68,7 +68,7 @@ EraseBullet PROC USES esi,
 EraseBullet ENDP
 
 ;; BulletMove
-; move one byte toward bullet's direction
+;; move one byte toward bullet's direction
 BulletMove PROC USES eax,
     thisOutputHandle: DWORD, 
     thisBullet: PTR BULLET,

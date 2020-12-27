@@ -82,6 +82,9 @@ TANK_FACE_RIGHT EQU <2>
 TANK_FACE_DOWN  EQU <3>
 TANK_FACE_LEFT  EQU <4>
 
+; The game map
+GAME_MAP_CHAR_EMPTY EQU <' '>
+
 
 
 ; ==============
@@ -135,6 +138,7 @@ INCLUDE Renderer.inc        ; The major rendering part of the game
 INCLUDE GameMapHandler.inc  ; The main handler of the game map
 INCLUDE Tank.inc            ; The main handler of the tanks
 INCLUDE Bullet.inc          ; The main handler of the bullets
+INCLUDE ControlEnemy.inc    ; The main handler of controling enemies
 
 
 ; ================
@@ -228,6 +232,7 @@ INCLUDE Renderer.asm        ; The major rendering part of the game
 INCLUDE GameMapHandler.asm  ; The main handler of the game map
 INCLUDE Tank.asm            ; The main handler of the tanks
 INCLUDE Bullet.asm          ; The main handler of the bullets
+INCLUDE ControlEnemy.asm    ; The main handler of controling enemies
 
 ; The end of the program entry
 END ProgramEntry

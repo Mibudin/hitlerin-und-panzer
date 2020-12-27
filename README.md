@@ -11,6 +11,16 @@ In a word, the final project of Assembly Language and System Programming class.
 The game of the MASM, by the MASM, for the MASM.
 
 
+## Members
+
+HITLERIN und PANZER Projekt
+
+- 資工二Ａ 林緯翔 (108502003)
+- 資工二Ａ 洪裕翔 (108502520)
+- 資工二Ａ 劉子雍 (108502523)
+- 資工二Ａ 秦承業 (108502539)
+
+
 ## File Structure
 
 ### Main Folders

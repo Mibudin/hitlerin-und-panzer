@@ -118,8 +118,7 @@ EraseTank PROC USES ecx esi,
 EraseTank ENDP
 
 ;; ChangeFaceTo
-;; FIXME:
-; change direction 
+;; change direction 
 ChangeFaceTo PROC USES eax ecx esi,
     thisTank: PTR TANK,
     newFaceTo: BYTE
@@ -201,7 +200,7 @@ ChangeFaceTo PROC USES eax ecx esi,
 ChangeFaceTo ENDP
 
 ;; MoveTank
-; move tank
+;; move tank
 MoveTank PROC USES eax esi, 
     thisOutputHandle: DWORD, 
     thisTank: PTR Tank,
@@ -227,53 +226,53 @@ MoveTank_MoveUp:
     cmp al, 1h
     je MoveTank_SubY
     INVOKE ChangeFaceTo, thisTank, 1h
-    jmp  MoveTank_PrintMove
+    jmp MoveTank_PrintMove
 MoveTank_SubY:
     sub (TANK PTR [esi]).position.Y, 1
     mov ax, (TANK PTR [esi]).position.Y
     .IF ax == 0h 										
         add (TANK PTR [esi]).position.Y, 1 										
     .ENDIF
-    jmp  MoveTank_PrintMove
+    jmp MoveTank_PrintMove
 MoveTank_MoveRight:
     mov al, (TANK PTR [esi]).faceTo
     cmp al, 2h
     je MoveTank_AddX
     INVOKE ChangeFaceTo, thisTank, 2h
-    jmp  MoveTank_PrintMove
+    jmp MoveTank_PrintMove
 MoveTank_AddX:
     add (TANK PTR [esi]).position.X, 1
     mov ax, (TANK PTR [esi]).position.X
     .IF ax == 7Dh 			; 125									
         sub (TANK PTR [esi]).position.X, 1 										
     .ENDIF
-    jmp  MoveTank_PrintMove
+    jmp MoveTank_PrintMove
 MoveTank_MoveDown:
     mov al, (TANK PTR [esi]).faceTo
     cmp al, 3h
     je MoveTank_AddY
     INVOKE ChangeFaceTo, thisTank, 3h
-    jmp  MoveTank_PrintMove
+    jmp MoveTank_PrintMove
 MoveTank_AddY:
     add (TANK PTR [esi]).position.Y, 1
     mov ax, (TANK PTR [esi]).position.Y
     .IF ax == 1Dh 										
         sub (TANK PTR [esi]).position.Y, 1 										
     .ENDIF
-    jmp  MoveTank_PrintMove
+    jmp MoveTank_PrintMove
 MoveTank_MoveLeft:
     mov al, (TANK PTR [esi]).faceTo
     cmp al, 4h
     je MoveTank_SubX
     INVOKE ChangeFaceTo, thisTank, 4h
-    jmp  MoveTank_PrintMove
+    jmp MoveTank_PrintMove
 MoveTank_SubX:
     sub (TANK PTR [esi]).position.X, 1
     mov ax, (TANK PTR [esi]).position.X
     .IF ax == 0h 										
         add (TANK PTR [esi]).position.X, 1 										
     .ENDIF
-    jmp  MoveTank_PrintMove
+    jmp MoveTank_PrintMove
 MoveTank_PrintMove:
     INVOKE PrintTank, thisOutputHandle, thisTank, countWord
     ret
