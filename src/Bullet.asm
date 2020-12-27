@@ -1,98 +1,106 @@
 TITLE Bullet (Bullet.asm)
 
-INCLUDE Irvine32.inc
+; ==========
+; = Bullet =
+; ==========
 
-bullet STRUCT
-    symbol BYTE '@'
-    white BYTE ' '
-    color word 0Eh
-    direction BYTE 1
-    position COORD <1, 1>
-bullet ENDS
+; The main handler of the bullets
 
-.code
+
+;; PrintBullet
 ; print bullet
-printBullet PROC USES esi,
+PrintBullet PROC USES esi,
     thisOutputHandle: DWORD,
-    thisBullet: PTR bullet,
+    thisBullet: PTR BULLET,
     countWord: PTR DWORD
     
     mov esi, thisBullet
 
-    INVOKE WriteConsoleOutputAttribute,			; set color
-		thisOutputHandle,
-		ADDR (Bullet PTR [esi]).color,
-		1,
-		(Bullet PTR [esi]).position,
-		countWord
-	INVOKE WriteConsoleOutputCharacter,			; 設定字母
-		thisOutputHandle, 
-		ADDR (Bullet PTR [esi]).symbol,
-		1,
-		(Bullet PTR [esi]).position,
-		countWord
+    INVOKE PushRenderBufferImageDiscardable,
+        RENDER_BUFFER_LAYER_BULLETS,
+        ADDR bulletCmdImage,
+        (BULLET PTR [esi]).position
+
+    ; INVOKE WriteConsoleOutputAttribute,  ; set color
+    ;     thisOutputHandle,
+    ;     ADDR (Bullet PTR [esi]).color,
+    ;     1,
+    ;     (Bullet PTR [esi]).position,
+    ;     countWord
+    ; INVOKE WriteConsoleOutputCharacter,  ; 設定字母
+    ;     thisOutputHandle, 
+    ;     ADDR (Bullet PTR [esi]).symbol,
+    ;     1,
+    ;     (Bullet PTR [esi]).position,
+    ;     countWord
 
     ret
-printBullet ENDP
+PrintBullet ENDP
 
+;; EraseBullet
 ; before print new bullet, remove the old bullet 
-eraseBullet PROC USES esi, 
+EraseBullet PROC USES esi, 
     thisOutputHandle: DWORD,
-    thisBullet: PTR Bullet,
+    thisBullet: PTR BULLET,
     countWord: PTR DWORD
 
     mov esi, thisBullet
 
-    INVOKE WriteConsoleOutputAttribute,			; set color
-		thisOutputHandle,
-		ADDR (Bullet PTR [esi]).color,
-		1,
-		(Bullet PTR [esi]).position,
-		countWord
-	INVOKE WriteConsoleOutputCharacter,			; 設定字母
-		thisOutputHandle, 
-		ADDR (Bullet PTR [esi]).white,
-		1,
-		(Bullet PTR [esi]).position,
-		countWord
+    INVOKE PushRenderBufferImageBlank,
+        RENDER_BUFFER_LAYER_BULLETS,
+        (TANK PTR [esi]).position,
+        bulletSize
+
+    ; INVOKE WriteConsoleOutputAttribute,  ; set color
+    ;     thisOutputHandle,
+    ;     ADDR (Bullet PTR [esi]).color,
+    ;     1,
+    ;     (Bullet PTR [esi]).position,
+    ;     countWord
+    ; INVOKE WriteConsoleOutputCharacter,  ; 設定字母
+    ;     thisOutputHandle, 
+    ;     ADDR (Bullet PTR [esi]).white,
+    ;     1,
+    ;     (Bullet PTR [esi]).position,
+    ;     countWord
 
     ret
-eraseBullet ENDP
+EraseBullet ENDP
 
-
+;; BulletMove
 ; move one byte toward bullet's direction
-bulletMove PROC USES eax,
+BulletMove PROC USES eax,
     thisOutputHandle: DWORD, 
-    thisBullet: PTR bullet,
+    thisBullet: PTR BULLET,
     countWord: PTR DWORD
 
-    INVOKE eraseBullet, thisOutputHandle, thisBullet, countWord
+    INVOKE EraseBullet, thisOutputHandle, thisBullet, countWord
     
     mov esi, thisBullet
-    mov al, (Bullet PTR [esi]).direction 
+    mov al, (BULLET PTR [esi]).direction 
     
     cmp al, 1h
-    je flyUp
+    je BulletMove_FlyUp
     cmp al, 2h
-    je flyRight
+    je BulletMove_FlyRight
     cmp al, 3h
-    je flyDown
+    je BulletMove_FlyDown
     cmp al, 4h
-    je flyLeft
+    je BulletMove_FlyLeft
 
-flyUp:
-    sub (Bullet PTR [esi]).position.Y, 1
-    jmp endMove
-flyRight:
-    add (Bullet PTR [esi]).position.X, 1
-    jmp endMove
-flyDown:
-    add (Bullet PTR [esi]).position.Y, 1
-    jmp endMove
-flyLeft:
-    sub (Bullet PTR[esi]).position.X, 1
-    jmp endMove
-endMove:
-    INVOKE printBullet, thisOutputHandle, thisBullet, countWord
+BulletMove_FlyUp:
+    sub (BULLET PTR [esi]).position.Y, 1
+    jmp BulletMove_EndMove
+BulletMove_FlyRight:
+    add (BULLET PTR [esi]).position.X, 1
+    jmp BulletMove_EndMove
+BulletMove_FlyDown:
+    add (BULLET PTR [esi]).position.Y, 1
+    jmp BulletMove_EndMove
+BulletMove_FlyLeft:
+    sub (BULLET PTR[esi]).position.X, 1
+    jmp BulletMove_EndMove
+BulletMove_EndMove:
+    INVOKE PrintBullet, thisOutputHandle, thisBullet, countWord
     ret
-bulletMove ENDP
+BulletMove ENDP

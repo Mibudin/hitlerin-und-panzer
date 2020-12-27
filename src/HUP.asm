@@ -57,7 +57,7 @@ COLOR_BR EQU <01000000b>  ; BACKGROUND_RED       EQU <01000000b>
 COLOR_BI EQU <10000000b>  ; BACKGROUND_INTENSITY EQU <10000000b>
 
 ; Render settings
-RENDER_BUFFER_DISCARD    EQU <0h>                         ; Null character
+RENDER_BUFFER_DISCARD    EQU <0h>                        ; Null character
 RENDER_BUFFER_CLEAR_CHAR EQU <RENDER_BUFFER_DISCARD>     ; Use space character to clear render buffer
 RENDER_BUFFER_CLEAR_ATTR EQU <00001111b>                 ; Black background and white foreground
 RENDER_BUFFER_BLANK_CHAR EQU <20h>                       ; A space
@@ -115,6 +115,14 @@ TANK STRUCT
     faceTo      BYTE  TANK_FACE_UP   ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
 TANK ENDS
 
+BULLET STRUCT
+    ; symbol    BYTE  '@'
+    ; white     BYTE  ' '
+    ; color     WORD  0Eh
+    direction BYTE  1
+    position  COORD <1, 1>
+BULLET ENDS
+
 
 ; =================
 ; = Include Inner =
@@ -126,6 +134,7 @@ INCLUDE Initialization.inc  ; The major initialization part of the game
 INCLUDE Renderer.inc        ; The major rendering part of the game
 INCLUDE GameMapHandler.inc  ; The main handler of the game map
 INCLUDE Tank.inc            ; The main handler of the tanks
+INCLUDE Bullet.inc          ; The main handler of the bullets
 
 
 ; ================
@@ -163,6 +172,7 @@ gameTickCount DWORD ?
 blankCmdImage     CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
                              SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_CHAR), \
                              SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+
 tankCmdImageUp    CMD_IMAGE <<3, 3>,                                        \
                              { 0h, 7Ch,  0h, 23h, 2Bh, 23h, 23h, 2Bh, 23h}, \
                              { 6h,  6h,  6h,  6h, 0Ch,  6h,  6h, 0Ch,  6h}>
@@ -176,13 +186,18 @@ tankCmdImageLeft  CMD_IMAGE <<3, 3>,                                        \
                              { 0h, 23h, 23h, 2Dh, 2Bh, 2Bh,  0h, 23h, 23h}, \
                              { 6h,  6h,  6h,  6h, 0Ch, 0Ch,  6h,  6h,  6h}>
 
-; Tank settings
-tankSize COORD <3, 3>
+bulletCmdImage    CMD_IMAGE <<1, 1>, \
+                             {'@'},  \
+                             {0Eh}>
 
-; The trash bus
+; Object sizes
+tankSize   COORD <3, 3>
+bulletSize COORD <1, 1>
+
+; The common trash bus
 trashBus DWORD ?
 
-; Test
+; TODO: Test
 testString BYTE CRLF_C
            BYTE "~~~ HITLERIN und PANZER ~~~", CRLF_C
            BYTE CRLF_C
@@ -212,6 +227,7 @@ INCLUDE Initialization.asm  ; The major initialization part of the game
 INCLUDE Renderer.asm        ; The major rendering part of the game
 INCLUDE GameMapHandler.asm  ; The main handler of the game map
 INCLUDE Tank.asm            ; The main handler of the tanks
+INCLUDE Bullet.asm          ; The main handler of the bullets
 
 ; The end of the program entry
 END ProgramEntry
