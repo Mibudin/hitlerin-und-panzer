@@ -65,16 +65,16 @@ MoveRandom_Check:
 
         INVOKE GetRenderBufferIndex, checkPosition
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
     
         inc checkPosition.x
         INVOKE GetRenderBufferIndex, checkPosition
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
 
         inc checkPosition.x
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
 
         jmp MoveRandom_Move
 
@@ -87,16 +87,16 @@ MoveRandom_Check:
 
         INVOKE GetRenderBufferIndex, checkPosition
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
     
         inc checkPosition.y
         INVOKE GetRenderBufferIndex, checkPosition
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
 
         inc checkPosition.y
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
 
         jmp MoveRandom_Move
 
@@ -109,16 +109,16 @@ MoveRandom_Check:
 
         INVOKE GetRenderBufferIndex, checkPosition
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
     
         inc checkPosition.x
         INVOKE GetRenderBufferIndex, checkPosition
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
 
         inc checkPosition.x
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
 
         jmp MoveRandom_Move
 
@@ -131,16 +131,16 @@ MoveRandom_Check:
 
         INVOKE GetRenderBufferIndex, checkPosition
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
     
         inc checkPosition.y
         INVOKE GetRenderBufferIndex, checkPosition
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
 
         inc checkPosition.y
         cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        je MoveRandom_Return
+        jne MoveRandom_Return
 
         jmp MoveRandom_Move
 
