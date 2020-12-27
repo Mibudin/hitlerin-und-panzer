@@ -20,3 +20,9 @@ EraseTank PROTO,
 ChangeFaceTo PROTO,
     thisTank: PTR Tank,
     newFaceTo: BYTE
+
+MoveTank PROTO, 
+    thisOutputHandle: DWORD, 
+    thisTank: PTR Tank,
+    direction: WORD, 
+    countWord: PTR DWORD
