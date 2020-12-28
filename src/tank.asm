@@ -324,6 +324,7 @@ MoveTank_SubY:
     jne MoveTank_Return
     
     inc checkPosition.x
+    INVOKE GetRenderBufferIndex, checkPosition
     cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
     jne MoveTank_Return
 
@@ -356,6 +357,7 @@ MoveTank_AddX:
     jne MoveTank_Return
 
     inc checkPosition.y
+    INVOKE GetRenderBufferIndex, checkPosition
     cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
     jne MoveTank_Return
 
@@ -388,6 +390,7 @@ MoveTank_AddY:
     jne MoveTank_Return
 
     inc checkPosition.x
+    INVOKE GetRenderBufferIndex, checkPosition
     cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
     jne MoveTank_Return
 
@@ -420,6 +423,7 @@ MoveTank_SubX:
     jne MoveTank_Return
 
     inc checkPosition.y
+    INVOKE GetRenderBufferIndex, checkPosition
     cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
     jne MoveTank_Return
 
