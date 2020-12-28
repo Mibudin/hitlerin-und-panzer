@@ -277,7 +277,7 @@ ChangeFaceTo ENDP
 
 ;; MoveTank
 ;; move tank
-MoveTank PROC USES eax esi, 
+MoveTank PROC USES eax edi esi, 
     thisOutputHandle: DWORD, 
     thisTank: PTR Tank,
 	gameMap: PTR BYTE,
@@ -285,8 +285,10 @@ MoveTank PROC USES eax esi,
     countWord: PTR DWORD
 
     INVOKE EraseTank, thisOutputHandle, thisTank, gameMap, countWord
+    xor eax, eax
     mov ax, direction
     mov esi, thisTank
+    mov edi, gameMap
     
     cmp ax, 4800h  ; move up
     je MoveTank_MoveUp
@@ -305,11 +307,30 @@ MoveTank_MoveUp:
     INVOKE ChangeFaceTo, thisTank, 1h
     jmp MoveTank_PrintMove
 MoveTank_SubY:
-    sub (TANK PTR [esi]).position.Y, 1
-    mov ax, (TANK PTR [esi]).position.Y
-    .IF ax == 0h 										
-        add (TANK PTR [esi]).position.Y, 1 										
-    .ENDIF
+    mov ax, (TANK PTR [esi]).position.y
+    dec ax
+    mov checkPosition.y, ax
+    mov ax, (TANK PTR [esi]).position.x
+    mov checkPosition.x, ax
+
+    INVOKE GetRenderBufferIndex, checkPosition
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+
+    inc checkPosition.x
+    INVOKE GetRenderBufferIndex, checkPosition
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+    
+    inc checkPosition.x
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+
+    ; sub (TANK PTR [esi]).position.Y, 1
+    ; mov ax, (TANK PTR [esi]).position.Y
+    ; .IF ax == 0h 										
+    ;     add (TANK PTR [esi]).position.Y, 1 										
+    ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_MoveRight:
     mov al, (TANK PTR [esi]).faceTo
@@ -318,11 +339,30 @@ MoveTank_MoveRight:
     INVOKE ChangeFaceTo, thisTank, 2h
     jmp MoveTank_PrintMove
 MoveTank_AddX:
-    add (TANK PTR [esi]).position.X, 1
-    mov ax, (TANK PTR [esi]).position.X
-    .IF ax == 7Dh 			; 125									
-        sub (TANK PTR [esi]).position.X, 1 										
-    .ENDIF
+    mov ax, (TANK PTR [esi]).position.x
+    add ax, 3
+    mov checkPosition.x, ax
+    mov ax, (TANK PTR [esi]).position.y
+    mov checkPosition.y, ax
+
+    INVOKE GetRenderBufferIndex, checkPosition
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+    
+    inc checkPosition.y
+    INVOKE GetRenderBufferIndex, checkPosition
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+
+    inc checkPosition.y
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+
+    ; add (TANK PTR [esi]).position.X, 1
+    ; mov ax, (TANK PTR [esi]).position.X
+    ; .IF ax == 7Dh 			; 125									
+    ;     sub (TANK PTR [esi]).position.X, 1 										
+    ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_MoveDown:
     mov al, (TANK PTR [esi]).faceTo
@@ -331,11 +371,30 @@ MoveTank_MoveDown:
     INVOKE ChangeFaceTo, thisTank, 3h
     jmp MoveTank_PrintMove
 MoveTank_AddY:
-    add (TANK PTR [esi]).position.Y, 1
-    mov ax, (TANK PTR [esi]).position.Y
-    .IF ax == 1Dh 										
-        sub (TANK PTR [esi]).position.Y, 1 										
-    .ENDIF
+    mov ax, (TANK PTR [esi]).position.y
+    add ax, 3
+    mov checkPosition.y, ax
+    mov ax, (TANK PTR [esi]).position.x
+    mov checkPosition.x, ax
+
+    INVOKE GetRenderBufferIndex, checkPosition
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+    
+    inc checkPosition.x
+    INVOKE GetRenderBufferIndex, checkPosition
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+
+    inc checkPosition.x
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+
+    ; add (TANK PTR [esi]).position.Y, 1
+    ; mov ax, (TANK PTR [esi]).position.Y
+    ; .IF ax == 1Dh 										
+    ;     sub (TANK PTR [esi]).position.Y, 1 										
+    ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_MoveLeft:
     mov al, (TANK PTR [esi]).faceTo
@@ -344,13 +403,33 @@ MoveTank_MoveLeft:
     INVOKE ChangeFaceTo, thisTank, 4h
     jmp MoveTank_PrintMove
 MoveTank_SubX:
-    sub (TANK PTR [esi]).position.X, 1
-    mov ax, (TANK PTR [esi]).position.X
-    .IF ax == 0h 										
-        add (TANK PTR [esi]).position.X, 1 										
-    .ENDIF
+    mov ax, (TANK PTR [esi]).position.x
+    dec ax
+    mov checkPosition.x, ax
+    mov ax, (TANK PTR [esi]).position.y
+    mov checkPosition.y, ax
+
+    INVOKE GetRenderBufferIndex, checkPosition
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+    
+    inc checkPosition.y
+    INVOKE GetRenderBufferIndex, checkPosition
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+
+    inc checkPosition.y
+    cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+    jne MoveTank_Return
+
+    ; sub (TANK PTR [esi]).position.X, 1
+    ; mov ax, (TANK PTR [esi]).position.X
+    ; .IF ax == 0h 										
+    ;     add (TANK PTR [esi]).position.X, 1 										
+    ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_PrintMove:
     INVOKE PrintTank, thisOutputHandle, thisTank, gameMap, countWord
+MoveTank_Return:
     ret
 MoveTank ENDP
