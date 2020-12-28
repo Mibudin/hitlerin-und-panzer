@@ -58,93 +58,93 @@ MoveRandom_Check:
     xor eax, eax
     mov al, (TANK PTR [esi]).faceTo
     .IF     (al == FACE_UP)
-        mov ax, (TANK PTR [esi]).position.y
-        dec ax
-        mov checkPosition.y, ax
-        mov ax, (TANK PTR [esi]).position.x
-        mov checkPosition.x, ax
+        ; mov ax, (TANK PTR [esi]).position.y
+        ; dec ax
+        ; mov checkPosition.y, ax
+        ; mov ax, (TANK PTR [esi]).position.x
+        ; mov checkPosition.x, ax
 
-        INVOKE GetRenderBufferIndex, checkPosition
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; INVOKE GetRenderBufferIndex, checkPosition
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
     
-        inc checkPosition.x
-        INVOKE GetRenderBufferIndex, checkPosition
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; inc checkPosition.x
+        ; INVOKE GetRenderBufferIndex, checkPosition
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
 
-        inc checkPosition.x
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; inc checkPosition.x
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
 
 		mov ax, 4800h
         jmp MoveRandom_Move
 
     .ELSEIF (al == FACE_RIGHT)
-        mov ax, (TANK PTR [esi]).position.x
-        add ax, 3
-        mov checkPosition.x, ax
-        mov ax, (TANK PTR [esi]).position.y
-        mov checkPosition.y, ax
+        ; mov ax, (TANK PTR [esi]).position.x
+        ; add ax, 3
+        ; mov checkPosition.x, ax
+        ; mov ax, (TANK PTR [esi]).position.y
+        ; mov checkPosition.y, ax
 
-        INVOKE GetRenderBufferIndex, checkPosition
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; INVOKE GetRenderBufferIndex, checkPosition
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
     
-        inc checkPosition.y
-        INVOKE GetRenderBufferIndex, checkPosition
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; inc checkPosition.y
+        ; INVOKE GetRenderBufferIndex, checkPosition
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
 
-        inc checkPosition.y
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; inc checkPosition.y
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
 
 		mov ax, 4D00h
         jmp MoveRandom_Move
 
     .ELSEIF (al == FACE_DOWN)
-        mov ax, (TANK PTR [esi]).position.y
-        add ax, 3
-        mov checkPosition.y, ax
-        mov ax, (TANK PTR [esi]).position.x
-        mov checkPosition.x, ax
+        ; mov ax, (TANK PTR [esi]).position.y
+        ; add ax, 3
+        ; mov checkPosition.y, ax
+        ; mov ax, (TANK PTR [esi]).position.x
+        ; mov checkPosition.x, ax
 
-        INVOKE GetRenderBufferIndex, checkPosition
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; INVOKE GetRenderBufferIndex, checkPosition
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
     
-        inc checkPosition.x
-        INVOKE GetRenderBufferIndex, checkPosition
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; inc checkPosition.x
+        ; INVOKE GetRenderBufferIndex, checkPosition
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
 
-        inc checkPosition.x
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; inc checkPosition.x
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
 
 		mov ax, 5000h
         jmp MoveRandom_Move
 
     .ELSEIF (al == FACE_LEFT)
-        mov ax, (TANK PTR [esi]).position.x
-        dec ax
-        mov checkPosition.x, ax
-        mov ax, (TANK PTR [esi]).position.y
-        mov checkPosition.y, ax
+        ; mov ax, (TANK PTR [esi]).position.x
+        ; dec ax
+        ; mov checkPosition.x, ax
+        ; mov ax, (TANK PTR [esi]).position.y
+        ; mov checkPosition.y, ax
 
-        INVOKE GetRenderBufferIndex, checkPosition
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; INVOKE GetRenderBufferIndex, checkPosition
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
     
-        inc checkPosition.y
-        INVOKE GetRenderBufferIndex, checkPosition
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; inc checkPosition.y
+        ; INVOKE GetRenderBufferIndex, checkPosition
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
 
-        inc checkPosition.y
-        cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
-        jne MoveRandom_Return
+        ; inc checkPosition.y
+        ; cmp BYTE PTR [edi + eax], GAME_MAP_CHAR_EMPTY
+        ; jne MoveRandom_Return
 
 		mov ax, 4B00h
         jmp MoveRandom_Move
