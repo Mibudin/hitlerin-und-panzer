@@ -48,6 +48,7 @@ mMainGameTurn_GameStateGameMap MACRO
     INVOKE GetDirection, ADDR testTankEnemy2
     INVOKE MoveRandom, stdOutputHandle, ADDR testTankEnemy2, ADDR gameMapRecord, ADDR trashBus
 
+    ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
     INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
 
     ; mov gameState, GAME_STATE_END

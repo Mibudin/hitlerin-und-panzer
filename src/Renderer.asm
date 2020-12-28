@@ -8,7 +8,7 @@ TITLE Renderer (Renderer.asm)
 
 
 ;; InitRenderer
-InitRenderer PROC USES ecx
+InitRenderer PROC USES ecx esi edi
     call Clrscr
 
     ; Clear all render buffer layers
@@ -21,6 +21,13 @@ InitRenderer_ClearRenderBufferLayersAll:
 
     ; Set default cursor style
     INVOKE SetConsoleCursorInfo, stdOutputHandle, ADDR stdConsoleCursorInfo
+
+    cld
+    mov ecx, GAME_MAP_WIDTH * GAME_MAP_HEIGHT
+    mov esi, OFFSET mapCmdImage_characters
+    mov edi, OFFSET mapCmdImage.characters
+    rep movsb
+    INVOKE PushRenderBufferImageDiscardable, RENDER_BUFFER_LAYER_GAME_MAP, ADDR mapCmdImage, stdRenderOrigin
 
     ret
 InitRenderer ENDP

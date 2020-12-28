@@ -71,7 +71,7 @@ RENDER_BUFFER_LAYER_TANKS    EQU <2>  ; The panzers (tanks)
 RENDER_BUFFER_LAYER_BULLETS  EQU <3>  ; The bullets
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <200>  ; in milliseconds  ; TODO: Test value
+MAIN_GAME_TURN_INTERVAL EQU <100>  ; in milliseconds  ; TODO: Test value
 
 ; Texts
 CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
@@ -199,9 +199,56 @@ tankCmdImageLeft  CMD_IMAGE <<3, 3>,                                        \
                              { 0h, 23h, 23h, 2Dh, 2Bh, 2Bh,  0h, 23h, 23h}, \
                              { 6h,  6h,  6h,  6h, 0Ch, 0Ch,  6h,  6h,  6h}>
 
+tankCmdImageEnemyUp    CMD_IMAGE <<3, 3>,                                        \
+                                  { 0h, 7Ch,  0h, 23h, 2Bh, 23h, 23h, 2Bh, 23h}, \
+                                  {0Ch, 0Ch, 0Ch, 0Ch, 0Fh, 0Ch, 0Ch, 0Fh, 0Ch}>
+tankCmdImageEnemyRight CMD_IMAGE <<3, 3>,                                        \
+                                  {23h, 23h,  0h, 2Bh, 2Bh, 2Dh, 23h, 23h,  0h}, \
+                                  {0Ch, 0Ch, 0Ch, 0Fh, 0Fh, 0Ch, 0Ch, 0Ch, 0Ch}>
+tankCmdImageEnemyDown  CMD_IMAGE <<3, 3>,                                        \
+                                  {23h, 2Bh, 23h, 23h, 2Bh, 23h,  0h, 7Ch,  0h}, \
+                                  {0Ch, 0Fh, 0Ch, 0Ch, 0Fh, 0Ch, 0Ch, 0Ch, 0Ch}>
+tankCmdImageEnemyLeft  CMD_IMAGE <<3, 3>,                                        \
+                                  { 0h, 23h, 23h, 2Dh, 2Bh, 2Bh,  0h, 23h, 23h}, \
+                                  {0Ch, 0Ch, 0Ch, 0Ch, 0Fh, 0Fh, 0Ch, 0Ch, 0Ch}>
+
 bulletCmdImage    CMD_IMAGE <<1, 1>, \
                              {'@'},  \
                              {0Eh}>
+
+mapCmdImage_characters BYTE "==============================================================================================================================="
+                       BYTE "|                    |                                                                                                        |"
+                       BYTE "|                    |                                                                                                        |"
+                       BYTE "|                    |                                                                                                        |"
+                       BYTE "|                                                                                                                             |"
+                       BYTE "|                                ===============     ==================                       =============================   |"
+                       BYTE "|                                |                                    |                       |                               |"
+                       BYTE "|                                |                                    |                       |                               |"
+                       BYTE "|                                                                                             |                               |"
+                       BYTE "|                                                                                             |                               |"
+                       BYTE "|                                                                                             |                               |"
+                       BYTE "|                                                                     |                       |                               |"
+                       BYTE "|                                                                     |                       |                               |"
+                       BYTE "|                                    ==================================                       |                               |"
+                       BYTE "|                               |                                                             |                               |"
+                       BYTE "|                               |                                                             |                               |"
+                       BYTE "|                               |                                                             |                               |"
+                       BYTE "|                               |                       ==============================                                        |"
+                       BYTE "|                               |                       |                                                                     |"
+                       BYTE "|                               |                       |                                                                     |"
+                       BYTE "|                               |                                                                                             |"
+                       BYTE "|                               |                                                                                             |"
+                       BYTE "|                               |                                                                                             |"
+                       BYTE "|                               |                                                                                             |"
+                       BYTE "|                               |                       |                                    |                                |"
+                       BYTE "|                               |                       |                                    |                                |"
+                       BYTE "|   =============================                       ==================     ===============                                |"
+                       BYTE "|                                                                                                                             |"
+                       BYTE "|                                                                                                        |                    |"
+                       BYTE "|                                                                                                        |                    |"
+                       BYTE "|                                                                                                        |                    |"
+                       BYTE "==============================================================================================================================="
+mapCmdImage       CMD_IMAGE <<GAME_MAP_WIDTH, GAME_MAP_HEIGHT>, <>, GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
 
 ; Object sizes
 tankSize   COORD <3, 3>

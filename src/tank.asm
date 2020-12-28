@@ -16,16 +16,28 @@ PrintTank PROC USES eax ecx esi edi,
     countWord: PTR DWORD
 
     mov esi, thisTank
-
+    movzx eax, (TANK PTR [esi]).role
     movzx edi, (TANK PTR [esi]).faceTo
-    .IF     edi == FACE_UP
-        mov edi, OFFSET tankCmdImageUp
-    .ELSEIF edi == FACE_RIGHT
-        mov edi, OFFSET tankCmdImageRight
-    .ELSEIF edi == FACE_DOWN
-        mov edi, OFFSET tankCmdImageDown
-    .ELSEIF edi == FACE_LEFT
-        mov edi, OFFSET tankCmdImageLeft
+    .IF eax == ROLE_PLAYER
+        .IF     edi == FACE_UP
+            mov edi, OFFSET tankCmdImageUp
+        .ELSEIF edi == FACE_RIGHT
+            mov edi, OFFSET tankCmdImageRight
+        .ELSEIF edi == FACE_DOWN
+            mov edi, OFFSET tankCmdImageDown
+        .ELSEIF edi == FACE_LEFT
+            mov edi, OFFSET tankCmdImageLeft
+        .ENDIF
+    .ELSE
+        .IF     edi == FACE_UP
+            mov edi, OFFSET tankCmdImageEnemyUp
+        .ELSEIF edi == FACE_RIGHT
+            mov edi, OFFSET tankCmdImageEnemyRight
+        .ELSEIF edi == FACE_DOWN
+            mov edi, OFFSET tankCmdImageEnemyDown
+        .ELSEIF edi == FACE_LEFT
+            mov edi, OFFSET tankCmdImageEnemyLeft
+        .ENDIF
     .ENDIF
 
     INVOKE PushRenderBufferImageDiscardable,
