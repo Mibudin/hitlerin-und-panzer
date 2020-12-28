@@ -341,10 +341,10 @@ MoveTank_SubY:
     jne MoveTank_Return
 
     sub (TANK PTR [esi]).position.Y, 1
-    mov ax, (TANK PTR [esi]).position.Y
-    .IF ax == 0h
-        add (TANK PTR [esi]).position.Y, 1
-    .ENDIF
+    ; mov ax, (TANK PTR [esi]).position.Y
+    ; .IF ax == 0h
+    ;     add (TANK PTR [esi]).position.Y, 1
+    ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_MoveRight:
     mov al, (TANK PTR [esi]).faceTo
@@ -374,10 +374,10 @@ MoveTank_AddX:
     jne MoveTank_Return
 
     add (TANK PTR [esi]).position.X, 1
-    mov ax, (TANK PTR [esi]).position.X
-    .IF ax == 7Dh  ; 125
-        sub (TANK PTR [esi]).position.X, 1
-    .ENDIF
+    ; mov ax, (TANK PTR [esi]).position.X
+    ; .IF ax == 7Dh  ; 125
+    ;     sub (TANK PTR [esi]).position.X, 1
+    ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_MoveDown:
     mov al, (TANK PTR [esi]).faceTo
@@ -407,10 +407,10 @@ MoveTank_AddY:
     jne MoveTank_Return
 
     add (TANK PTR [esi]).position.Y, 1
-    mov ax, (TANK PTR [esi]).position.Y
-    .IF ax == 1Dh
-        sub (TANK PTR [esi]).position.Y, 1
-    .ENDIF
+    ; mov ax, (TANK PTR [esi]).position.Y
+    ; .IF ax == 1Dh
+    ;     sub (TANK PTR [esi]).position.Y, 1
+    ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_MoveLeft:
     mov al, (TANK PTR [esi]).faceTo
@@ -440,10 +440,10 @@ MoveTank_SubX:
     jne MoveTank_Return
 
     sub (TANK PTR [esi]).position.X, 1
-    mov ax, (TANK PTR [esi]).position.X
-    .IF ax == 0h
-        add (TANK PTR [esi]).position.X, 1
-    .ENDIF
+    ; mov ax, (TANK PTR [esi]).position.X
+    ; .IF ax == 0h
+    ;     add (TANK PTR [esi]).position.X, 1
+    ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_PrintMove:
     INVOKE PrintTank, thisOutputHandle, thisTank, gameMap, countWord
