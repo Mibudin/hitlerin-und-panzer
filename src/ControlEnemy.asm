@@ -11,7 +11,7 @@ TITLE ControlEnemy (ControlEnemy.asm)
 GetDirection PROC USES eax esi, thisTank: PTR Tank
     mov eax, 4
     mov esi, thisTank
-    call Randomize
+    ; call Randomize
     call RandomRange
     inc eax
     mov (TANK PTR [esi]).faceTo, al
@@ -49,7 +49,7 @@ MoveRandom_Set:
     ;     mov eax, ((TANK PTR [esi]).X - 1)           ; 0 is boundary, so X need to - 1
     ; .ENDIF
 MoveRandom_Random:
-    call Randomize
+    ; call Randomize
     call RandomRange
     inc eax
     mov ecx, eax
@@ -167,7 +167,7 @@ MoveRandom_Check:
 MoveRandom_Move:
     INVOKE MoveTank, thisOutputHandle, thisTank, ADDR gameMapRecord, ax, countWord
 MoveRandom_Loop:
-    loop MoveRandom_Move
+    ; loop MoveRandom_Move
 MoveRandom_Return:
     ret
 MoveRandom ENDP

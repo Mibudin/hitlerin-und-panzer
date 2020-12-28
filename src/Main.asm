@@ -25,23 +25,18 @@ MainGameInit PROC
     call InitGame
     call InitRenderer
 
-    mov gameState, GAME_STATE_START
-
     ret
 MainGameInit ENDP
 
 ;; MainGameLoop
-MainGameLoop PROC USES eax ebx ecx
-    xor ebx, ebx
-
+MainGameLoop PROC USES eax ecx
 MainGameLoop_Loop:
     call GetTickCount
-    mov gameTickCount, eax
     mov ecx, eax
-    sub ecx, ebx
+    sub ecx, gameTickCount
     cmp ecx, MAIN_GAME_TURN_INTERVAL
     jb MainGameLoop_Loop
-    mov ebx, eax
+    mov gameTickCount, eax
 
     call MainGameTurn
     ; mov eax, TRUE

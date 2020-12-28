@@ -34,5 +34,9 @@ InitGame PROC
     call InitHandle
     call InitScreen
 
+    call Randomize
+    mov gameState, GAME_STATE_START
+    mov gameTickCount, 0
+
     ret
 InitGame ENDP

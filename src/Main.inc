@@ -38,8 +38,15 @@ ENDM
 mMainGameTurn_GameStateGameMap MACRO
     mClearRenderBuffer RENDER_BUFFER_LAYER_TANKS
 
+    ; Player tank
     call ReadKey
     INVOKE MoveTank, stdOutputHandle, ADDR testTank, ADDR gameMapRecord, ax, ADDR trashBus
+
+    ; Enemy tank
+    INVOKE GetDirection, ADDR testTankEnemy1
+    INVOKE MoveRandom, stdOutputHandle, ADDR testTankEnemy1, ADDR gameMapRecord, ADDR trashBus
+    INVOKE GetDirection, ADDR testTankEnemy2
+    INVOKE MoveRandom, stdOutputHandle, ADDR testTankEnemy2, ADDR gameMapRecord, ADDR trashBus
 
     INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
 

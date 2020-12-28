@@ -71,7 +71,7 @@ RENDER_BUFFER_LAYER_TANKS    EQU <2>  ; The panzers (tanks)
 RENDER_BUFFER_LAYER_BULLETS  EQU <3>  ; The bullets
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <100>  ; in milliseconds  ; TODO: Test value
+MAIN_GAME_TURN_INTERVAL EQU <200>  ; in milliseconds  ; TODO: Test value
 
 ; Texts
 CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
@@ -254,6 +254,8 @@ testImage CMD_IMAGE <<5, 6>, "123456789012345678901234567890", 30 DUP(49)>
 testPosition COORD <4, 7>
 
 testTank TANK <>
+testTankEnemy1 TANK <<100, 20>, ?, ROLE_ENEMY>
+testTankEnemy2 TANK <<80, 1>, ?, ROLE_ENEMY>
 
 
 ; ================
