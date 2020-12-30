@@ -17,4 +17,6 @@ InitScreen PROTO
 
 InitGameMapRecord PROTO
 
+InitTanks PROTO
+
 InitGame PROTO

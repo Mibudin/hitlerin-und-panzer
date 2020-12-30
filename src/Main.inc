@@ -38,32 +38,27 @@ ENDM
 
 ;; mMainGameTurn_GameStateGameMap
 mMainGameTurn_GameStateGameMap MACRO
-    ; mov al, mapCmdImage_characters[128]
-    ; call WriteChar
-    ; call WaitMsg
-
+    ; Clear render buffer layers
     mClearRenderBuffer RENDER_BUFFER_LAYER_TANKS
     mClearRenderBuffer RENDER_BUFFER_LAYER_BULLETS
     mClearRenderBuffer RENDER_BUFFER_LAYER_FINALE
 
     ; Player tank
     call ReadKey
-    INVOKE MoveTank, stdOutputHandle, ADDR testTank, ADDR gameMapRecord, ax, ADDR trashBus
+    INVOKE MoveTank, stdOutputHandle, ADDR playersTank, ADDR gameMapRecord, ax, ADDR trashBus
 
     ; Enemy tank
-    INVOKE GetDirection, ADDR testTankEnemy1, ADDR testTank
-    INVOKE ComputerTankMove, stdOutputHandle, ADDR testTankEnemy1, ADDR trashBus
-    INVOKE GetDirection, ADDR testTankEnemy2, ADDR testTank
-    INVOKE ComputerTankMove, stdOutputHandle, ADDR testTankEnemy2, ADDR trashBus
+    mov ecx, ENEMY_TANK_AMOUNT
+    xor edx, edx
+mMainGameTurn_GameStateGameMap_EnemyTanks:
+    INVOKE GetDirection, ADDR enemyTankList[edx], ADDR playersTank
+    INVOKE ComputerTankMove, stdOutputHandle, ADDR enemyTankList[edx], ADDR trashBus
+    add edx, TANK
+    loop mMainGameTurn_GameStateGameMap_EnemyTanks
 
-    ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
-    ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
-    ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_BULLETS
-
+    ; Render
     INVOKE IntegrateRenderBufferFinaleAllDiscardable
     INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_FINALE
-
-    ; call WaitMsg
 
     ; mov gameState, GAME_STATE_END
 

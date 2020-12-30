@@ -71,7 +71,7 @@ RENDER_BUFFER_LAYER_BULLETS  EQU <2>  ; The bullets
 RENDER_BUFFER_LAYER_FINALE   EQU <3>  ; The final render buffer layer
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <10>  ; in milliseconds  ; TODO: Test value
+MAIN_GAME_TURN_INTERVAL EQU <100>  ; in milliseconds  ; TODO: Test value
 
 ; Texts
 CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
@@ -94,6 +94,12 @@ GAME_MAP_CHAR_PLAYER_BULLET EQU <'@'>
 GAME_MAP_CHAR_ENEMY_BULLET  EQU <'%'>
 GAME_MAP_CHAR_WALL_0        EQU <'='>
 GAME_MAP_CHAR_WALL_1        EQU <'|'>
+
+; Player start position
+PLAYER_START_POSITION EQU <<1, 1>>
+
+; Tank
+ENEMY_TANK_AMOUNT EQU <2>
 
 
 ; ==============
@@ -155,7 +161,7 @@ INCLUDE HomePage.inc        ; The main handler of the home page
 .data
 
 ; The title of the window
-windowTitle BYTE "HITLERIN und PANZER - Version 0.1", 0
+windowTitle BYTE "HITLERIN und PANZER - Version 0.2", 0
 
 ; The standard handles
 stdOutputHandle  DWORD ?
@@ -252,9 +258,17 @@ mapCmdImage_characters BYTE "===================================================
                        BYTE "================================================================================================================================"
 mapCmdImage       CMD_IMAGE <<GAME_MAP_WIDTH, GAME_MAP_HEIGHT>, <>, GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
 
+; Game map field
+enemyField SMALL_RECT <6, 96, 25, 126>
+
 ; Object sizes
 tankSize   COORD <3, 3>
 bulletSize COORD <1, 1>
+
+; Tanks
+playersTank   TANK <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER>
+enemyTankList TANK <<100, 2>, FACE_UP, ROLE_ENEMY>  ; ENEMY_TANK_AMOUNT = 2
+              TANK << 80, 1>, FACE_UP, ROLE_ENEMY>
 
 ; The common trash bus
 trashBus DWORD ?
@@ -290,21 +304,21 @@ MemberListS3 BYTE "					     PETER", 0						; 林緯翔
 MemberListS4 BYTE "					     QIN, CHENG-YE", 0				; 秦承業
 
 ; TODO: Test
-testString BYTE CRLF_C
-           BYTE "~~~ HITLERIN und PANZER ~~~", CRLF_C
-           BYTE CRLF_C
-           BYTE "Battle City x Waifu x Console x MASM", CRLF_C
-           BYTE CRLF_C, 0
+; testString BYTE CRLF_C
+;            BYTE "~~~ HITLERIN und PANZER ~~~", CRLF_C
+;            BYTE CRLF_C
+;            BYTE "Battle City x Waifu x Console x MASM", CRLF_C
+;            BYTE CRLF_C, 0
 
-testImageChars BYTE "123456789"
-testImageAttrs WORD 9 DUP(49)
+; testImageChars BYTE "123456789"
+; testImageAttrs WORD 9 DUP(49)
 
-testImage CMD_IMAGE <<5, 6>, "123456789012345678901234567890", 30 DUP(49)>
-testPosition COORD <4, 7>
+; testImage CMD_IMAGE <<5, 6>, "123456789012345678901234567890", 30 DUP(49)>
+; testPosition COORD <4, 7>
 
-testTank TANK <>
-testTankEnemy1 TANK <<100, 20>, ?, ROLE_ENEMY>
-testTankEnemy2 TANK <<80, 1>, ?, ROLE_ENEMY>
+; testTank TANK <>
+; testTankEnemy1 TANK <<100, 20>, ?, ROLE_ENEMY>
+; testTankEnemy2 TANK <<80, 1>, ?, ROLE_ENEMY>
 
 
 ; ================

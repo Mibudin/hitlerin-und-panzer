@@ -51,7 +51,7 @@ MainGameLoop ENDP
 ;; Returns:
 ;;     EAX: Whether to continue the main game loop
 ;;          1: True; 0: False
-MainGameTurn PROC
+MainGameTurn PROC USES ecx edx
     ; Initialization
     ; call Clrscr
     ; call ClearRenderBuffer
@@ -59,22 +59,18 @@ MainGameTurn PROC
     ; The game states
     .IF     gameState == GAME_STATE_TEST
         mMainGameTurn_GameStateTest
-
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_START
         mMainGameTurn_GameStateStart
-
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_GAME_MAP
         mMainGameTurn_GameStateGameMap
-
         jmp MainGameTurn_PostProcess
 
     .ELSEIF gameState == GAME_STATE_END
         mMainGameTurn_GameStateEnd
-
         jmp MainGameTurn_PostProcess
 
     .ENDIF

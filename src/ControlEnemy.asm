@@ -33,6 +33,7 @@ GetDirection ENDP
 
 ComputerTankMove PROC USES eax esi, thisOutputHandle: DWORD, thisTank: PTR Tank, countWord: PTR DWORD
 ComputerTankMove_CheckDirection:
+    mov esi, thisTank
     xor eax, eax
     mov al, (TANK PTR [esi]).faceTo
     .IF     (al == FACE_UP)
