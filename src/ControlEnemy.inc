@@ -13,13 +13,24 @@ TITLE ControlEnemy (ControlEnemy.inc)
 
 GetDirection PROTO,
     thisTank: PTR Tank,
+    playerTank: PTR Tank
 
-MoveRandom PROTO,
+ComputerTankMove PROTO,
     thisOutputHandle: DWORD,
     thisTank: PTR Tank,
-    GameMap: PTR BYTE,
     countWord: PTR DWORD
 
-DetectShoot PROTO,
+
+; MoveRandom PROTO,
+;     thisOutputHandle: DWORD,
+;     thisTank: PTR Tank,
+;     GameMap: PTR BYTE,
+;     countWord: PTR DWORD
+
+Detect PROTO,
+    thisTank: PTR Tank,
+    playerTank: PTR Tank
+
+Shoot PROTO,
     thisTank: PTR Tank,
     playerTank: PTR Tank
