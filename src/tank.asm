@@ -446,7 +446,7 @@ MoveTank_SubX:
     ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_PrintMove:
-    INVOKE PrintTank, thisOutputHandle, thisTank, gameMap, countWord
 MoveTank_Return:
+    INVOKE PrintTank, thisOutputHandle, thisTank, gameMap, countWord
     ret
 MoveTank ENDP

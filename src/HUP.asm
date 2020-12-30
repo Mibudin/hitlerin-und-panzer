@@ -71,7 +71,7 @@ RENDER_BUFFER_LAYER_TANKS    EQU <2>  ; The panzers (tanks)
 RENDER_BUFFER_LAYER_BULLETS  EQU <3>  ; The bullets
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <100>  ; in milliseconds  ; TODO: Test value
+MAIN_GAME_TURN_INTERVAL EQU <10>  ; in milliseconds  ; TODO: Test value
 
 ; Texts
 CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
@@ -216,38 +216,38 @@ bulletCmdImage    CMD_IMAGE <<1, 1>, \
                              {'@'},  \
                              {0Eh}>
 
-mapCmdImage_characters BYTE "==============================================================================================================================="
-                       BYTE "|                    |                                                                                                        |"
-                       BYTE "|                    |                                                                                                        |"
-                       BYTE "|                    |                                                                                                        |"
-                       BYTE "|                                                                                                                             |"
-                       BYTE "|                                ===============     ==================                       =============================   |"
-                       BYTE "|                                |                                    |                       |                               |"
-                       BYTE "|                                |                                    |                       |                               |"
-                       BYTE "|                                                                                             |                               |"
-                       BYTE "|                                                                                             |                               |"
-                       BYTE "|                                                                                             |                               |"
-                       BYTE "|                                                                     |                       |                               |"
-                       BYTE "|                                                                     |                       |                               |"
-                       BYTE "|                                    ==================================                       |                               |"
-                       BYTE "|                               |                                                             |                               |"
-                       BYTE "|                               |                                                             |                               |"
-                       BYTE "|                               |                                                             |                               |"
-                       BYTE "|                               |                       ==============================                                        |"
-                       BYTE "|                               |                       |                                                                     |"
-                       BYTE "|                               |                       |                                                                     |"
-                       BYTE "|                               |                                                                                             |"
-                       BYTE "|                               |                                                                                             |"
-                       BYTE "|                               |                                                                                             |"
-                       BYTE "|                               |                                                                                             |"
-                       BYTE "|                               |                       |                                    |                                |"
-                       BYTE "|                               |                       |                                    |                                |"
-                       BYTE "|   =============================                       ==================     ===============                                |"
-                       BYTE "|                                                                                                                             |"
-                       BYTE "|                                                                                                        |                    |"
-                       BYTE "|                                                                                                        |                    |"
-                       BYTE "|                                                                                                        |                    |"
-                       BYTE "==============================================================================================================================="
+mapCmdImage_characters BYTE "================================================================================================================================"
+                       BYTE "|                     |                                                                                                        |"
+                       BYTE "|                     |                                                                                                        |"
+                       BYTE "|                     |                                                                                                        |"
+                       BYTE "|                                                                                                                              |"
+                       BYTE "|                                 ===============     ==================                       =============================   |"
+                       BYTE "|                                 |                                    |                       |                               |"
+                       BYTE "|                                 |                                    |                       |                               |"
+                       BYTE "|                                                                                              |                               |"
+                       BYTE "|                                                                                              |                               |"
+                       BYTE "|                                                                                              |                               |"
+                       BYTE "|                                                                      |                       |                               |"
+                       BYTE "|                                                                      |                       |                               |"
+                       BYTE "|                                     ==================================                       |                               |"
+                       BYTE "|                                |                                                             |                               |"
+                       BYTE "|                                |                                                             |                               |"
+                       BYTE "|                                |                                                             |                               |"
+                       BYTE "|                                |                       ==============================                                        |"
+                       BYTE "|                                |                       |                                                                     |"
+                       BYTE "|                                |                       |                                                                     |"
+                       BYTE "|                                |                                                                                             |"
+                       BYTE "|                                |                                                                                             |"
+                       BYTE "|                                |                                                                                             |"
+                       BYTE "|                                |                                                                                             |"
+                       BYTE "|                                |                       |                                    |                                |"
+                       BYTE "|                                |                       |                                    |                                |"
+                       BYTE "|    =============================                       ==================     ===============                                |"
+                       BYTE "|                                                                                                                              |"
+                       BYTE "|                                                                                                         |                    |"
+                       BYTE "|                                                                                                         |                    |"
+                       BYTE "|                                                                                                         |                    |"
+                       BYTE "================================================================================================================================"
 mapCmdImage       CMD_IMAGE <<GAME_MAP_WIDTH, GAME_MAP_HEIGHT>, <>, GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
 
 ; Object sizes

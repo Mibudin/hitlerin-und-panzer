@@ -15,4 +15,6 @@ InitHandle PROTO
 
 InitScreen PROTO
 
+InitGameMapRecord PROTO
+
 InitGame PROTO

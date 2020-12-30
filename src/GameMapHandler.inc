@@ -11,4 +11,4 @@ TITLE GameMapHandler (GameMapHandler.inc)
 ; = PROTOS =
 ; ==========
 
-InitGameMap PROTO
+; InitGameMap PROTO

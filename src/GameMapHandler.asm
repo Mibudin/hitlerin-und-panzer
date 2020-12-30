@@ -8,8 +8,8 @@ TITLE GameMapHandler (GameMapHandler.asm)
 
 
 ;; InitGameMap
-InitGameMap PROC
-    ; TODO:
+; InitGameMap PROC
+;     ; TODO:
 
-    ret
-InitGameMap ENDP
+;     ret
+; InitGameMap ENDP

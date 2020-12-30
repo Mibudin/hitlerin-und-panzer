@@ -22,6 +22,7 @@ InitRenderer_ClearRenderBufferLayersAll:
     ; Set default cursor style
     INVOKE SetConsoleCursorInfo, stdOutputHandle, ADDR stdConsoleCursorInfo
 
+    ; Initialize the game map to show
     cld
     mov ecx, GAME_MAP_WIDTH * GAME_MAP_HEIGHT
     mov esi, OFFSET mapCmdImage_characters
