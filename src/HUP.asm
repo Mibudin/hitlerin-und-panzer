@@ -92,6 +92,8 @@ GAME_MAP_CHAR_PALYER        EQU <'#'>
 GAME_MAP_CHAR_ENEMY         EQU <'*'>
 GAME_MAP_CHAR_PLAYER_BULLET EQU <'@'>
 GAME_MAP_CHAR_ENEMY_BULLET  EQU <'%'>
+GAME_MAP_CHAR_WALL_0        EQU <'='>
+GAME_MAP_CHAR_WALL_1        EQU <'|'>
 
 
 ; ==============

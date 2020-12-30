@@ -45,7 +45,7 @@ PrintBullet_ChangeRow:
     movzx ecx, (BULLET PTR [esi]).position.X
     add edi, ecx
        
-    mov al, (BULLET PTR [esi]).owner
+    mov al, (BULLET PTR [esi]).role
     .IF al == ROLE_PLAYER
         mov (BYTE PTR [edi]), GAME_MAP_CHAR_PLAYER_BULLET
         jmp PrintBullet_PrintEnd
@@ -275,7 +275,7 @@ BulletHit_ChangeRow:
     sub (BYTE PTR [esi]), 1                 ; bullet amount - 1
     pop esi
 
-    mov al, (bullet PTR [esi]).owner
+    mov al, (bullet PTR [esi]).role
     .IF ebx == GAME_MAP_CHAR_PALYER                        ; hit our tank
         .IF al == ROLE_PLAYER
             jmp BulletHit_BulletHitEnd

@@ -51,10 +51,10 @@ mMainGameTurn_GameStateGameMap MACRO
     INVOKE MoveTank, stdOutputHandle, ADDR testTank, ADDR gameMapRecord, ax, ADDR trashBus
 
     ; Enemy tank
-    INVOKE GetDirection, ADDR testTankEnemy1
-    INVOKE MoveRandom, stdOutputHandle, ADDR testTankEnemy1, ADDR gameMapRecord, ADDR trashBus
-    INVOKE GetDirection, ADDR testTankEnemy2
-    INVOKE MoveRandom, stdOutputHandle, ADDR testTankEnemy2, ADDR gameMapRecord, ADDR trashBus
+    INVOKE GetDirection, ADDR testTankEnemy1, ADDR testTank
+    INVOKE ComputerTankMove, stdOutputHandle, ADDR testTankEnemy1, ADDR trashBus
+    INVOKE GetDirection, ADDR testTankEnemy2, ADDR testTank
+    INVOKE ComputerTankMove, stdOutputHandle, ADDR testTankEnemy2, ADDR trashBus
 
     ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
     ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
