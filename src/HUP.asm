@@ -128,6 +128,7 @@ TANK STRUCT
     position    COORD <1, 1>         ; left up
     faceTo      BYTE  FACE_UP        ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
     role        BYTE  ROLE_PLAYER
+    hp          BYTE  3
 TANK ENDS
 
 BULLET STRUCT
