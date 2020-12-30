@@ -127,7 +127,7 @@ BULLET STRUCT
     ; white     BYTE  ' '
     ; color     WORD  0Eh
     direction BYTE  FACE_UP
-    owner     BYTE  ROLE_PLAYER
+    role     BYTE  ROLE_PLAYER
     position  COORD <1, 1>
 BULLET ENDS
 
