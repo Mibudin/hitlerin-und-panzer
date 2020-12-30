@@ -20,19 +20,6 @@ mMainGameTurn_GameStateTest MACRO
 
     ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
 
-    mGetRenderBufferLayerIndex eax, RENDER_BUFFER_LAYER_0
-    call WriteHex
-    call Crlf
-    mGetRenderBufferLayerIndex eax, RENDER_BUFFER_LAYER_GAME_MAP
-    call WriteHex
-    call Crlf
-    mGetRenderBufferLayerIndex eax, RENDER_BUFFER_LAYER_TANKS
-    call WriteHex
-    call Crlf
-    mGetRenderBufferLayerIndex eax, RENDER_BUFFER_LAYER_BULLETS
-    call WriteHex
-    call Crlf
-
     call WaitMsg
 
     mov eax, TRUE
@@ -57,6 +44,7 @@ mMainGameTurn_GameStateGameMap MACRO
 
     mClearRenderBuffer RENDER_BUFFER_LAYER_TANKS
     mClearRenderBuffer RENDER_BUFFER_LAYER_BULLETS
+    mClearRenderBuffer RENDER_BUFFER_LAYER_FINALE
 
     ; Player tank
     call ReadKey
@@ -68,9 +56,13 @@ mMainGameTurn_GameStateGameMap MACRO
     INVOKE GetDirection, ADDR testTankEnemy2
     INVOKE MoveRandom, stdOutputHandle, ADDR testTankEnemy2, ADDR gameMapRecord, ADDR trashBus
 
-    INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
-    INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
-    INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_BULLETS
+    ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
+    ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
+    ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_BULLETS
+
+    INVOKE IntegrateRenderBufferFinaleAllDiscardable
+    INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_FINALE
+
     ; call WaitMsg
 
     ; mov gameState, GAME_STATE_END

@@ -65,10 +65,10 @@ RENDER_BUFFER_BLANK_ATTR EQU <RENDER_BUFFER_CLEAR_ATTR>  ; Black background and 
 
 ; Render layers
 RENDER_BUFFER_LAYERS         EQU <4>  ; The amount of layers ; TODO: Test value
-RENDER_BUFFER_LAYER_0        EQU <0>  ; The game map record temporary
-RENDER_BUFFER_LAYER_GAME_MAP EQU <1>  ; The game map
-RENDER_BUFFER_LAYER_TANKS    EQU <2>  ; The panzers (tanks)
-RENDER_BUFFER_LAYER_BULLETS  EQU <3>  ; The bullets
+RENDER_BUFFER_LAYER_GAME_MAP EQU <0>  ; The game map
+RENDER_BUFFER_LAYER_TANKS    EQU <1>  ; The panzers (tanks)
+RENDER_BUFFER_LAYER_BULLETS  EQU <2>  ; The bullets
+RENDER_BUFFER_LAYER_FINALE   EQU <3>  ; The final render buffer layer
 
 ; The main game logic
 MAIN_GAME_TURN_INTERVAL EQU <10>  ; in milliseconds  ; TODO: Test value

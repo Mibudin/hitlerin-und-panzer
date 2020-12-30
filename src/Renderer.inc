@@ -36,7 +36,7 @@ mGetRenderBufferLayerIndex MACRO regDWord, layerDWord
 
     ; * 3
     ; FIXME:
-    add regDWord, layerDWord
+    shl regDWord, 1
     add regDWord, layerDWord
 
     ; * 1000h
@@ -73,9 +73,13 @@ GetRenderBufferCoord PROTO,
     index:WORD,
     position:PTR COORD
 
-CoverRenderBuffer PROTO,
-    layer:DWORD,
-    renderBuffer:PTR RENDER_BUFFER
+CoverRenderBufferLayer PROTO,
+    sourceLayer:DWORD,
+    targetLayer:DWORD
+
+CoverRenderBufferLayerDiscardable PROTO,
+    sourceLayer:DWORD,
+    targetLayer:DWORD
 
 SetRenderBuffer PROTO,
     layer:DWORD,
@@ -96,6 +100,10 @@ PushRenderBufferImageDiscardable PROTO,
     layer:DWORD,
     cmdImage:PTR CMD_IMAGE,
     position:COORD
+
+IntegrateRenderBufferFinaleAll PROTO
+
+IntegrateRenderBufferFinaleAllDiscardable PROTO
 
 Render PROTO,
     layer:DWORD

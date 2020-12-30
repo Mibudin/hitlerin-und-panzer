@@ -29,8 +29,8 @@ InitScreen PROC USES eax
     ret
 InitScreen ENDP
 
-;; InitGameMap
-InitGameMap PROC USES ecx esi edi
+;; InitGameMapRecord
+InitGameMapRecord PROC USES ecx esi edi
     cld
     mov ecx, GAME_MAP_WIDTH * GAME_MAP_HEIGHT
     mov esi, OFFSET mapCmdImage_characters
@@ -38,13 +38,13 @@ InitGameMap PROC USES ecx esi edi
     rep movsb
 
     ret
-InitGameMap ENDP
+InitGameMapRecord ENDP
 
 ;;  InitGame
 InitGame PROC
     call InitHandle
     call InitScreen
-    call InitGameMap
+    call InitGameMapRecord
 
     call Randomize
 

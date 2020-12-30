@@ -96,26 +96,56 @@ GetRenderBufferCoord PROC USES ax cx esi,
     ret
 GetRenderBufferCoord ENDP
 
-;; CoverRenderBuffer
-CoverRenderBuffer PROC USES eax ecx esi edi,
-    layer:DWORD,
-    renderBuffer:PTR RENDER_BUFFER
+;; CoverRenderBufferLayer
+CoverRenderBufferLayer PROC USES eax ecx edx esi edi,
+    sourceLayer:DWORD,
+    targetLayer:DWORD
 
     cld
-    mGetRenderBufferLayerIndex eax, layer
+    mGetRenderBufferLayerIndex eax, sourceLayer
+    mGetRenderBufferLayerIndex edx, targetLayer
 
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
     lea esi, stdRenderBuffer[eax].characters
-    lea edi, (RENDER_BUFFER PTR [renderBuffer]).characters
+    lea edi, stdRenderBuffer[edx].characters
     rep movsb
 
     mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
-    lea esi, stdRenderBuffer[eax].attributes
-    lea edi, (RENDER_BUFFER PTR [renderBuffer]).attributes
+    ; lea esi, stdRenderBuffer[eax].attributes
+    ; lea edi, stdRenderBuffer[edx].attributes
     rep movsw
 
     ret
-CoverRenderBuffer ENDP
+CoverRenderBufferLayer ENDP
+
+;; CoverRenderBufferLayerDiscardable
+CoverRenderBufferLayerDiscardable PROC USES eax ecx esi edi,
+    sourceLayer:DWORD,
+    targetLayer:DWORD
+
+    cld
+    mGetRenderBufferLayerIndex esi, sourceLayer
+    mGetRenderBufferLayerIndex edi, targetLayer
+
+    mov ecx, SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT
+    xor eax, eax
+CoverRenderBufferLayerDiscardable_CoverLoop:
+    mov bl, stdRenderBuffer[esi].characters[eax]
+    cmp bl, RENDER_BUFFER_DISCARD
+    je CoverRenderBufferLayerDiscardable_CoverLoop_Discard
+    mov stdRenderBuffer[edi].characters[eax], bl
+
+    shl eax, 1
+    mov bx, stdRenderBuffer[esi].attributes[eax]
+    mov stdRenderBuffer[edi].attributes[eax], bx
+    shr eax, 1
+
+CoverRenderBufferLayerDiscardable_CoverLoop_Discard:
+    inc eax
+    loop CoverRenderBufferLayerDiscardable_CoverLoop
+
+    ret
+CoverRenderBufferLayerDiscardable ENDP
 
 ;; SetRenderBuffer
 SetRenderBuffer PROC USES ax ebx ecx edi,
@@ -263,6 +293,32 @@ PushRenderBufferImageDiscardable_ColumnLoop_OneCell_Discard:
 PushRenderBufferImageDiscardable_AllDiscard:
     ret
 PushRenderBufferImageDiscardable ENDP
+
+;; IntegrateRenderBufferFinaleAll
+IntegrateRenderBufferFinaleAll PROC USES eax ecx
+    mov ecx, RENDER_BUFFER_LAYERS
+    dec ecx
+    xor eax, eax
+IntegrateRenderBufferFinaleAll_AllLayers:
+    INVOKE CoverRenderBufferLayer, eax, RENDER_BUFFER_LAYER_FINALE
+    inc eax
+    loop IntegrateRenderBufferFinaleAll_AllLayers
+
+    ret
+IntegrateRenderBufferFinaleAll ENDP
+
+;; IntegrateRenderBufferFinaleAllDiscardable
+IntegrateRenderBufferFinaleAllDiscardable PROC USES eax ecx
+    mov ecx, RENDER_BUFFER_LAYERS
+    dec ecx
+    xor eax, eax
+IntegrateRenderBufferFinaleAllDiscardable_AllLayers:
+    INVOKE CoverRenderBufferLayerDiscardable, eax, RENDER_BUFFER_LAYER_FINALE
+    inc eax
+    loop IntegrateRenderBufferFinaleAllDiscardable_AllLayers
+
+    ret
+IntegrateRenderBufferFinaleAllDiscardable ENDP
 
 ;; Render
 Render PROC USES eax ecx edx,
