@@ -9,97 +9,80 @@ TITLE Bullet (Bullet.asm)
 
 ;; PrintBullet
 ;; print bullet
-PrintBullet PROC USES eax ecx esi,
-    thisOutputHandle: DWORD,
-    thisBullet: PTR BULLET,
-    thisGameMap: PTR BYTE,
-    countWord: PTR DWORD
+PrintBullet PROC USES eax ebx esi edi,
+    thisBullet: PTR bullet,
+    thisGameMap: PTR BYTE
     
+    ; print bullet
     mov esi, thisBullet
-
-    INVOKE PushRenderBufferImageDiscardable,
-        RENDER_BUFFER_LAYER_BULLETS,
-        ADDR bulletCmdImage,
+    INVOKE PushRenderBufferImageDiscardable, 
+        RENDER_BUFFER_LAYER_BULLETS, 
+        OFFSET bulletCmdImage,
         (BULLET PTR [esi]).position
 
-    ; INVOKE WriteConsoleOutputAttribute,  ; set color
-    ;     thisOutputHandle,
-    ;     ADDR (Bullet PTR [esi]).color,
-    ;     1,
-    ;     (Bullet PTR [esi]).position,
-    ;     countWord
-    ; INVOKE WriteConsoleOutputCharacter,  ; 設定字母
-    ;     thisOutputHandle, 
-    ;     ADDR (Bullet PTR [esi]).symbol,
-    ;     1,
-    ;     (Bullet PTR [esi]).position,
-    ;     countWord
-
     ; record in map
-    movzx ecx, (BULLET PTR [esi]).position.Y
-    mov edi, thisGameMap
-PrintBullet_ChangeRow:
-    add edi, 128
-    loop PrintBullet_ChangeRow
+    mov edi, gameMap
+    INVOKE GetRenderBufferIndex, (BULLET PTR [esi]).position
+    movzx eax, ax
+    movzx ebx, (BULLET PTR [esi]).role
 
-    movzx ecx, (BULLET PTR [esi]).position.X
-    add edi, ecx
-       
-    mov al, (BULLET PTR [esi]).role
-    .IF al == ROLE_PLAYER
-        mov (BYTE PTR [edi]), GAME_MAP_CHAR_PLAYER_BULLET
-        jmp PrintBullet_PrintEnd
-    .ENDIF 
-
-    .IF al == ROLE_ENEMY
-        mov (BYTE PTR [edi]), GAME_MAP_CHAR_ENEMY_BULLET
-        jmp PrintBullet_PrintEnd
+    .IF ebx == ROLE_PLAYER
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+    .ELSEIF ebx == ROLE_ENEMY
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
     .ENDIF
-PrintBullet_PrintEnd:
-
     ret
 PrintBullet ENDP
 
 ;; EraseBullet
 ;; before print new bullet, remove the old bullet 
-EraseBullet PROC USES ecx esi edi, 
-    thisOutputHandle: DWORD,
-    thisBullet: PTR BULLET,
-    thisGameMap: PTR BYTE,
-    countWord: PTR DWORD
+; EraseBullet PROC USES ecx esi edi, 
+;     thisOutputHandle: DWORD,
+;    thisBullet: PTR BULLET,
+;    thisGameMap: PTR BYTE,
+;    countWord: PTR DWORD
+;
+;    mov esi, thisBullet
+;
+;    INVOKE PushRenderBufferImageBlank,
+;        RENDER_BUFFER_LAYER_BULLETS,
+;        (TANK PTR [esi]).position,
+;        bulletSize
+;
+;    ; record in map
+;    movzx ecx, (BULLET PTR [esi]).position.Y
+;    mov edi, thisGameMap
+;EraseBullet_ChangeRow:
+;    add edi, GAME_MAP_WIDTH
+;    loop EraseBullet_ChangeRow
+;
+;    movzx ecx, (BULLET PTR [esi]).position.X
+;    add edi, ecx
+;       
+;    mov (BYTE PTR [edi]), GAME_MAP_CHAR_EMPTY
+;
+;    ret
+;EraseBullet ENDP
+
+
+EraseBullet PROC USES eax ecx esi edi,
+    thisBullet: PTR Bullet,
+    thisGameMap: PTR BYTE
 
     mov esi, thisBullet
 
+    ; erase bullet
     INVOKE PushRenderBufferImageBlank,
         RENDER_BUFFER_LAYER_BULLETS,
-        (TANK PTR [esi]).position,
+        (BULLET PTR [esi]).position,
         bulletSize
 
-    ; INVOKE WriteConsoleOutputAttribute,  ; set color
-    ;     thisOutputHandle,
-    ;     ADDR (Bullet PTR [esi]).color,
-    ;     1,
-    ;     (Bullet PTR [esi]).position,
-    ;     countWord
-    ; INVOKE WriteConsoleOutputCharacter,  ; 設定字母
-    ;     thisOutputHandle, 
-    ;     ADDR (Bullet PTR [esi]).white,
-    ;     1,
-    ;     (Bullet PTR [esi]).position,
-    ;     countWord
-
     ; record in map
-    movzx ecx, (BULLET PTR [esi]).position.Y
     mov edi, thisGameMap
-EraseBullet_ChangeRow:
-    add edi, GAME_MAP_WIDTH
-    loop EraseBullet_ChangeRow
-
-    movzx ecx, (BULLET PTR [esi]).position.X
-    add edi, ecx
+    INVOKE GetRenderBufferIndex, (BULLET PTR [esi]).position
+    movzx eax, ax
        
-    mov (BYTE PTR [edi]), GAME_MAP_CHAR_EMPTY
-
+    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_EMPTY
     ret
 EraseBullet ENDP
 
