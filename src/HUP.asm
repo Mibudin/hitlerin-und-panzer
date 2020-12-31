@@ -140,6 +140,8 @@ BULLET STRUCT
     position  COORD <1, 1>
 BULLET ENDS
 
+; PROC Size BYTE
+BULLET_SIZE_BYTE EQU <6>
 
 ; =================
 ; = Include Inner =
@@ -265,6 +267,7 @@ enemyField SMALL_RECT <6, 96, 25, 126>
 ; Object sizes
 tankSize   COORD <3, 3>
 bulletSize COORD <1, 1>
+
 
 ; Tanks
 playersTank   TANK <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER>
