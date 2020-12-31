@@ -89,16 +89,20 @@ EraseBullet ENDP
 ;; BulletMove
 ;; move one byte toward bullet's direction
 BulletMove PROC USES eax esi,
-    thisOutputHandle: DWORD, 
-    thisBullet: PTR BULLET,
+    thisBullet: PTR bullet,
     thisGameMap: PTR BYTE,
-    countWord: PTR DWORD
+    bulletAmount: byte,
+    bulletList: PTR BULLET
 
-    INVOKE EraseBullet, thisOutputHandle, thisBullet, thisGameMap, countWord
+    LOCAL checkPosition:COORD
+
+    ; erase tank
+    INVOKE eraseBullet, thisBullet, thisGameMap
     
     mov esi, thisBullet
-    mov al, (BULLET PTR [esi]).direction 
-    
+    mov al, (Bullet PTR [esi]).direction 
+    movzx ebx, (Bullet PTR [esi]).role
+    ; different check
     cmp al, FACE_UP
     je BulletMove_FlyUp
     cmp al, FACE_RIGHT
@@ -107,23 +111,226 @@ BulletMove PROC USES eax esi,
     je BulletMove_FlyDown
     cmp al, FACE_LEFT
     je BulletMove_FlyLeft
-
 BulletMove_FlyUp:
-    sub (BULLET PTR [esi]).position.Y, 1
-    jmp BulletMove_EndMove
+    ; before move, check
+    mov ax, (BULLET PTR [esi]).position.Y
+    dec ax
+    mov checkPosition.y, ax
+    mov ax, (TANK PTR [esi]).position.x
+    mov checkPosition.x, ax
+
+    INVOKE GetRenderBufferIndex, checkPosition
+    movzx eax, ax
+
+    ; if role's bullet hit wall, enemy's bullet, enemy's tank
+    .IF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_0
+        ; remove this bullet from bullet list
+        jmp MoveBullet_return  
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
+        sub (BULLET PTR [esi]).position.y, 1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return 
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+        sub (BULLET PTR [esi]).position.y, 1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return 
+    .ENDIF
+    
+    .IF ebx == ROLE_PLAYER
+        .IF (BYTE PTR [edi + eax]), GAME_MAP_ENEMY
+            ; remove this bullet from bullet list
+            ; remove enemy tank
+            jmp MoveBullet_return 
+        .ENDIF    
+    .ELSEIF ebx == ROLE_ENEMY
+        .IF (BYTE PTR [edi + eax]), GAME_MAP_PLAYER
+            ; remove this bullet from bullet list
+            ; remove enemy tank
+            jmp MoveBullet_return 
+        .ENDIF
+    .ENDIF
+
+    sub (Bullet PTR [esi]).position.y, 1
+    jmp Print_bullet
 BulletMove_FlyRight:
-    add (BULLET PTR [esi]).position.X, 1
-    jmp BulletMove_EndMove
+    ; before move, check
+    mov ax, (BULLET PTR [esi]).position.Y
+    mov checkPosition.y, ax
+    mov ax, (TANK PTR [esi]).position.x
+    inc ax
+    mov checkPosition.x, ax
+
+    INVOKE GetRenderBufferIndex, checkPosition
+    movzx eax, ax
+
+    ; if role's bullet hit wall, enemy's bullet, enemy's tank
+    .IF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_0
+        ; remove this bullet from bullet list
+        jmp MoveBullet_return  
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
+        add (BULLET PTR [esi]).position.x, 1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return 
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+        add (BULLET PTR [esi]).position.x, 1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return 
+    .ENDIF
+    
+    .IF ebx == ROLE_PLAYER
+        .IF (BYTE PTR [edi + eax]), GAME_MAP_ENEMY
+            ; remove this bullet from bullet list
+            ; remove enemy tank
+            jmp MoveBullet_return 
+        .ENDIF    
+    .ELSEIF ebx == ROLE_ENEMY
+        .IF (BYTE PTR [edi + eax]), GAME_MAP_PLAYER
+            ; remove this bullet from bullet list
+            ; remove enemy tank
+            jmp MoveBullet_return 
+        .ENDIF
+    .ENDIF
+
+    sub (Bullet PTR [esi]).position.y, 1
+    jmp Print_bullet
 BulletMove_FlyDown:
-    add (BULLET PTR [esi]).position.Y, 1
-    jmp BulletMove_EndMove
+    ; before move, check
+    mov ax, (BULLET PTR [esi]).position.Y
+    mov checkPosition.y, ax
+    inc ax
+    mov ax, (TANK PTR [esi]).position.x
+    mov checkPosition.x, ax
+
+    INVOKE GetRenderBufferIndex, checkPosition
+    movzx eax, ax
+
+    ; if role's bullet hit wall, enemy's bullet, enemy's tank
+    .IF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_0
+        ; remove this bullet from bullet list
+        jmp MoveBullet_return  
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
+        add (BULLET PTR [esi]).position.x, 1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return 
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+        add (BULLET PTR [esi]).position.x, 1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return 
+    .ENDIF
+    
+    .IF ebx == ROLE_PLAYER
+        .IF (BYTE PTR [edi + eax]), GAME_MAP_ENEMY
+            ; remove this bullet from bullet list
+            ; remove enemy tank
+            jmp MoveBullet_return 
+        .ENDIF    
+    .ELSEIF ebx == ROLE_ENEMY
+        .IF (BYTE PTR [edi + eax]), GAME_MAP_PLAYER
+            ; remove this bullet from bullet list
+            ; remove enemy tank
+            jmp MoveBullet_return 
+        .ENDIF
+    .ENDIF
+
+    add (Bullet PTR [esi]).position.y, 1
+    jmp Print_bullet
 BulletMove_FlyLeft:
-    sub (BULLET PTR[esi]).position.X, 1
-    jmp BulletMove_EndMove
-BulletMove_EndMove:
-    INVOKE PrintBullet, thisOutputHandle, thisBullet, thisGameMap, countWord
+    ; before move, check
+    mov ax, (BULLET PTR [esi]).position.Y
+    mov checkPosition.y, ax
+    mov ax, (TANK PTR [esi]).position.x
+    sub ax, 1
+    mov checkPosition.x, ax
+
+    INVOKE GetRenderBufferIndex, checkPosition
+    movzx eax, ax
+
+    ; if role's bullet hit wall, enemy's bullet, enemy's tank
+    .IF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_0
+        ; remove this bullet from bullet list
+        jmp MoveBullet_return  
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
+        add (BULLET PTR [esi]).position.x, 1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return 
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+        add (BULLET PTR [esi]).position.x, 1
+        ; remove this bullet form bullet list
+        jmp MoveBullet_return 
+    .ENDIF
+    
+    .IF ebx == ROLE_PLAYER
+        .IF (BYTE PTR [edi + eax]), GAME_MAP_ENEMY
+            ; remove this bullet from bullet list
+            ; remove enemy tank
+            jmp MoveBullet_return 
+        .ENDIF    
+    .ELSEIF ebx == ROLE_ENEMY
+        .IF (BYTE PTR [edi + eax]), GAME_MAP_PLAYER
+            ; remove this bullet from bullet list
+            ; remove enemy tank
+            jmp MoveBullet_return 
+        .ENDIF
+    .ENDIF
+
+    ; move
+    sub (Bullet PTR [esi]).position.x, 1
+    jmp Print_bullet
+Print_bullet:
+    INVOKE printBullet, thisBullet, thisGameMap
+MoveBullet_return:
     ret
 BulletMove ENDP
+
+
+; BulletMove PROC USES eax esi,
+;     thisOutputHandle: DWORD, 
+;     thisBullet: PTR BULLET,
+;     thisGameMap: PTR BYTE,
+;     countWord: PTR DWORD
+
+;     INVOKE EraseBullet, thisOutputHandle, thisBullet, thisGameMap, countWord
+    
+;     mov esi, thisBullet
+;     mov al, (BULLET PTR [esi]).direction 
+    
+;     cmp al, FACE_UP
+;     je BulletMove_FlyUp
+;     cmp al, FACE_RIGHT
+;     je BulletMove_FlyRight
+;     cmp al, FACE_DOWN
+;     je BulletMove_FlyDown
+;     cmp al, FACE_LEFT
+;     je BulletMove_FlyLeft
+
+; BulletMove_FlyUp:
+;     sub (BULLET PTR [esi]).position.Y, 1
+;     jmp BulletMove_EndMove
+; BulletMove_FlyRight:
+;     add (BULLET PTR [esi]).position.X, 1
+;     jmp BulletMove_EndMove
+; BulletMove_FlyDown:
+;     add (BULLET PTR [esi]).position.Y, 1
+;     jmp BulletMove_EndMove
+; BulletMove_FlyLeft:
+;     sub (BULLET PTR[esi]).position.X, 1
+;     jmp BulletMove_EndMove
+; BulletMove_EndMove:
+;     INVOKE PrintBullet, thisOutputHandle, thisBullet, thisGameMap, countWord
+;     ret
+; BulletMove ENDP
 
 ;; NewBullet
 ;; FIXME:
@@ -229,51 +436,53 @@ NewBullet_NewBulletEnd:
     ret
 NewBullet ENDP 
 
+
+;; this proc is been moved to bullet_move
 ;; BulletHit
 ;; check if bullet has hit wall or tank 
 ;; FIXME:
-BulletHit PROC USES eax ebx ecx esi edi,
-    thisBullet: PTR BULLET,
-    thisBulletAmount: PTR BYTE, 
-    thisGameMap: PTR BYTE
+; BulletHit PROC USES eax ebx ecx esi edi,
+;     thisBullet: PTR BULLET,
+;     thisBulletAmount: PTR BYTE, 
+;     thisGameMap: PTR BYTE
 
-    mov esi, thisBullet
-    mov edi, thisGameMap
+;     mov esi, thisBullet
+;     mov edi, thisGameMap
     
-    movzx ecx, (BULLET PTR [esi]).position.Y
-BulletHit_ChangeRow:
-    add edi, GAME_MAP_WIDTH
-    loop BulletHit_ChangeRow
+;     movzx ecx, (BULLET PTR [esi]).position.Y
+; BulletHit_ChangeRow:
+;     add edi, GAME_MAP_WIDTH
+;     loop BulletHit_ChangeRow
 
-    movzx ecx, (bullet PTR [esi]).position.X
-    add edi, ecx
+;     movzx ecx, (bullet PTR [esi]).position.X
+;     add edi, ecx
     
-    mov ebx, [edi]
-    .IF ebx == GAME_MAP_CHAR_EMPTY
-        jmp BulletHit_BulletHitEnd
-    .ENDIF
+;     mov ebx, [edi]
+;     .IF ebx == GAME_MAP_CHAR_EMPTY
+;         jmp BulletHit_BulletHitEnd
+;     .ENDIF
 
-    push esi
-    mov esi, thisBulletAmount               ; hit something (tank or wall)
-    sub (BYTE PTR [esi]), 1                 ; bullet amount - 1
-    pop esi
+;     push esi
+;     mov esi, thisBulletAmount               ; hit something (tank or wall)
+;     sub (BYTE PTR [esi]), 1                 ; bullet amount - 1
+;     pop esi
 
-    mov al, (bullet PTR [esi]).role
-    .IF ebx == GAME_MAP_CHAR_PALYER                        ; hit our tank
-        .IF al == ROLE_PLAYER
-            jmp BulletHit_BulletHitEnd
-        .ENDIF
-        ; ourTankDestroy
-        ; 
-    .ENDIF
+;     mov al, (bullet PTR [esi]).role
+;     .IF ebx == GAME_MAP_CHAR_PALYER                        ; hit our tank
+;         .IF al == ROLE_PLAYER
+;             jmp BulletHit_BulletHitEnd
+;         .ENDIF
+;         ; ourTankDestroy
+;         ; 
+;     .ENDIF
 
-    .IF ebx == GAME_MAP_CHAR_ENEMY                        ; hit enemy's tank
-        .IF al == ROLE_ENEMY
-            jmp BulletHit_BulletHitEnd                ; enemy hit enemy
-        .ENDIF
-        ; enemyTankDestroy
-    .ENDIF
-                                            ; if hit wall, do nothing      
-BulletHit_BulletHitEnd:
-    ret
-BulletHit ENDP
+;     .IF ebx == GAME_MAP_CHAR_ENEMY                        ; hit enemy's tank
+;         .IF al == ROLE_ENEMY
+;             jmp BulletHit_BulletHitEnd                ; enemy hit enemy
+;         .ENDIF
+;         ; enemyTankDestroy
+;     .ENDIF
+;                                             ; if hit wall, do nothing      
+; BulletHit_BulletHitEnd:
+;     ret
+; BulletHit ENDP
