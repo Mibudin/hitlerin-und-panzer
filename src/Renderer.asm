@@ -37,10 +37,6 @@ InitRenderer_ClearRenderBufferLayersAll:
         ADDR menuCreditsCmdImage_characters,
         LENGTH menuCreditsCmdImage.characters
 
-    ; Initialize render buffers to show
-    INVOKE PushRenderBufferImageDiscardable, RENDER_BUFFER_LAYER_GAME_MAP, ADDR mapCmdImage, stdRenderOrigin
-    INVOKE PushRenderBufferImageDiscardable, RENDER_BUFFER_LAYER_GAME_MAP, ADDR menuCreditsCmdImage, stdRenderOrigin
-
     ret
 InitRenderer ENDP
 

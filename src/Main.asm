@@ -23,6 +23,11 @@ Main ENDP
 MainGameInit PROC
     call InitGame
 
+    mMainGameTurn_GameStateStart_Pre
+
+    ; mov gameState, GAME_STATE_TEST
+    ; mMainGameTurn_GameStateTest_Pre
+
     ret
 MainGameInit ENDP
 
@@ -44,7 +49,6 @@ MainGameLoop_Loop:
 MainGameLoop ENDP
 
 ;; MainGameTurn
-;; ; TODO:
 ;; Returns:
 ;;     EAX: Whether to continue the main game loop
 ;;          1: True; 0: False

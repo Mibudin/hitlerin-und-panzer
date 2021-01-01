@@ -11,6 +11,10 @@ TITLE Main (Main.inc)
 ; = MACROS =
 ; ==========
 
+;; mMainGameTurn_GameStateTest_Pre
+mMainGameTurn_GameStateTest_Pre MACRO
+ENDM
+
 ;; mMainGameTurn_GameStateTest
 mMainGameTurn_GameStateTest MACRO
     ; mClearRenderBuffer RENDER_BUFFER_LAYER_TANKS
@@ -20,27 +24,88 @@ mMainGameTurn_GameStateTest MACRO
 
     ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
 
-    INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
+    ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
 
     ; call WaitMsg
 
     mov eax, TRUE
 ENDM
 
-;; mMainGameTurn_GameStateStart
-;; TODO: HITLERIN
-mMainGameTurn_GameStateStart MACRO
-    call Home    
+;; mMainGameTurn_GameStateStart_Pre
+mMainGameTurn_GameStateStart_Pre MACRO
+    INVOKE PushRenderBufferImageDiscardable,
+        RENDER_BUFFER_LAYER_GAME_MAP,
+        ADDR startMenuCmdImage,
+        stdRenderOrigin
+    INVOKE Render, RENDER_BUFFER_LAYER_GAME_MAP
+ENDM
 
-    ; mov gameState, GAME_STATE_GAME_MAP
-    mov gameState, GAME_STATE_TEST
-    call Clrscr
+;; mMainGameTurn_GameStateStart
+;; TODO: More beautiful?
+mMainGameTurn_GameStateStart MACRO
+    call ReadKey
+    movzx edx, startMenuState
+    .IF edx == START_MENU_STATE_MAIN
+        .IF     ax == 3920h  ; SPACE
+            mov gameState, GAME_STATE_GAME_MAP
+            mMainGameTurn_GameStateGameMap_Pre
+
+        .ELSEIF ax == 1372h || ax == 1352h  ; r || R
+            INVOKE PushRenderBufferImage,
+                RENDER_BUFFER_LAYER_GAME_MAP,
+                ADDR menuRuleCmdImage,
+                stdRenderOrigin
+            INVOKE Render, RENDER_BUFFER_LAYER_GAME_MAP
+            mov startMenuState, START_MENU_STATE_RULES
+
+        .ELSEIF ax == 326Dh || ax == 324Dh  ; m || M
+            INVOKE PushRenderBufferImage,
+                RENDER_BUFFER_LAYER_GAME_MAP,
+                ADDR menuCreditsCmdImage,
+                stdRenderOrigin
+            INVOKE Render, RENDER_BUFFER_LAYER_GAME_MAP
+            mov startMenuState, START_MENU_STATE_CREDITS
+
+        .ENDIF
+
+    .ELSEIF edx == START_MENU_STATE_RULES
+        .IF     ax == 2D78h || ax == 2D58h  ; x || X
+            INVOKE PushRenderBufferImage,
+                RENDER_BUFFER_LAYER_GAME_MAP,
+                ADDR startMenuCmdImage,
+                stdRenderOrigin
+            INVOKE Render, RENDER_BUFFER_LAYER_GAME_MAP
+            mov startMenuState, START_MENU_STATE_MAIN
+
+        .ENDIF
+
+    .ELSEIF edx == START_MENU_STATE_CREDITS
+        .IF     ax == 2D78h || ax == 2D58h  ; x || X
+            INVOKE PushRenderBufferImage,
+                RENDER_BUFFER_LAYER_GAME_MAP,
+                ADDR startMenuCmdImage,
+                stdRenderOrigin
+            INVOKE Render, RENDER_BUFFER_LAYER_GAME_MAP
+            mov startMenuState, START_MENU_STATE_MAIN
+
+        .ENDIF
+
+    .ENDIF
 
     mov eax, TRUE
 ENDM
 
+;; mMainGameTurn_GameStateGameMap_Pre
+mMainGameTurn_GameStateGameMap_Pre MACRO
+    INVOKE PushRenderBufferImageDiscardable,
+        RENDER_BUFFER_LAYER_GAME_MAP,
+        ADDR mapCmdImage,
+        stdRenderOrigin
+ENDM
+
 ;; mMainGameTurn_GameStateGameMap
 ;; TODO: Move to ending
+;; TODO: Tanks, bullets, lives
 mMainGameTurn_GameStateGameMap MACRO
     ; Clear render buffer layers
     mClearRenderBuffer RENDER_BUFFER_LAYER_TANKS
@@ -69,8 +134,12 @@ mMainGameTurn_GameStateGameMap_EnemyTanks:
     mov eax, TRUE
 ENDM
 
+;; mMainGameTurn_GameStateEnd_Pre
+mMainGameTurn_GameStateEnd_Pre MACRO
+ENDM
+
 ;; mMainGameTurn_GameStateEnd
-;; TODO: Ending
+;; FIXME: Ending
 mMainGameTurn_GameStateEnd MACRO
 
     mov eax, TRUE

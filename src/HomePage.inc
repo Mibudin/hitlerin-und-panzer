@@ -4,6 +4,7 @@ TITLE HomePage (HomePage.asm)
 ; = HomePage =
 ; ============
 
+; (Obsolete)
 ; The main handler of the home page
 
 

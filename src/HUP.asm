@@ -41,6 +41,11 @@ SCREEN_BUFFER_HEIGHT EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
 WINDOW_WIDTH         EQU <128>  ; 128 (2^7) chars, 64 (2^6) blocks
 WINDOW_HEIGHT        EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
 
+; The start menu state
+START_MENU_STATE_MAIN    EQU <0>
+START_MENU_STATE_RULES   EQU <1>
+START_MENU_STATE_CREDITS EQU <2>
+
 ; The size of the map
 GAME_MAP_WIDTH  EQU <SCREEN_BUFFER_WIDTH>
 GAME_MAP_HEIGHT EQU <SCREEN_BUFFER_HEIGHT>
@@ -184,13 +189,13 @@ BULLET_SIZE_BYTE EQU <6>
 INCLUDE Main.inc             ; The main program file of this project. (Must be the first)
 INCLUDE Initialization.inc   ; The major initialization part of the game
 INCLUDE Renderer.inc         ; The major rendering part of the game
-INCLUDE GameMapHandler.inc   ; The main handler of the game map
+; INCLUDE GameMapHandler.inc   ; The main handler of the game map
 INCLUDE Tank.inc             ; The main handler of the tanks
 INCLUDE Bullet.inc           ; The main handler of the bullets
 INCLUDE ControlEnemy.inc     ; The main handler of controling enemies
-INCLUDE HomePage.inc         ; The main handler of the home page
-INCLUDE StartMenuHandler.inc ; The main handler of the start menu
-INCLUDE FileLoader.inc       ; The main handler of loading files
+; INCLUDE HomePage.inc         ; (Obsolete) The main handler of the home page
+; INCLUDE StartMenuHandler.inc ; The main handler of the start menu
+; INCLUDE FileLoader.inc       ; The main handler of loading files
 
 
 ; ================
@@ -223,6 +228,9 @@ stdConsoleCursorInfo CONSOLE_CURSOR_INFO <100, FALSE>
 ; The main game logic
 gameState     BYTE  GAME_STATE_TEST
 gameTickCount DWORD 0
+
+; The partial game logic
+startMenuState BYTE START_MENU_STATE_MAIN
 
 ; The game exit code
 gameExitCode DWORD 0
@@ -293,7 +301,7 @@ startMenuCmdImage_characters BYTE "                                             
                              BYTE "                                                                        .:odhoooooo//:++/+++-:+oooo+ss+:+++-..-/++/+:.   `  ```-"
                              BYTE "      * [SPACE] Start The Battle                                        `--++oooooo+//////:.:++++oo/ooo+::++-../++hh+`       ```"
                              BYTE "                                                                         ..-:/++++oo:+///..:///++++/++oo//-/+../:+oo:`     ` `.."
-                             BYTE "      * [P] See The Game Rule                                           ..```:/++++o++/-`.-:::://///+++++::/:-::///:/         .."
+                             BYTE "      * [R] See The Game Rule                                           ..```:/++++o++/-`.-:::://///+++++::/:-::///:/         .."
                              BYTE "                                                                       ..``  `-/+++oo/. `:::::::::::////+/-:::://:.+/         `."
                              BYTE "      * [M] See The Credits                                           `.``     `:+++-`` .:///:::::-:://///:--:::-.:-`          `"
                              BYTE "                                                                     `.``       ``..` ``--/-+o+/::-:::::/:---:--::-             "
@@ -432,35 +440,35 @@ gamePalyerTankLives     BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
 ; The common trash bus
 trashBus DWORD ?
 
-; Texts
-StartS  BYTE "					        Press SPACE to start", 0
-RuleS   BYTE "					    Press R to see the game rule", 0
-MemberS BYTE "					     Press M to see member list", 0
+; Home page texts
+; StartS  BYTE "					        Press SPACE to start", 0
+; RuleS   BYTE "					    Press R to see the game rule", 0
+; MemberS BYTE "					     Press M to see member list", 0
 
-CloseRS BYTE "	   	Press X to close the game rule", 0
-CloseMS BYTE "					     Press X to close member list", 0
+; CloseRS BYTE "	   	Press X to close the game rule", 0
+; CloseMS BYTE "					     Press X to close member list", 0
 
-GameRuleS1_1 BYTE "	   	- Player's Panzer", 0
-GameRuleS1_2 BYTE "		  	- Have one panzer", 0
-GameRuleS1_3 BYTE "		  	- Control the direction with ARROW KEYS", 0
-GameRuleS1_4 BYTE "		   	- Fire a bullet with SPACE ( fire one per 2 seconds, accumulate three ones at most )", 0
-GameRuleS1_5 BYTE "		   	- Have three lives", 0
+; GameRuleS1_1 BYTE "	   	- Player's Panzer", 0
+; GameRuleS1_2 BYTE "		  	- Have one panzer", 0
+; GameRuleS1_3 BYTE "		  	- Control the direction with ARROW KEYS", 0
+; GameRuleS1_4 BYTE "		   	- Fire a bullet with SPACE ( fire one per 2 seconds, accumulate three ones at most )", 0
+; GameRuleS1_5 BYTE "		   	- Have three lives", 0
 
-GameRuleS2_1 BYTE "	   	- Enemy's Panzers",0 
-GameRuleS2_2 BYTE "		   	- Have three panzers", 0
-GameRuleS2_3 BYTE "		   	- Automatically move and fire through certain rules", 0
-GameRuleS2_4 BYTE "		   	- Have one life", 0
+; GameRuleS2_1 BYTE "	   	- Enemy's Panzers",0 
+; GameRuleS2_2 BYTE "		   	- Have three panzers", 0
+; GameRuleS2_3 BYTE "		   	- Automatically move and fire through certain rules", 0
+; GameRuleS2_4 BYTE "		   	- Have one life", 0
 
-GameRuleS3_1 BYTE "	   	- Victory Condition", 0
-GameRuleS3_2 BYTE "		   	- Destroy all panzers of the enemy", 0
+; GameRuleS3_1 BYTE "	   	- Victory Condition", 0
+; GameRuleS3_2 BYTE "		   	- Destroy all panzers of the enemy", 0
 
-GameRuleS4_1 BYTE "	  	- Failure Condition", 0
-GameRuleS4_2 BYTE "		   	- Run out of all three lives", 0
+; GameRuleS4_1 BYTE "	  	- Failure Condition", 0
+; GameRuleS4_2 BYTE "		   	- Run out of all three lives", 0
 
-MemberListS1 BYTE "					     HONG, YU-XIANG", 0				; 洪裕翔
-MemberListS2 BYTE "					     LIU, ZI-YONG", 0				; 劉子雍
-MemberListS3 BYTE "					     PETER", 0						; 林緯翔
-MemberListS4 BYTE "					     QIN, CHENG-YE", 0				; 秦承業
+; MemberListS1 BYTE "					     HONG, YU-XIANG", 0				; 洪裕翔
+; MemberListS2 BYTE "					     LIU, ZI-YONG", 0				; 劉子雍
+; MemberListS3 BYTE "					     PETER", 0						; 林緯翔
+; MemberListS4 BYTE "					     QIN, CHENG-YE", 0				; 秦承業
 
 ; TODO: Test
 ; testString BYTE CRLF_C
@@ -492,13 +500,13 @@ ProgramEntry:
 INCLUDE Main.asm             ; The main program file of this project. (Must be the first)
 INCLUDE Initialization.asm   ; The major initialization part of the game
 INCLUDE Renderer.asm         ; The major rendering part of the game
-INCLUDE GameMapHandler.asm   ; The main handler of the game map
+; INCLUDE GameMapHandler.asm   ; The main handler of the game map
 INCLUDE Tank.asm             ; The main handler of the tanks
 INCLUDE Bullet.asm           ; The main handler of the bullets
 INCLUDE ControlEnemy.asm     ; The main handler of controling enemies
-INCLUDE HomePage.asm         ; The main handler of the home page
-INCLUDE StartMenuHandler.asm ; The main handler of the start menu
-INCLUDE FileLoader.asm       ; The main handler of loading files
+; INCLUDE HomePage.asm         ; (Obsolete) The main handler of the home page
+; INCLUDE StartMenuHandler.asm ; The main handler of the start menu
+; INCLUDE FileLoader.asm       ; The main handler of loading files
 
 ; The end of the program entry
 END ProgramEntry
