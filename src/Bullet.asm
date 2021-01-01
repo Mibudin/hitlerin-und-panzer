@@ -486,3 +486,32 @@ NewBullet ENDP
 ; BulletHit_BulletHitEnd:
 ;     ret
 ; BulletHit ENDP
+
+; TODO: add GAME_MAP_CHAR_PALYER_NUMBER to hup.asm
+WhatPositionIs PROC USES edi,
+    thisPosition: COORD,
+    thisGameMap: PTR BYTE
+
+    INVOKE GetRenderBufferIndex, thisPosition
+    movzx eax, ax
+    mov edi, thisGameMap
+
+    ; this Position might be wall, enemy's bullet, enemy's tank
+    .IF (BYTE PTR [edi + eax]) == GAMW_MAP_CHAR_EMPTY
+        mov al, GAME_MAP_CHAR_PALYER_NUMBER                 ; 1
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_PLAYER
+        mov al, GAME_MAP_PLAYER_NUMBER                      ; 2
+    .ELSEIF (BYTE PTR [edi + eax]), GAMW_MAP_ENEMY
+        mov al, GAMW_MAP_ENEMY_NUMBER                       ; 3
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+        mov al, GAME_MAP_CHAR_PLAYER_BULLET_NUMBER          ; 4
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
+        mov al, GAME_MAP_CHAR_ENEMY_BULLET_NUMBER           ; 5
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_0
+        mov al, GAME_MAP_CHAR_WALL_0_NUMBER                 ; 6
+    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_1
+        mov al, GAME_MAP_CHAR_WALL_1_NUMBER                 ; 7
+    .ENDIF
+WhatPositionIs_return:
+    ret
+WhatPositionIs ENDP
