@@ -190,6 +190,7 @@ INCLUDE Bullet.inc           ; The main handler of the bullets
 INCLUDE ControlEnemy.inc     ; The main handler of controling enemies
 INCLUDE HomePage.inc         ; The main handler of the home page
 INCLUDE StartMenuHandler.inc ; The main handler of the start menu
+INCLUDE FileLoader.inc       ; The main handler of loading files
 
 
 ; ================
@@ -265,9 +266,117 @@ bulletCmdImage      CMD_IMAGE <<1, 1>, \
                                {0Eh}>
 bulletCmdImageEnemy CMD_IMAGE <<1, 1>, \  ; TODO: Enemy bullet differences?
                                {'%'},  \
-                               {0Eh}>
+                               {0Dh}>
 
 ; TODO: Load from file?
+startMenuCmdImage_characters BYTE "                                                                                          ./-.       `` `..`       `-:`         "
+                             BYTE "                                                                                           :+.  ``..```.``.-...   .++:`         "
+                             BYTE "      H H  III  TTT  L    EEE  RRR  III  N N                                           `.```:- `..`` ````` `.`.. `.-``          "
+                             BYTE "      H H   I    T   L    E    R R   I   NNN                                          `-``.-..`.``` ``````````````..--:`        "
+                             BYTE "      HHH   I    T   L    EEE  RR    I   N N                                          -`.++-```.```````````.```````.`-.         "
+                             BYTE "      H H   I    T   L    E    R R   I   N N                                          :```` ``.-.--`---/-`````-`.``..``         "
+                             BYTE "      H H  III   T   LLL  EEE  R R  III  N N                                         `:``````````...-:sNo..--./::.-:/`.`        "
+                             BYTE "                                                                                     `-```` ``````..:hNmm/:--:.//-.-/.`-        "
+                             BYTE "                            d                                                        `.````  .-```../shNNmho+o:/+o``.- -`       "
+                             BYTE "                            d                                                        `````   sy```-:::syNMMMNs::+o `.. `-       "
+                             BYTE "                u u  nnn  ddd                                                        ````    -d/`..+NNNMMMMMNssmh. `.`  -       "
+                             BYTE "                u u  n n  d d                                                          ```    `.``-:hNMMMMMMMNNN:`````  -`      "
+                             BYTE "                uuu  n n  ddd                                            `o           `` `    `  `/NNMMNNNNMMMNo`````   ..      "
+                             BYTE "                                                                -//-     .m.         ..``        .`-dmMMNNNMNy-  ` `   ``-      "
+                             BYTE "                          PPP   A   N N  ZZZ  EEE  RRR            `:oo-   yh`      `::```  ```  `--dmdhdmdh+`    ``    ` -      "
+                             BYTE "                          P P  A A  NNN    Z  E    R R               `odyhmyd.     /:```:/+/+ooo-:::hMMNs/oy..--.`.`  `````     "
+                             BYTE "                          PPP  AAA  N N   Z   EEE  RR                 :MNmddhm.  `/-```+oooo+/o+--+o+sNh.---+::/++:.` ` `.`     "
+                             BYTE "                          P    A A  N N  Z    E    R R                 hMNhyhN/ .:.```-oooooo+/:-:///++dy..-d+++///o```````     "
+                             BYTE "                          P    A A  N N  ZZZ  EEE  R R                 .mMMmdNs-:` ```+ooooooo/`-++//+oomo.--d++/::+: `.```     "
+                             BYTE "                                                                        .dMMmh++/. ``.+oo+++oo.-so++oooooy..-/h+ooo/-   ````    "
+                             BYTE "                                                                        .+sdhd+ooo:`::/++++o+:-ossss++++++-...++oo+o-`    ``````"
+                             BYTE "                                                                        .:odhoooooo//:++/+++-:+oooo+ss+:+++-..-/++/+:.   `  ```-"
+                             BYTE "      * [SPACE] Start The Battle                                        `--++oooooo+//////:.:++++oo/ooo+::++-../++hh+`       ```"
+                             BYTE "                                                                         ..-:/++++oo:+///..:///++++/++oo//-/+../:+oo:`     ` `.."
+                             BYTE "      * [P] See The Game Rule                                           ..```:/++++o++/-`.-:::://///+++++::/:-::///:/         .."
+                             BYTE "                                                                       ..``  `-/+++oo/. `:::::::::::////+/-:::://:.+/         `."
+                             BYTE "      * [M] See The Credits                                           `.``     `:+++-`` .:///:::::-:://///:--:::-.:-`          `"
+                             BYTE "                                                                     `.``       ``..` ``--/-+o+/::-:::::/:---:--::-             "
+                             BYTE "                                                                     ```        ` ``   `-++/:+o+o/+/://:-::-.:.-::.             "
+                             BYTE "                                                                    ```` `      ````   `-/+o/:oo//+++ooo:++:.:::/:.             "
+                             BYTE "      HETLERIN und PANZER - Version 0.2                             ``` `      ``` `   `---/++/+/oo++/+:/++/-:////-             "
+                             BYTE "                                                                   ```  `      ``` `  ..::////::/+////:-::/:.::://+-            "
+startMenuCmdImage CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
+                             <>,                                                                       \
+                             SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+
+menuRuleCmdImage_characters BYTE "                                                                                          ./-.       `` `..`       `-:`         "
+                            BYTE "                                                                                           :+.  ``..```.``.-...   .++:`         "
+                            BYTE "      The Game Rule of `HITERLIN und PANZER`                                           `.```:- `..`` ````` `.`.. `.-``          "
+                            BYTE "                                                                                      `-``.-..`.``` ``````````````..--:`        "
+                            BYTE "      - Player's Panzer                                                               -`.++-```.```````````.```````.`-.         "
+                            BYTE "                                                                                      :```` ``.-.--`---/-`````-`.``..``         "
+                            BYTE "          - Have one panzer                                                          `:``````````...-:sNo..--./::.-:/`.`        "
+                            BYTE "          - Control the direction with [ARROW KEYS]                                  `-```` ``````..:hNmm/:--:.//-.-/.`-        "
+                            BYTE "          - Fire a bullet with [SPACE]                                               `.````  .-```../shNNmho+o:/+o``.- -`       "
+                            BYTE "            ( fire one per 2 seconds, accumulate three ones at most )                `````   sy```-:::syNMMMNs::+o `.. `-       "
+                            BYTE "          - Have three lives                                                         ````    -d/`..+NNNMMMMMNssmh. `.`  -       "
+                            BYTE "                                                                                       ```    `.``-:hNMMMMMMMNNN:`````  -`      "
+                            BYTE "      - Enemy's Panzers                                                  `o           `` `    `  `/NNMMNNNNMMMNo`````   ..      "
+                            BYTE "                                                                -//-     .m.         ..``        .`-dmMMNNNMNy-  ` `   ``-      "
+                            BYTE "          - Have three panzers                                    `:oo-   yh`      `::```  ```  `--dmdhdmdh+`    ``    ` -      "
+                            BYTE "          - Automatically move and fire through certain rules        `odyhmyd.     /:```:/+/+ooo-:::hMMNs/oy..--.`.`  `````     "
+                            BYTE "          - Have one life                                             :MNmddhm.  `/-```+oooo+/o+--+o+sNh.---+::/++:.` ` `.`     "
+                            BYTE "                                                                       hMNhyhN/ .:.```-oooooo+/:-:///++dy..-d+++///o```````     "
+                            BYTE "      - Victory Condition                                              .mMMmdNs-:` ```+ooooooo/`-++//+oomo.--d++/::+: `.```     "
+                            BYTE "                                                                        .dMMmh++/. ``.+oo+++oo.-so++oooooy..-/h+ooo/-   ````    "
+                            BYTE "          - Destroy all panzers of the enemy                            .+sdhd+ooo:`::/++++o+:-ossss++++++-...++oo+o-`    ``````"
+                            BYTE "                                                                        .:odhoooooo//:++/+++-:+oooo+ss+:+++-..-/++/+:.   `  ```-"
+                            BYTE "      - Failure Condition                                               `--++oooooo+//////:.:++++oo/ooo+::++-../++hh+`       ```"
+                            BYTE "                                                                         ..-:/++++oo:+///..:///++++/++oo//-/+../:+oo:`     ` `.."
+                            BYTE "          - Run out of all three lives                                  ..```:/++++o++/-`.-:::://///+++++::/:-::///:/         .."
+                            BYTE "                                                                       ..``  `-/+++oo/. `:::::::::::////+/-:::://:.+/         `."
+                            BYTE "                                                                      `.``     `:+++-`` .:///:::::-:://///:--:::-.:-`          `"
+                            BYTE "      * [X] Retuen to The Start Menu                                 `.``       ``..` ``--/-+o+/::-:::::/:---:--::-             "
+                            BYTE "                                                                     ```        ` ``   `-++/:+o+o/+/://:-::-.:.-::.             "
+                            BYTE "                                                                    ```` `      ````   `-/+o/:oo//+++ooo:++:.:::/:.             "
+                            BYTE "      HETLERIN und PANZER - Version 0.2                             ``` `      ``` `   `---/++/+/oo++/+:/++/-:////-             "
+                            BYTE "                                                                   ```  `      ``` `  ..::////::/+////:-::/:.::://+-            "
+menuRuleCmdImage CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
+                            <>,                                                                       \
+                            SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+
+menuCreditsCmdImage_characters BYTE "                                                                                          ./-.       `` `..`       `-:`         "
+                               BYTE "                                                                                           :+.  ``..```.``.-...   .++:`         "
+                               BYTE "                                                                                       `.```:- `..`` ````` `.`.. `.-``          "
+                               BYTE "                                                                                      `-``.-..`.``` ``````````````..--:`        "
+                               BYTE "      The Credits of `HITERLIN und PANZER`                                            -`.++-```.```````````.```````.`-.         "
+                               BYTE "                                                                                      :```` ``.-.--`---/-`````-`.``..``         "
+                               BYTE "                                                                                     `:``````````...-:sNo..--./::.-:/`.`        "
+                               BYTE "      - Lin, Wei-Xiang (108502003)                                                   `-```` ``````..:hNmm/:--:.//-.-/.`-        "
+                               BYTE "                                                                                     `.````  .-```../shNNmho+o:/+o``.- -`       "
+                               BYTE "          - Behaviors of Tanks and Bullets                                           `````   sy```-:::syNMMMNs::+o `.. `-       "
+                               BYTE "                                                                                     ````    -d/`..+NNNMMMMMNssmh. `.`  -       "
+                               BYTE "      - Hong, Yu-Xiang (108502020)                                                     ```    `.``-:hNMMMMMMMNNN:`````  -`      "
+                               BYTE "                                                                         `o           `` `    `  `/NNMMNNNNMMMNo`````   ..      "
+                               BYTE "          - AI of Tanks, DEMO Slides Designing and Making       -//-     .m.         ..``        .`-dmMMNNNMNy-  ` `   ``-      "
+                               BYTE "                                                                  `:oo-   yh`      `::```  ```  `--dmdhdmdh+`    ``    ` -      "
+                               BYTE "      - Liu, Zih-Yong  (108502023)                                   `odyhmyd.     /:```:/+/+ooo-:::hMMNs/oy..--.`.`  `````     "
+                               BYTE "                                                                      :MNmddhm.  `/-```+oooo+/o+--+o+sNh.---+::/++:.` ` `.`     "
+                               BYTE "          - Game Interfaces Designing and Project Integrating          hMNhyhN/ .:.```-oooooo+/:-:///++dy..-d+++///o```````     "
+                               BYTE "                                                                       .mMMmdNs-:` ```+ooooooo/`-++//+oomo.--d++/::+: `.```     "
+                               BYTE "      - Qin, Cheng-Ye  (108502039)                                      .dMMmh++/. ``.+oo+++oo.-so++oooooy..-/h+ooo/-   ````    "
+                               BYTE "                                                                        .+sdhd+ooo:`::/++++o+:-ossss++++++-...++oo+o-`    ``````"
+                               BYTE "          - Idea Giving and Start Menu Designing                        .:odhoooooo//:++/+++-:+oooo+ss+:+++-..-/++/+:.   `  ```-"
+                               BYTE "                                                                        `--++oooooo+//////:.:++++oo/ooo+::++-../++hh+`       ```"
+                               BYTE "                                                                         ..-:/++++oo:+///..:///++++/++oo//-/+../:+oo:`     ` `.."
+                               BYTE "                                                                        ..```:/++++o++/-`.-:::://///+++++::/:-::///:/         .."
+                               BYTE "      * [X] Retuen to The Start Menu                                   ..``  `-/+++oo/. `:::::::::::////+/-:::://:.+/         `."
+                               BYTE "                                                                      `.``     `:+++-`` .:///:::::-:://///:--:::-.:-`          `"
+                               BYTE "                                                                     `.``       ``..` ``--/-+o+/::-:::::/:---:--::-             "
+                               BYTE "                                                                     ```        ` ``   `-++/:+o+o/+/://:-::-.:.-::.             "
+                               BYTE "                                                                    ```` `      ````   `-/+o/:oo//+++ooo:++:.:::/:.             "
+                               BYTE "      HETLERIN und PANZER - Version 0.2                             ``` `      ``` `   `---/++/+/oo++/+:/++/-:////-             "
+                               BYTE "                                                                   ```  `      ``` `  ..::////::/+////:-::/:.::://+-            "
+menuCreditsCmdImage CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
+                               <>,                                                                       \
+                               SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+
 mapCmdImage_characters BYTE "================================================================================================================================"
                        BYTE "|                     |                                                                                                        |"
                        BYTE "|                     |                                                                                                        |"
@@ -300,12 +409,12 @@ mapCmdImage_characters BYTE "===================================================
                        BYTE "|                                                                                                         |                    |"
                        BYTE "|                                                                                                         |                    |"
                        BYTE "================================================================================================================================"
-mapCmdImage       CMD_IMAGE <<GAME_MAP_WIDTH, GAME_MAP_HEIGHT>,                              \
-                             <>,                                                             \
-                             GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+mapCmdImage CMD_IMAGE <<GAME_MAP_WIDTH, GAME_MAP_HEIGHT>,                              \
+                       <>,                                                             \
+                       GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
 
 ; Game map field
-enemyField SMALL_RECT <6, 96, 25, 126>
+enemySpawnField SMALL_RECT <6, 96, 25, 126>  ; TODO: Random spawn enemy?
 
 ; Object sizes
 tankSize   COORD <3, 3>
@@ -389,6 +498,7 @@ INCLUDE Bullet.asm           ; The main handler of the bullets
 INCLUDE ControlEnemy.asm     ; The main handler of controling enemies
 INCLUDE HomePage.asm         ; The main handler of the home page
 INCLUDE StartMenuHandler.asm ; The main handler of the start menu
+INCLUDE FileLoader.asm       ; The main handler of loading files
 
 ; The end of the program entry
 END ProgramEntry

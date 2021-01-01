@@ -85,6 +85,11 @@ SetRenderBuffer PROTO,
     characterValue:BYTE,
     attributeValue:WORD
 
+PushCmdImageCharacters PROTO,
+    cmdImage:PTR CMD_IMAGE,
+    cmdImageCharacters:PTR BYTE,
+    characterLength:DWORD
+
 PushRenderBufferImage PROTO,
     layer:DWORD,
     cmdImage:PTR CMD_IMAGE,

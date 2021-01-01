@@ -20,7 +20,9 @@ mMainGameTurn_GameStateTest MACRO
 
     ; INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_TANKS
 
-    call WaitMsg
+    INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_GAME_MAP
+
+    ; call WaitMsg
 
     mov eax, TRUE
 ENDM
@@ -30,8 +32,8 @@ ENDM
 mMainGameTurn_GameStateStart MACRO
     call Home    
 
-    mov gameState, GAME_STATE_GAME_MAP
-    ; mov gameState, GAME_STATE_TEST
+    ; mov gameState, GAME_STATE_GAME_MAP
+    mov gameState, GAME_STATE_TEST
     call Clrscr
 
     mov eax, TRUE

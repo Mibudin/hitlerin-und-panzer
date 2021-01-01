@@ -19,13 +19,27 @@ InitRenderer_ClearRenderBufferLayersAll:
     cmp ecx, 0
     jbe InitRenderer_ClearRenderBufferLayersAll
 
-    ; Initialize the game map to show
-    cld
-    mov ecx, GAME_MAP_WIDTH * GAME_MAP_HEIGHT
-    mov esi, OFFSET mapCmdImage_characters
-    mov edi, OFFSET mapCmdImage.characters
-    rep movsb
+    ; Initialize CMD images
+    INVOKE PushCmdImageCharacters,
+        ADDR mapCmdImage,
+        ADDR mapCmdImage_characters,
+        LENGTH mapCmdImage.characters
+    INVOKE PushCmdImageCharacters,
+        ADDR startMenuCmdImage,
+        ADDR startMenuCmdImage_characters,
+        LENGTH startMenuCmdImage.characters
+    INVOKE PushCmdImageCharacters,
+        ADDR menuRuleCmdImage,
+        ADDR menuRuleCmdImage_characters,
+        LENGTH menuRuleCmdImage.characters
+    INVOKE PushCmdImageCharacters,
+        ADDR menuCreditsCmdImage,
+        ADDR menuCreditsCmdImage_characters,
+        LENGTH menuCreditsCmdImage.characters
+
+    ; Initialize render buffers to show
     INVOKE PushRenderBufferImageDiscardable, RENDER_BUFFER_LAYER_GAME_MAP, ADDR mapCmdImage, stdRenderOrigin
+    INVOKE PushRenderBufferImageDiscardable, RENDER_BUFFER_LAYER_GAME_MAP, ADDR menuCreditsCmdImage, stdRenderOrigin
 
     ret
 InitRenderer ENDP
@@ -165,6 +179,22 @@ SetRenderBuffer PROC USES ax ebx ecx edi,
 
     ret
 SetRenderBuffer ENDP
+
+;; PushCmdImageCharacters
+PushCmdImageCharacters PROC USES ecx esi edi,
+    cmdImage:PTR CMD_IMAGE,
+    cmdImageCharacters:PTR BYTE,
+    characterLength:DWORD
+
+    cld
+    mov ecx, characterLength
+    mov esi, cmdImage
+    lea edi, (CMD_IMAGE PTR [esi]).characters
+    mov esi, cmdImageCharacters
+    rep movsb
+
+    ret
+PushCmdImageCharacters ENDP
 
 ;; PushRenderBufferImage
 PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
