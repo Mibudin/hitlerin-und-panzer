@@ -8,7 +8,6 @@ TITLE Main (Main.asm)
 
 
 ;; Main
-;; TODO:
 Main PROC
     call MainGameInit
 

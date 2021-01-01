@@ -51,25 +51,25 @@ PrintTank PROC USES eax ecx esi edi,
     movzx ebx, (TANK PTR [esi]).role
     .IF     ebx == ROLE_PLAYER
         ; add eax, 128*(PTR Tank [esi]).position.y)+(PTR Tank [esi]).position.x
-	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER
         inc eax
-        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER
         inc eax
-	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER
 
         add eax, GAME_MAP_WIDTH - 2    ; 128-2
-        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER
         inc eax
-        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER
         inc eax
-	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER
 
         add eax, GAME_MAP_WIDTH - 2    ; 128-2
-        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER
         inc eax
-        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+        mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER
         inc eax
-	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PALYER
+	    mov (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER
 
     .ELSEIF ebx == ROLE_ENEMY
         ; add eax, 128*(PTR Tank [esi]).position.y)+(PTR Tank [esi]).position.x

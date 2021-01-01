@@ -170,7 +170,6 @@ SetRenderBuffer PROC USES ax ebx ecx edi,
 SetRenderBuffer ENDP
 
 ;; PushRenderBufferImage
-;; TODO: Improvement?
 PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
     layer:DWORD,
     cmdImage:PTR CMD_IMAGE,
@@ -238,7 +237,6 @@ PushRenderBufferImageBlank PROC USES ax,
 PushRenderBufferImageBlank ENDP
 
 ;; PushRenderBufferImageDiscardable
-;; TODO: Improvement? Check correctness?
 PushRenderBufferImageDiscardable PROC USES eax ebx ecx edx esi edi,
     layer:DWORD,
     cmdImage:PTR CMD_IMAGE,
@@ -345,7 +343,6 @@ Render PROC USES eax ecx edx,
 Render ENDP
 
 ;; RenderDiscardable
-;; TODO: Improve?
 RenderDiscardable PROC USES eax ebx ecx edx esi edi,
     layer:DWORD
     LOCAL outputCount:DWORD,

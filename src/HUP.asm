@@ -86,20 +86,28 @@ FACE_LEFT  EQU <4>
 ROLE_PLAYER EQU <1>
 ROLE_ENEMY  EQU <2>
 
-; The game map
+; The game map characters
 GAME_MAP_CHAR_EMPTY         EQU <' '>
-GAME_MAP_CHAR_PALYER        EQU <'#'>
+GAME_MAP_CHAR_PLAYER        EQU <'#'>
 GAME_MAP_CHAR_ENEMY         EQU <'*'>
 GAME_MAP_CHAR_PLAYER_BULLET EQU <'@'>
 GAME_MAP_CHAR_ENEMY_BULLET  EQU <'%'>
 GAME_MAP_CHAR_WALL_0        EQU <'='>
 GAME_MAP_CHAR_WALL_1        EQU <'|'>
 
-; Player start position
-PLAYER_START_POSITION EQU <<1, 1>>
+; The Game map numbers
+GAME_MAP_PLAYER_NUMBER        EQU <1>
+GAME_MAP_PLAYER_NUMBER        EQU <2>
+GAME_MAP_ENEMY_NUMBER         EQU <3>
+GAME_MAP_PLAYER_BULLET_NUMBER EQU <4>
+GAME_MAP_ENEMY_BULLET_NUMBER  EQU <5>
+GAME_MAP_WALL_0_NUMBER        EQU <6>
+GAME_MAP_WALL_1_NUMBER        EQU <7>
 
-; Tank
-ENEMY_TANK_AMOUNT EQU <2>
+; Game Objects
+PLAYER_START_POSITION EQU <<1, 1>>
+ENEMY_TANK_AMOUNT     EQU <2>
+BULLET_AMOUNT_MAX     EQU <20>
 
 
 ; ==============
@@ -136,12 +144,14 @@ BULLET STRUCT
     ; white     BYTE  ' '
     ; color     WORD  0Eh
     direction BYTE  FACE_UP
-    role     BYTE  ROLE_PLAYER
+    role      BYTE  ROLE_PLAYER
     position  COORD <1, 1>
 BULLET ENDS
 
 ; PROC Size BYTE
+; FIXME: or just use `BULLET`
 BULLET_SIZE_BYTE EQU <6>
+
 
 ; =================
 ; = Include Inner =
@@ -268,11 +278,12 @@ enemyField SMALL_RECT <6, 96, 25, 126>
 tankSize   COORD <3, 3>
 bulletSize COORD <1, 1>
 
-
-; Tanks
-playersTank   TANK <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER>
-enemyTankList TANK <<100, 2>, FACE_UP, ROLE_ENEMY>  ; ENEMY_TANK_AMOUNT = 2
-              TANK << 80, 1>, FACE_UP, ROLE_ENEMY>
+; Current game objects list
+gamePlayerTank          TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER>
+gameEnemyTankList       TANK   <<100, 2>, FACE_UP, ROLE_ENEMY>  ; ENEMY_TANK_AMOUNT = 2  ; TODO: Initialize enemy tanks
+                        TANK   << 80, 1>, FACE_UP, ROLE_ENEMY>
+gameBulletList          BULLET BULLET_AMOUNT_MAX DUP(<>)
+gameBulletCurrentAmount BYTE   0
 
 ; The common trash bus
 trashBus DWORD ?

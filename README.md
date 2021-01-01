@@ -2,6 +2,8 @@
 
 ***Battle City x Waifu x Console x MASM***
 
+<!-- TODO: Complete README -->
+
 ---
 
 ```

@@ -26,6 +26,7 @@ mMainGameTurn_GameStateTest MACRO
 ENDM
 
 ;; mMainGameTurn_GameStateStart
+;; TODO: HITLERIN
 mMainGameTurn_GameStateStart MACRO
     call Home    
 
@@ -37,6 +38,7 @@ mMainGameTurn_GameStateStart MACRO
 ENDM
 
 ;; mMainGameTurn_GameStateGameMap
+;; TODO: Move to ending
 mMainGameTurn_GameStateGameMap MACRO
     ; Clear render buffer layers
     mClearRenderBuffer RENDER_BUFFER_LAYER_TANKS
@@ -45,14 +47,14 @@ mMainGameTurn_GameStateGameMap MACRO
 
     ; Player tank
     call ReadKey
-    INVOKE MoveTank, stdOutputHandle, ADDR playersTank, ADDR gameMapRecord, ax, ADDR trashBus
+    INVOKE MoveTank, stdOutputHandle, ADDR gamePlayerTank, ADDR gameMapRecord, ax, ADDR trashBus
 
     ; Enemy tank
     mov ecx, ENEMY_TANK_AMOUNT
     xor edx, edx
 mMainGameTurn_GameStateGameMap_EnemyTanks:
-    INVOKE GetDirection, ADDR enemyTankList[edx], ADDR playersTank
-    INVOKE ComputerTankMove, stdOutputHandle, ADDR enemyTankList[edx], ADDR trashBus
+    INVOKE GetDirection, ADDR gameEnemyTankList[edx], ADDR gamePlayerTank
+    INVOKE ComputerTankMove, stdOutputHandle, ADDR gameEnemyTankList[edx], ADDR trashBus
     add edx, TANK
     loop mMainGameTurn_GameStateGameMap_EnemyTanks
 
@@ -66,7 +68,9 @@ mMainGameTurn_GameStateGameMap_EnemyTanks:
 ENDM
 
 ;; mMainGameTurn_GameStateEnd
+;; TODO: Ending
 mMainGameTurn_GameStateEnd MACRO
+
     mov eax, TRUE
 ENDM
 
