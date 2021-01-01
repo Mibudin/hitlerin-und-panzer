@@ -515,3 +515,45 @@ WhatPositionIs PROC USES edi,
 WhatPositionIs_return:
     ret
 WhatPositionIs ENDP
+
+DeleteBullet PROC USES eax ebx ecx edx esi edi, 
+    thisBullet: PTR BULLET,
+    bulletAmount: PTR BYTE, 
+    bulletList: PTR BULLET
+    mov edx, bulletAmount
+    mov esi, thisBullet
+    mov edi, bulletList
+    movzx ecx, (BYTE PTR [edx])
+DeleteBullet_CheckBullet:
+    mov ax, (BULLET PTR [esi]).position.x
+    mov bx, (BULLET PTR [edi]).position.x
+    cmp ax, bx
+    jne DeleteBullet_RunCheckLoop
+    mov ax, (BULLET PTR [esi]).position.y
+    mov bx, (BULLET PTR [edi]).position.y
+    cmp ax, bx
+    jne DeleteBullet_RunCheckLoop
+    push ecx
+    push edi
+    dec ecx
+DeleteBullet_RunToEnd:
+    inc edi
+    loop DeleteBullet_RunToEnd
+DeleteBullet_MoveEndToDelete:
+    mov eax, edi
+    pop edi
+    pop ecx
+    mov bx, (BULLET PTR [eax]).position.x
+    mov (BULLET PTR [edi]).position.x, bx
+    mov bx, (BULLET PTR [eax]).position.y
+    mov (BULLET PTR [edi]).position.y, bx
+    mov bl, (BULLET PTR [eax]).direction
+    mov bh, (BULLET PTR [eax]).owner
+    mov (BULLET PTR [edi]).direction, bl
+    mov (BULLET PTR [edi]).owner, bh
+    dec (BYTE PTR [edx])
+DeleteBullet_RunCheckLoop:
+    inc edi
+    loop DeleteBullet_CheckBullet
+    ret
+DeleteBullet ENDP
