@@ -15,14 +15,13 @@ Main PROC
 
     call MainGameExit
 
-    INVOKE ExitProcess, 0
+    INVOKE ExitProcess, gameExitCode
     exit
 Main ENDP
 
 ;; MainGameInit
 MainGameInit PROC
     call InitGame
-    call InitRenderer
 
     ret
 MainGameInit ENDP
@@ -38,7 +37,6 @@ MainGameLoop_Loop:
     mov gameTickCount, eax
 
     call MainGameTurn
-    ; mov eax, TRUE
     cmp eax, TRUE
     je MainGameLoop_Loop
 
@@ -52,8 +50,6 @@ MainGameLoop ENDP
 ;;          1: True; 0: False
 MainGameTurn PROC USES ecx edx
     ; Initialization
-    ; call Clrscr
-    ; call ClearRenderBuffer
 
     ; The game states
     .IF     gameState == GAME_STATE_TEST
@@ -75,7 +71,6 @@ MainGameTurn PROC USES ecx edx
     .ENDIF
 
 MainGameTurn_PostProcess:
-    ; call Render
 
 MainGameTurn_End:
     ret

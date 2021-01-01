@@ -15,9 +15,9 @@ TITLE HUP (HUP.asm)
 INCLUDE Irvine32.inc
 
 ; Include outer libraries
-INCLUDELIB Kernel32.lib
-INCLUDELIB irvine32.lib
-INCLUDELIB user32.lib
+INCLUDELIB Kernel32.Lib
+INCLUDELIB User32.Lib
+INCLUDELIB Irvine32.lib
 
 
 ; ===========
@@ -45,6 +45,28 @@ WINDOW_HEIGHT        EQU <32>   ;  32 (2^5) chars, 32 (2^5) blocks
 GAME_MAP_WIDTH  EQU <SCREEN_BUFFER_WIDTH>
 GAME_MAP_HEIGHT EQU <SCREEN_BUFFER_HEIGHT>
 
+; Concole modes
+; Default:
+;     In:  01F7h (0000 0001 1111 0111 b)
+;     Out: 0003h (0000 0000 0000 0011 b)
+; In:  ???? ??0? ?0?0 00?1 => 0000 0001 1010 0011
+;     1 0x0001 ENABLE_PROCESSED_INPUT 
+;     ? 0x0002 ENABLE_LINE_INPUT 
+;     0 0x0004 ENABLE_ECHO_INPUT 
+;     0 0x0008 ENABLE_WINDOW_INPUT 
+;     0 0x0010 ENABLE_MOUSE_INPUT 
+;     ? 0x0020 ENABLE_INSERT_MODE 
+;     0 0x0040 ENABLE_QUICK_EDIT_MODE 
+;     0 0x0200 ENABLE_VIRTUAL_TERMINAL_INPUT 
+; Out: ???? ???? ???0 0001 => 0000 0000 0000 0001
+;     1 0x0001 ENABLE_PROCESSED_OUTPUT
+;     0 0x0002 ENABLE_WRAP_AT_EOL_OUTPUT
+;     0 0x0004 ENABLE_VIRTUAL_TERMINAL_PROCESSING
+;     0 0x0008 DISABLE_NEWLINE_AUTO_RETURN
+;     0 0x0010 ENABLE_LVB_GRID_WORLDWIDE>
+CONSOLE_INPUT_MODE  EQU <0000000110100011b>
+CONSOLE_OUTPUT_MODE EQU <0000000000000001b>
+
 ; CMD color codes
 ; (Combinable by the operation `OR`)
 COLOR_FB EQU <00000001b>  ; FOREGROUND_BLUE      EQU <00000001b>
@@ -64,7 +86,7 @@ RENDER_BUFFER_BLANK_CHAR EQU <20h>                       ; A space
 RENDER_BUFFER_BLANK_ATTR EQU <RENDER_BUFFER_CLEAR_ATTR>  ; Black background and white foreground
 
 ; Render layers
-RENDER_BUFFER_LAYERS         EQU <4>  ; The amount of layers ; TODO: Test value
+RENDER_BUFFER_LAYERS         EQU <4>  ; The amount of layers
 RENDER_BUFFER_LAYER_GAME_MAP EQU <0>  ; The game map
 RENDER_BUFFER_LAYER_TANKS    EQU <1>  ; The panzers (tanks)
 RENDER_BUFFER_LAYER_BULLETS  EQU <2>  ; The bullets
@@ -104,10 +126,11 @@ GAME_MAP_ENEMY_BULLET_NUMBER  EQU <5>
 GAME_MAP_WALL_0_NUMBER        EQU <6>
 GAME_MAP_WALL_1_NUMBER        EQU <7>
 
-; Game Objects
-PLAYER_START_POSITION EQU <<1, 1>>
-ENEMY_TANK_AMOUNT     EQU <2>
-BULLET_AMOUNT_MAX     EQU <20>
+; Game objects
+PLAYER_START_POSITION     EQU <<1, 1>>
+PLAYER_LIVES_INITIAL      EQU <3>
+ENEMY_TANK_AMOUNT_INITIAL EQU <3>
+BULLET_AMOUNT_MAX         EQU <20>
 
 
 ; ==============
@@ -158,14 +181,15 @@ BULLET_SIZE_BYTE EQU <6>
 ; =================
 
 ; Include inner include files
-INCLUDE Main.inc            ; The main program file of this project. (Must be the first)
-INCLUDE Initialization.inc  ; The major initialization part of the game
-INCLUDE Renderer.inc        ; The major rendering part of the game
-INCLUDE GameMapHandler.inc  ; The main handler of the game map
-INCLUDE Tank.inc            ; The main handler of the tanks
-INCLUDE Bullet.inc          ; The main handler of the bullets
-INCLUDE ControlEnemy.inc    ; The main handler of controling enemies
-INCLUDE HomePage.inc        ; The main handler of the home page
+INCLUDE Main.inc             ; The main program file of this project. (Must be the first)
+INCLUDE Initialization.inc   ; The major initialization part of the game
+INCLUDE Renderer.inc         ; The major rendering part of the game
+INCLUDE GameMapHandler.inc   ; The main handler of the game map
+INCLUDE Tank.inc             ; The main handler of the tanks
+INCLUDE Bullet.inc           ; The main handler of the bullets
+INCLUDE ControlEnemy.inc     ; The main handler of controling enemies
+INCLUDE HomePage.inc         ; The main handler of the home page
+INCLUDE StartMenuHandler.inc ; The main handler of the start menu
 
 
 ; ================
@@ -184,7 +208,7 @@ stdInputHandle   DWORD ?
 screenBufferSize COORD                      <SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>
 screenBufferInfo CONSOLE_SCREEN_BUFFER_INFO <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>, \
                                              <0, 0>,                                      \
-                                             0,                                           \
+                                             RENDER_BUFFER_BLANK_ATTR,                                           \
                                              <0, 0, WINDOW_WIDTH - 1, WINDOW_HEIGHT - 1>, \
                                              <WINDOW_WIDTH, WINDOW_HEIGHT>>
 windowSize       COORD                      <WINDOW_WIDTH, WINDOW_HEIGHT>
@@ -197,7 +221,10 @@ stdConsoleCursorInfo CONSOLE_CURSOR_INFO <100, FALSE>
 
 ; The main game logic
 gameState     BYTE  GAME_STATE_TEST
-gameTickCount DWORD ?
+gameTickCount DWORD 0
+
+; The game exit code
+gameExitCode DWORD 0
 
 ; The game map record
 gameMapRecord BYTE GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(GAME_MAP_CHAR_EMPTY)
@@ -233,10 +260,14 @@ tankCmdImageEnemyLeft  CMD_IMAGE <<3, 3>,                                       
                                   { 0h, 23h, 23h, 2Dh, 2Bh, 2Bh,  0h, 23h, 23h}, \
                                   {0Ch, 0Ch, 0Ch, 0Ch, 0Fh, 0Fh, 0Ch, 0Ch, 0Ch}>
 
-bulletCmdImage    CMD_IMAGE <<1, 1>, \
-                             {'@'},  \
-                             {0Eh}>
+bulletCmdImage      CMD_IMAGE <<1, 1>, \
+                               {'@'},  \
+                               {0Eh}>
+bulletCmdImageEnemy CMD_IMAGE <<1, 1>, \  ; TODO: Enemy bullet differences?
+                               {'%'},  \
+                               {0Eh}>
 
+; TODO: Load from file?
 mapCmdImage_characters BYTE "================================================================================================================================"
                        BYTE "|                     |                                                                                                        |"
                        BYTE "|                     |                                                                                                        |"
@@ -269,7 +300,9 @@ mapCmdImage_characters BYTE "===================================================
                        BYTE "|                                                                                                         |                    |"
                        BYTE "|                                                                                                         |                    |"
                        BYTE "================================================================================================================================"
-mapCmdImage       CMD_IMAGE <<GAME_MAP_WIDTH, GAME_MAP_HEIGHT>, <>, GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+mapCmdImage       CMD_IMAGE <<GAME_MAP_WIDTH, GAME_MAP_HEIGHT>,                              \
+                             <>,                                                             \
+                             GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
 
 ; Game map field
 enemyField SMALL_RECT <6, 96, 25, 126>
@@ -278,12 +311,14 @@ enemyField SMALL_RECT <6, 96, 25, 126>
 tankSize   COORD <3, 3>
 bulletSize COORD <1, 1>
 
-; Current game objects list
+; Current game objects
 gamePlayerTank          TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER>
-gameEnemyTankList       TANK   <<100, 2>, FACE_UP, ROLE_ENEMY>  ; ENEMY_TANK_AMOUNT = 2  ; TODO: Initialize enemy tanks
+gameEnemyTankList       TANK   <<100, 2>, FACE_UP, ROLE_ENEMY>  ; ENEMY_TANK_AMOUNT = 3  ; TODO: Initialize enemy tanks
                         TANK   << 80, 1>, FACE_UP, ROLE_ENEMY>
+                        TANK   << 70, 2>, FACE_UP, ROLE_ENEMY>
 gameBulletList          BULLET BULLET_AMOUNT_MAX DUP(<>)
 gameBulletCurrentAmount BYTE   0
+gamePalyerTankLives     BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
 
 ; The common trash bus
 trashBus DWORD ?
@@ -345,14 +380,15 @@ MemberListS4 BYTE "					     QIN, CHENG-YE", 0				; 秦承業
 ProgramEntry:
 
 ; Include sources
-INCLUDE Main.asm            ; The main program file of this project. (Must be the first)
-INCLUDE Initialization.asm  ; The major initialization part of the game
-INCLUDE Renderer.asm        ; The major rendering part of the game
-INCLUDE GameMapHandler.asm  ; The main handler of the game map
-INCLUDE Tank.asm            ; The main handler of the tanks
-INCLUDE Bullet.asm          ; The main handler of the bullets
-INCLUDE ControlEnemy.asm    ; The main handler of controling enemies
-INCLUDE HomePage.asm        ; The main handler of the home page
+INCLUDE Main.asm             ; The main program file of this project. (Must be the first)
+INCLUDE Initialization.asm   ; The major initialization part of the game
+INCLUDE Renderer.asm         ; The major rendering part of the game
+INCLUDE GameMapHandler.asm   ; The main handler of the game map
+INCLUDE Tank.asm             ; The main handler of the tanks
+INCLUDE Bullet.asm           ; The main handler of the bullets
+INCLUDE ControlEnemy.asm     ; The main handler of controling enemies
+INCLUDE HomePage.asm         ; The main handler of the home page
+INCLUDE StartMenuHandler.asm ; The main handler of the start menu
 
 ; The end of the program entry
 END ProgramEntry

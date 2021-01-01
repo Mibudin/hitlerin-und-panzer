@@ -15,9 +15,15 @@ PrintBullet PROC USES eax ebx esi edi,
     
     ; print bullet
     mov esi, thisBullet
+    movzx edi, (BULLET PTR [esi]).role
+    .IF edi == ROLE_PLAYER
+        mov edi, OFFSET bulletCmdImage
+    .ELSE
+        mov edi, OFFSET bulletCmdImageEnemy
+    .ENDIF
     INVOKE PushRenderBufferImageDiscardable, 
         RENDER_BUFFER_LAYER_BULLETS, 
-        OFFSET bulletCmdImage,
+        edi,
         (BULLET PTR [esi]).position
 
     ; record in map

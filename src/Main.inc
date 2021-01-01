@@ -50,7 +50,7 @@ mMainGameTurn_GameStateGameMap MACRO
     INVOKE MoveTank, stdOutputHandle, ADDR gamePlayerTank, ADDR gameMapRecord, ax, ADDR trashBus
 
     ; Enemy tank
-    mov ecx, ENEMY_TANK_AMOUNT
+    mov ecx, ENEMY_TANK_AMOUNT_INITIAL
     xor edx, edx
 mMainGameTurn_GameStateGameMap_EnemyTanks:
     INVOKE GetDirection, ADDR gameEnemyTankList[edx], ADDR gamePlayerTank

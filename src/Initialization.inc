@@ -13,7 +13,7 @@ TITLE Initialization (Initialization.inc)
 
 InitHandle PROTO
 
-InitScreen PROTO
+InitConsole PROTO
 
 InitGameMapRecord PROTO
 

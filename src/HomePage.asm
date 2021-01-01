@@ -5,6 +5,7 @@ TITLE HomePage (HomePage.asm)
 ; ============
 
 ; The main handler of the home page
+; FIXME: Fucking super big large change
 
 
 ;; Home

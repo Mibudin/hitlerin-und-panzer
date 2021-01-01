@@ -35,7 +35,6 @@ mGetRenderBufferLayerIndex MACRO regDWord, layerDWord
     mov regDWord, layerDWord
 
     ; * 3
-    ; FIXME:
     shl regDWord, 1
     add regDWord, layerDWord
 

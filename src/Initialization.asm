@@ -17,17 +17,27 @@ InitHandle PROC USES eax
     ret
 InitHandle ENDP
 
-;;  InitScreen
-InitScreen PROC USES eax
+;;  InitConsole
+InitConsole PROC USES eax ecx edx
     ; TODO: preset cosole font etc.
+
+    ; Set the console mode
+    INVOKE SetConsoleMode, stdInputHandle,  CONSOLE_INPUT_MODE
+    INVOKE SetConsoleMode, stdOutputHandle, CONSOLE_OUTPUT_MODE
+
+    ; Set the screen and window
     INVOKE SetConsoleScreenBufferSize, stdOutputHandle, screenBufferSize
     INVOKE SetConsoleWindowInfo, stdOutputHandle, TRUE, ADDR screenBufferInfo.srWindow
     call Clrscr
 
+    ; Set default cursor style
+    INVOKE SetConsoleCursorInfo, stdOutputHandle, ADDR stdConsoleCursorInfo
+
+    ; Set the title
     INVOKE SetConsoleTitle, ADDR windowTitle
 
     ret
-InitScreen ENDP
+InitConsole ENDP
 
 ;; InitGameMapRecord
 InitGameMapRecord PROC USES ecx esi edi
@@ -70,7 +80,9 @@ InitGame PROC
     call Randomize
 
     call InitHandle
-    call InitScreen
+    call InitConsole
+
+    call InitRenderer
 
     call InitGameMapRecord
     call InitTanks
