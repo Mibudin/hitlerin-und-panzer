@@ -122,36 +122,36 @@ BulletMove PROC USES eax ebx esi edi,
 BulletMove_FlyUp:
     mov ax, (BULLET PTR [esi]).position.Y
     dec ax
-    mov (BULLET PTR [esi]).Y, ax
+    mov (BULLET PTR [esi]).position.Y, ax
 
     INVOKE GetRenderBufferIndex, (BULLET PTR [esi]).position
     movzx eax, ax
 
     ; if role's bullet hit wall, enemy's bullet, enemy's tank
-    .IF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_0
+    .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_WALL_0
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return  
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_1
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_WALL_1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY_BULLET
         sub (BULLET PTR [esi]).position.y, 1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return 
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER_BULLET
         sub (BULLET PTR [esi]).position.y, 1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return 
     .ENDIF
     
     .IF ebx == ROLE_PLAYER
-        .IF (BYTE PTR [edi + eax]), GAME_MAP_ENEMY
+        .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY
             INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
             jmp MoveBullet_return 
         .ENDIF    
     .ELSEIF ebx == ROLE_ENEMY
-        .IF (BYTE PTR [edi + eax]), GAME_MAP_PLAYER
+        .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER
             INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
             jmp MoveBullet_return 
@@ -168,30 +168,30 @@ BulletMove_FlyRight:
     movzx eax, ax
 
     ; if role's bullet hit wall, enemy's bullet, enemy's tank
-    .IF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_0
+    .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_WALL_0
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return  
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_1
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_WALL_1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY_BULLET
         add (BULLET PTR [esi]).position.x, 1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return 
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER_BULLET
         add (BULLET PTR [esi]).position.x, 1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return 
     .ENDIF
     
     .IF ebx == ROLE_PLAYER
-        .IF (BYTE PTR [edi + eax]), GAME_MAP_ENEMY
+        .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY
             INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
             jmp MoveBullet_return 
         .ENDIF    
     .ELSEIF ebx == ROLE_ENEMY
-        .IF (BYTE PTR [edi + eax]), GAME_MAP_PLAYER
+        .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER
             INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
             jmp MoveBullet_return 
@@ -208,30 +208,30 @@ BulletMove_FlyDown:
     movzx eax, ax
 
     ; if role's bullet hit wall, enemy's bullet, enemy's tank
-    .IF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_0
+    .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_WALL_0
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return  
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_1
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_WALL_1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY_BULLET
         add (BULLET PTR [esi]).position.x, 1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return 
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER_BULLET
         add (BULLET PTR [esi]).position.x, 1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return 
     .ENDIF
     
     .IF ebx == ROLE_PLAYER
-        .IF (BYTE PTR [edi + eax]), GAME_MAP_ENEMY
+        .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY
             INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
             jmp MoveBullet_return 
         .ENDIF    
     .ELSEIF ebx == ROLE_ENEMY
-        .IF (BYTE PTR [edi + eax]), GAME_MAP_PLAYER
+        .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER
             INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
             jmp MoveBullet_return 
@@ -248,30 +248,30 @@ BulletMove_FlyLeft:
     movzx eax, ax
 
     ; if role's bullet hit wall, enemy's bullet, enemy's tank
-    .IF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_0
+    .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_WALL_0
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return  
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_WALL_1
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_WALL_1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_ENEMY_BULLET
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY_BULLET
         add (BULLET PTR [esi]).position.x, 1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return 
-    .ELSEIF (BYTE PTR [edi + eax]), GAME_MAP_CHAR_PLAYER_BULLET
+    .ELSEIF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER_BULLET
         add (BULLET PTR [esi]).position.x, 1
         INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
         jmp MoveBullet_return 
     .ENDIF
     
     .IF ebx == ROLE_PLAYER
-        .IF (BYTE PTR [edi + eax]), GAME_MAP_ENEMY
+        .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY
             INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
             jmp MoveBullet_return 
         .ENDIF    
     .ELSEIF ebx == ROLE_ENEMY
-        .IF (BYTE PTR [edi + eax]), GAME_MAP_PLAYER
+        .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER
             INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
             jmp MoveBullet_return 
@@ -428,7 +428,7 @@ NewBullet_SetNewBullet:
 NewBullet_NewBulletEnd:
     mov esi, bulletAmount 
     add (BYTE PTR [esi]), 1
-    INVOKE BulletMove, (bullet PTR [esi]), gameMap, bulletAmount, bulletList
+    INVOKE BulletMove, esi, gameMap, bulletAmount, bulletList, ADDR gamePlayerTank, ADDR gameEnemyTankList, ADDR gameEnemyTankCurrentAmount
 NewBullet_return:
     ret
 NewBullet ENDP 
@@ -557,12 +557,13 @@ DeleteBullet_RunCheckLoop:
     ret
 DeleteBullet ENDP
 
-; delete tank
+;; DeleteTank
+;; delete tank
 DeleteTank PROC USES esi,
     thisBullet: PTR BULLET,
     ourTank: PTR TANK,
     enemyTankList: PTR TANK,
-    enmyTankAmount: PTR BYTE
+    enemyTankAmount: PTR BYTE
 
     mov esi, thisBullet
     mov edi, ourTank
@@ -602,12 +603,12 @@ DeleteTank_checkEnemy:
     cmp ax, (bullet PTR [esi]).position.X
     jb DeleteTank_nextTank
 
-    mov al, (tank PTR [edi]).position.Y
-    cmp al, (bullet PTR [esi]).position.Y
+    mov ax, (tank PTR [edi]).position.Y
+    cmp ax, (bullet PTR [esi]).position.Y
     ja DeleteTank_nextTank
 
-    add al, 2
-    cmp al, (bullet PTR [esi]).position.Y
+    add ax, 2
+    cmp ax, (bullet PTR [esi]).position.Y
     jb DeleteTank_nextTank
        
     jmp DeleteTank_deleteEnemyTank
@@ -616,12 +617,12 @@ DeleteTank_nextTank:
     loop DeleteTank_checkEnemy
 DeleteTank_deleteEnemyTank:
     mov esi, enemyTankAmount
-    movzx ecx, (BYTR PTR [esi])
+    movzx ecx, (BYTE PTR [esi])
     cmp ecx, 0
-    je deleteEnemyTank2
+    je DeleteTank_deleteEnemyTank2
 DeleteTank_moveToLastTank:
     add esi, 7
-    loop DeleteTank_movToLastTank
+    loop DeleteTank_moveToLastTank
 DeleteTank_deleteEnemyTank2:
     mov ax, (Tank PTR [esi]).position.X
     mov (Tank PTR [edi]).position.x, ax

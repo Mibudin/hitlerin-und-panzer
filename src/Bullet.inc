@@ -20,15 +20,19 @@ EraseBullet PROTO,
     thisGameMap: PTR BYTE
 
 BulletMove PROTO,
-    thisBullet: PTR BULLET,
+    thisBullet: PTR bullet,
     thisGameMap: PTR BYTE,
-    bulletAmount: BYTE,
-    bulletList: PTR BULLET
+    bulletAmount: PTR BYTE,
+    bulletList: PTR BULLET,
+    ourTank: PTR Tank, 
+    enemyTankList: PTR Tank, 
+    enemyTankAmount: PTR BYTE
 
 NewBullet PROTO,
     thisTank: PTR TANK,
     bulletAmount: PTR BYTE,
-    bulletList: PTR BULLET
+    bulletList: PTR BULLET,
+    gameMap: PTR BYTE
 
 ; BulletHit PROTO,
 ;     thisBullet: PTR BULLET,
@@ -43,3 +47,9 @@ DeleteBullet PROTO,
     thisBullet: PTR BULLET,
     bulletAmount: PTR BYTE, 
     bulletList: PTR BULLET
+
+DeleteTank PROTO,
+    thisBullet: PTR BULLET,
+    ourTank: PTR TANK,
+    enemyTankList: PTR TANK,
+    enemyTankAmount: PTR BYTE

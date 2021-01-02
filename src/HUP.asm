@@ -429,13 +429,14 @@ tankSize   COORD <3, 3>
 bulletSize COORD <1, 1>
 
 ; Current game objects
-gamePlayerTank          TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER>
-gameEnemyTankList       TANK   <<100, 2>, FACE_UP, ROLE_ENEMY>  ; ENEMY_TANK_AMOUNT = 3  ; TODO: Initialize enemy tanks
-                        TANK   << 80, 1>, FACE_UP, ROLE_ENEMY>
-                        TANK   << 70, 2>, FACE_UP, ROLE_ENEMY>
-gameBulletList          BULLET BULLET_AMOUNT_MAX DUP(<>)
-gameBulletCurrentAmount BYTE   0
-gamePalyerTankLives     BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
+gamePlayerTank             TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER>
+gameEnemyTankList          TANK   <<100, 2>, FACE_UP, ROLE_ENEMY>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
+                           TANK   << 80, 1>, FACE_UP, ROLE_ENEMY>
+                           TANK   << 70, 2>, FACE_UP, ROLE_ENEMY>
+gameEnemyTankCurrentAmount BYTE   ENEMY_TANK_AMOUNT_INITIAL  ; FIXME: Handle this
+gameBulletList             BULLET BULLET_AMOUNT_MAX DUP(<>)
+gameBulletCurrentAmount    BYTE   0
+gamePalyerTankLives        BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
 
 ; The common trash bus
 trashBus DWORD ?
