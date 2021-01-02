@@ -215,6 +215,7 @@ Detect PROC USES ax bx cx dx esi edi, thisTank: PTR Tank, playerTank: PTR Tank
     mov esi, thisTank
     mov edi, playerTank
 
+
     mov ax, (TANK PTR [esi]).position.x
     mov bx, (TANK PTR [esi]).position.y
     mov cx, (TANK PTR [edi]).position.x
@@ -264,7 +265,13 @@ Detect PROC USES ax bx cx dx esi edi, thisTank: PTR Tank, playerTank: PTR Tank
     ret
 Detect ENDP
 
-Shoot PROC thisTank: PTR TANK, playerTank: PTR TANK
+Shoot PROC USES eax, thisTank: PTR TANK, playerTank: PTR TANK
+    mov eax, 10
+    call RandomRange
+    cmp eax, 6
+    jb Shoot_Shoot
+    jmp Shoot_Return
+Shoot_Shoot:
     INVOKE Detect, thisTank, playerTank
     ; TODO: 射一發子彈
 
@@ -309,5 +316,6 @@ Shoot PROC thisTank: PTR TANK, playerTank: PTR TANK
     ;         ; 射一發子彈
     ;     .ENDIF
     ; .ENDIF
+Shoot_Return:
     ret
 Shoot ENDP
