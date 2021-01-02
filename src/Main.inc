@@ -46,7 +46,7 @@ mMainGameTurn_GameStateStart MACRO
     call ReadKey
     movzx edx, startMenuState
     .IF edx == START_MENU_STATE_MAIN
-        .IF     ax == 3920h  ; SPACE
+        .IF     ax == 3920h                 ; SPACE
             mov gameState, GAME_STATE_GAME_MAP
             mMainGameTurn_GameStateGameMap_Pre
 
@@ -114,7 +114,22 @@ mMainGameTurn_GameStateGameMap MACRO
 
     ; Player tank
     call ReadKey
-    INVOKE MoveTank, stdOutputHandle, ADDR gamePlayerTank, ADDR gameMapRecord, ax, ADDR trashBus
+    jz mMainGameTurn_GameStateGameMap_EndPlayerKeyDetect
+    .IF ax == 3920h  ; SPACE
+        INVOKE NewBullet,
+            ADDR gamePlayerTank,
+            ADDR gameBulletCurrentAmount,
+            ADDR gameBulletList,
+            ADDR gameMapRecord
+    .ENDIF
+
+mMainGameTurn_GameStateGameMap_EndPlayerKeyDetect:
+    INVOKE MoveTank,
+        stdOutputHandle,
+        ADDR gamePlayerTank,
+        ADDR gameMapRecord,
+        ax,
+        ADDR trashBus
 
     ; Enemy tank
     mov ecx, ENEMY_TANK_AMOUNT_INITIAL
@@ -124,6 +139,25 @@ mMainGameTurn_GameStateGameMap_EnemyTanks:
     INVOKE ComputerTankMove, stdOutputHandle, ADDR gameEnemyTankList[edx], ADDR trashBus
     add edx, TANK
     loop mMainGameTurn_GameStateGameMap_EnemyTanks
+
+    ; Bullets
+    movzx ecx, gameBulletCurrentAmount
+    cmp ecx, 0
+    je mMainGameTurn_GameStateGameMap_BulletsEnd
+    xor edx, edx
+mMainGameTurn_GameStateGameMap_Bullets:
+    INVOKE BulletMove,
+        ADDR gameBulletList[edx],
+        ADDR gameMapRecord,
+        ADDR gameBulletCurrentAmount,
+        ADDR gameBulletList,
+        ADDR gamePlayerTank, 
+        ADDR gameEnemyTankList, 
+        ADDR gameEnemyTankCurrentAmount
+    add edx, BULLET
+    loop mMainGameTurn_GameStateGameMap_Bullets
+
+mMainGameTurn_GameStateGameMap_BulletsEnd:
 
     ; Render
     INVOKE IntegrateRenderBufferFinaleAllDiscardable

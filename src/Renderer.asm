@@ -17,7 +17,7 @@ InitRenderer_ClearRenderBufferLayersAll:
     dec ecx
     mClearRenderBuffer ecx
     cmp ecx, 0
-    jbe InitRenderer_ClearRenderBufferLayersAll
+    ja InitRenderer_ClearRenderBufferLayersAll
 
     ; Initialize CMD images
     INVOKE PushCmdImageCharacters,

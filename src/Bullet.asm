@@ -95,20 +95,21 @@ EraseBullet ENDP
 ;; BulletMove
 ;; move one byte toward bullet's direction
 BulletMove PROC USES eax ebx esi edi,
-    thisBullet: PTR bullet,
+    thisBullet: PTR BULLET,
     thisGameMap: PTR BYTE,
     bulletAmount: PTR BYTE,
     bulletList: PTR BULLET,
-    ourTank: PTR Tank, 
-    enemyTankList: PTR Tank, 
+    ourTank: PTR TANK,
+    enemyTankList: PTR TANK,
     enemyTankAmount: PTR BYTE
 
 
-    ; erase tank
+    ; erase bullets
     INVOKE eraseBullet, thisBullet, thisGameMap
     
+    mov edi, thisGameMap
     mov esi, thisBullet
-    mov al, (Bullet PTR [esi]).direction 
+    mov al, (Bullet PTR [esi]).direction
     movzx ebx, (Bullet PTR [esi]).role
     ; different check
     cmp al, FACE_UP
@@ -160,7 +161,7 @@ BulletMove_FlyUp:
 
     jmp Print_bullet
 BulletMove_FlyRight:
-    mov ax, (TANK PTR [esi]).position.x
+    mov ax, (BULLET PTR [esi]).position.x
     inc ax
     mov (BULLET PTR [esi]).position.x, ax
 
@@ -202,7 +203,7 @@ BulletMove_FlyRight:
 BulletMove_FlyDown:
     mov ax, (BULLET PTR [esi]).position.Y
     inc ax
-    mov ax, (TANK PTR [esi]).position.Y
+    mov (BULLET PTR [esi]).position.Y, ax
 
     INVOKE GetRenderBufferIndex, (BULLET PTR [esi]).position
     movzx eax, ax
@@ -240,7 +241,7 @@ BulletMove_FlyDown:
 
     jmp Print_bullet
 BulletMove_FlyLeft:
-    mov ax, (TANK PTR [esi]).position.x
+    mov ax, (BULLET PTR [esi]).position.x
     sub ax, 1
     mov (BULLET PTR [esi]).position.x, ax
 
@@ -280,7 +281,7 @@ BulletMove_FlyLeft:
 
     jmp Print_bullet
 Print_bullet:
-    INVOKE printBullet, thisBullet, thisGameMap
+    INVOKE PrintBullet, thisBullet, thisGameMap
 MoveBullet_return:
     ret
 BulletMove ENDP
@@ -338,7 +339,7 @@ NewBullet PROC USES eax ecx esi edi,
     .ENDIF
     movzx ecx, al
 NewBullet_MoveToNewBullet:
-    add esi, BULLET_SIZE_BYTE
+    add esi, BULLET
     loop NewBullet_MoveToNewBullet
 
 NewBullet_SetNewBullet:
@@ -354,7 +355,7 @@ NewBullet_SetNewBullet:
         mov (bullet PTR [esi]).position.x, ax
 
         mov ax, (TANK PTR [edi]).position.y
-        ; sub ax, 1h
+        sub ax, 1h
         mov (bullet PTR [esi]).position.y, ax
 
         ; 
@@ -370,7 +371,7 @@ NewBullet_SetNewBullet:
 
     .IF al == FACE_RIGHT
         mov ax, (TANK PTR [edi]).position.x
-        add ax, 2h
+        add ax, 3h
         mov (bullet PTR [esi]).position.x, ax
 
         mov ax, (TANK PTR [edi]).position.y
@@ -393,7 +394,7 @@ NewBullet_SetNewBullet:
         mov (bullet PTR [esi]).position.x, ax
 
         mov ax, (TANK PTR [edi]).position.y
-        add ax, 2h
+        add ax, 3h
         mov (bullet PTR [esi]).position.y, ax
 
         ; mov (bullet PTR [esi]).position.X, (TANK PTR [edi]).position.X
@@ -408,7 +409,7 @@ NewBullet_SetNewBullet:
 
     .IF al == FACE_LEFT
         mov ax, (TANK PTR [edi]).position.x
-        ; sub ax, 1h
+        sub ax, 1h
         mov (bullet PTR [esi]).position.x, ax
 
         mov ax, (TANK PTR [edi]).position.y
@@ -428,7 +429,7 @@ NewBullet_SetNewBullet:
 NewBullet_NewBulletEnd:
     mov esi, bulletAmount 
     add (BYTE PTR [esi]), 1
-    INVOKE BulletMove, esi, gameMap, bulletAmount, bulletList, ADDR gamePlayerTank, ADDR gameEnemyTankList, ADDR gameEnemyTankCurrentAmount
+    ; INVOKE BulletMove, esi, gameMap, bulletAmount, bulletList, ADDR gamePlayerTank, ADDR gameEnemyTankList, ADDR gameEnemyTankCurrentAmount
 NewBullet_return:
     ret
 NewBullet ENDP 

@@ -176,10 +176,6 @@ BULLET STRUCT
     position  COORD <1, 1>
 BULLET ENDS
 
-; PROC Size BYTE
-; FIXME: or just use `BULLET`
-BULLET_SIZE_BYTE EQU <6>
-
 
 ; =================
 ; = Include Inner =
@@ -433,10 +429,10 @@ gamePlayerTank             TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER>
 gameEnemyTankList          TANK   <<100, 2>, FACE_UP, ROLE_ENEMY>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
                            TANK   << 80, 1>, FACE_UP, ROLE_ENEMY>
                            TANK   << 70, 2>, FACE_UP, ROLE_ENEMY>
-gameEnemyTankCurrentAmount BYTE   ENEMY_TANK_AMOUNT_INITIAL  ; FIXME: Handle this
+gameEnemyTankCurrentAmount BYTE   ENEMY_TANK_AMOUNT_INITIAL
 gameBulletList             BULLET BULLET_AMOUNT_MAX DUP(<>)
 gameBulletCurrentAmount    BYTE   0
-gamePalyerTankLives        BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
+gamePlayerTankLives        BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
 
 ; The common trash bus
 trashBus DWORD ?
