@@ -341,7 +341,8 @@ BulletMove ENDP
 NewBullet PROC USES eax ecx esi edi,
     thisTank: PTR TANK,
     bulletAmount: PTR BYTE,
-    bulletList: PTR BULLET
+    bulletList: PTR BULLET,
+    gameMap: PTR BYTE
 
     ; get the position that the new bullet should appear
     mov esi, bulletList
@@ -352,11 +353,14 @@ NewBullet PROC USES eax ecx esi edi,
     .ENDIF
     movzx ecx, al
 NewBullet_MoveToNewBullet:
-    add esi, 10
+    add esi, BULLET_SIZE_BYTE
     loop NewBullet_MoveToNewBullet
 
 NewBullet_SetNewBullet:
     mov edi, thisTank
+    mov al, (TANK PTR [edi]).role
+    mov (BULLET PTR [esi]).role, al
+
     mov al, (tank PTR [edi]).faceTo
 
     .IF al == FACE_UP
@@ -365,9 +369,10 @@ NewBullet_SetNewBullet:
         mov (bullet PTR [esi]).position.x, ax
 
         mov ax, (TANK PTR [edi]).position.y
-        sub ax, 1h
+        ; sub ax, 1h
         mov (bullet PTR [esi]).position.y, ax
 
+        ; 
         ; mov (bullet PTR [esi]).position.X, (tank PTR [edi]).position.X
         ; add (bullet PTR [esi]).position.X, 1h
 
@@ -380,7 +385,7 @@ NewBullet_SetNewBullet:
 
     .IF al == FACE_RIGHT
         mov ax, (TANK PTR [edi]).position.x
-        add ax, 3h
+        add ax, 2h
         mov (bullet PTR [esi]).position.x, ax
 
         mov ax, (TANK PTR [edi]).position.y
@@ -393,17 +398,17 @@ NewBullet_SetNewBullet:
         ; mov (bullet PTR [edi]).position.Y, (TANK PTR [edi]).position.Y
         ; add (bullet PTR [edi]).position.Y, 1h
 
-        mov (bullet PTR [edi]).direction, FACE_RIGHT
+        mov (bullet PTR [esi]).direction, FACE_RIGHT
         jmp NewBullet_NewBulletEnd
     .ENDIF
 
     .IF al == FACE_DOWN
         mov ax, (TANK PTR [edi]).position.x
-        add ax, 3h
+        add ax, 1h
         mov (bullet PTR [esi]).position.x, ax
 
         mov ax, (TANK PTR [edi]).position.y
-        add ax, 3h
+        add ax, 2h
         mov (bullet PTR [esi]).position.y, ax
 
         ; mov (bullet PTR [esi]).position.X, (TANK PTR [edi]).position.X
@@ -412,13 +417,13 @@ NewBullet_SetNewBullet:
         ; mov (bullet PTR [edi]).position.Y, (TANK PTR [edi]).position.Y
         ; add (bullet PTR [edi]).position.Y, 3h
 
-        mov (bullet PTR [edi]).direction, FACE_DOWN
+        mov (bullet PTR [esi]).direction, FACE_DOWN
         jmp NewBullet_NewBulletEnd
     .ENDIF
 
     .IF al == FACE_LEFT
         mov ax, (TANK PTR [edi]).position.x
-        sub ax, 1h
+        ; sub ax, 1h
         mov (bullet PTR [esi]).position.x, ax
 
         mov ax, (TANK PTR [edi]).position.y
@@ -431,12 +436,15 @@ NewBullet_SetNewBullet:
         ; mov (bullet PTR [edi]).position.Y, (TANK PTR [edi]).position.Y
         ; add (bullet PTR [edi]).position.Y, 1
 
-        mov (bullet PTR [edi]).direction, FACE_LEFT
+        mov (bullet PTR [esi]).direction, FACE_LEFT
         jmp NewBullet_NewBulletEnd
     .ENDIF
+
 NewBullet_NewBulletEnd:
     mov esi, bulletAmount 
     add (BYTE PTR [esi]), 1
+    INVOKE BulletMove, (bullet PTR [esi]), gameMap, bulletAmount, bulletList
+NewBullet_return:
     ret
 NewBullet ENDP 
 
