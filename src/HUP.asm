@@ -164,7 +164,7 @@ TANK STRUCT
     position    COORD <1, 1>         ; left up
     faceTo      BYTE  FACE_UP        ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
     role        BYTE  ROLE_PLAYER
-    hp          BYTE  3
+    hp          BYTE  PLAYER_LIVES_INITIAL
 TANK ENDS
 
 BULLET STRUCT
@@ -425,14 +425,14 @@ tankSize   COORD <3, 3>
 bulletSize COORD <1, 1>
 
 ; Current game objects
-gamePlayerTank             TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER>
-gameEnemyTankList          TANK   <<100, 2>, FACE_UP, ROLE_ENEMY>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
-                           TANK   << 80, 1>, FACE_UP, ROLE_ENEMY>
-                           TANK   << 70, 2>, FACE_UP, ROLE_ENEMY>
+gamePlayerTank             TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER, PLAYER_LIVES_INITIAL>
+gameEnemyTankList          TANK   <<100, 2>, FACE_UP, ROLE_ENEMY, 1>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
+                           TANK   << 80, 1>, FACE_UP, ROLE_ENEMY, 1>
+                           TANK   << 70, 2>, FACE_UP, ROLE_ENEMY, 1>
 gameEnemyTankCurrentAmount BYTE   ENEMY_TANK_AMOUNT_INITIAL
 gameBulletList             BULLET BULLET_AMOUNT_MAX DUP(<>)
 gameBulletCurrentAmount    BYTE   0
-gamePlayerTankLives        BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
+; gamePlayerTankLives        BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
 
 ; The common trash bus
 trashBus DWORD ?

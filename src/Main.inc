@@ -112,7 +112,35 @@ mMainGameTurn_GameStateGameMap MACRO
     mClearRenderBuffer RENDER_BUFFER_LAYER_BULLETS
     mClearRenderBuffer RENDER_BUFFER_LAYER_FINALE
 
+    ; Bullets
+    movzx ecx, gameBulletCurrentAmount
+    cmp ecx, 0
+    je mMainGameTurn_GameStateGameMap_BulletsEnd
+    xor edx, edx
+mMainGameTurn_GameStateGameMap_Bullets:
+    INVOKE BulletMove,
+        ADDR gameBulletList[edx],
+        ADDR gameMapRecord,
+        ADDR gameBulletCurrentAmount,
+        ADDR gameBulletList,
+        ADDR gamePlayerTank, 
+        ADDR gameEnemyTankList, 
+        ADDR gameEnemyTankCurrentAmount
+    add edx, BULLET
+    loop mMainGameTurn_GameStateGameMap_Bullets
+
+    ; Check player's lives
+    ; movzx edx, gamePlayerTankLives
+    movzx edx, gamePlayerTank.hp
+    .IF edx <= 0
+        mov gameState, GAME_STATE_END
+        jmp mMainGameTurn_GameStateGameMap_EndTurn
+    .ENDIF
+
+mMainGameTurn_GameStateGameMap_BulletsEnd:
+
     ; Player tank
+    ; FIXME: Interval time?
     call ReadKey
     jz mMainGameTurn_GameStateGameMap_EndPlayerKeyDetect
     .IF ax == 3920h  ; SPACE
@@ -132,6 +160,7 @@ mMainGameTurn_GameStateGameMap_EndPlayerKeyDetect:
         ADDR trashBus
 
     ; Enemy tank
+    ; FIXME: Enemys' bullets?
     mov ecx, ENEMY_TANK_AMOUNT_INITIAL
     xor edx, edx
 mMainGameTurn_GameStateGameMap_EnemyTanks:
@@ -140,31 +169,11 @@ mMainGameTurn_GameStateGameMap_EnemyTanks:
     add edx, TANK
     loop mMainGameTurn_GameStateGameMap_EnemyTanks
 
-    ; Bullets
-    movzx ecx, gameBulletCurrentAmount
-    cmp ecx, 0
-    je mMainGameTurn_GameStateGameMap_BulletsEnd
-    xor edx, edx
-mMainGameTurn_GameStateGameMap_Bullets:
-    INVOKE BulletMove,
-        ADDR gameBulletList[edx],
-        ADDR gameMapRecord,
-        ADDR gameBulletCurrentAmount,
-        ADDR gameBulletList,
-        ADDR gamePlayerTank, 
-        ADDR gameEnemyTankList, 
-        ADDR gameEnemyTankCurrentAmount
-    add edx, BULLET
-    loop mMainGameTurn_GameStateGameMap_Bullets
-
-mMainGameTurn_GameStateGameMap_BulletsEnd:
-
     ; Render
     INVOKE IntegrateRenderBufferFinaleAllDiscardable
     INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_FINALE
 
-    ; mov gameState, GAME_STATE_END
-
+mMainGameTurn_GameStateGameMap_EndTurn:
     mov eax, TRUE
 ENDM
 
