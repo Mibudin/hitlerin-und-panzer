@@ -21,10 +21,6 @@ InitRenderer_ClearRenderBufferLayersAll:
 
     ; Initialize CMD images
     INVOKE PushCmdImageCharacters,
-        ADDR mapCmdImage,
-        ADDR mapCmdImage_characters,
-        LENGTH mapCmdImage.characters
-    INVOKE PushCmdImageCharacters,
         ADDR startMenuCmdImage,
         ADDR startMenuCmdImage_characters,
         LENGTH startMenuCmdImage.characters
@@ -36,6 +32,16 @@ InitRenderer_ClearRenderBufferLayersAll:
         ADDR menuCreditsCmdImage,
         ADDR menuCreditsCmdImage_characters,
         LENGTH menuCreditsCmdImage.characters
+
+    INVOKE PushCmdImageCharacters,
+        ADDR mapCmdImage,
+        ADDR mapCmdImage_characters,
+        LENGTH mapCmdImage.characters
+
+    INVOKE PushCmdImageCharacters,
+        ADDR loseResultCmdImage,
+        ADDR loseResultCmdImage_characters,
+        LENGTH loseResultCmdImage.characters
 
     ret
 InitRenderer ENDP

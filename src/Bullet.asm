@@ -372,9 +372,8 @@ NewBullet_SetNewBullet:
 
         mov (bullet PTR [esi]).direction, FACE_UP
         jmp NewBullet_NewBulletEnd
-    .ENDIF
 
-    .IF al == FACE_RIGHT
+    .ELSEIF al == FACE_RIGHT
         mov ax, (TANK PTR [edi]).position.x
         add ax, 2h
         mov (bullet PTR [esi]).position.x, ax
@@ -391,9 +390,8 @@ NewBullet_SetNewBullet:
 
         mov (bullet PTR [esi]).direction, FACE_RIGHT
         jmp NewBullet_NewBulletEnd
-    .ENDIF
 
-    .IF al == FACE_DOWN
+    .ELSEIF al == FACE_DOWN
         mov ax, (TANK PTR [edi]).position.x
         add ax, 1h
         mov (bullet PTR [esi]).position.x, ax
@@ -410,9 +408,8 @@ NewBullet_SetNewBullet:
 
         mov (bullet PTR [esi]).direction, FACE_DOWN
         jmp NewBullet_NewBulletEnd
-    .ENDIF
 
-    .IF al == FACE_LEFT
+    .ELSEIF al == FACE_LEFT
         mov ax, (TANK PTR [edi]).position.x
         ; sub ax, 1h
         mov (bullet PTR [esi]).position.x, ax
@@ -432,7 +429,8 @@ NewBullet_SetNewBullet:
     .ENDIF
 
 NewBullet_NewBulletEnd:
-    mov edi, bulletAmount 
+    ; inc gameBulletCurrentAmount
+    mov edi, bulletAmount
     add (BYTE PTR [edi]), 1
     INVOKE BulletMove, esi, gameMap, bulletAmount, bulletList, ADDR gamePlayerTank, ADDR gameEnemyTankList, ADDR gameEnemyTankCurrentAmount
     ; INVOKE PrintBullet, esi, gameMap

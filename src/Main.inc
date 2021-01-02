@@ -112,6 +112,22 @@ mMainGameTurn_GameStateGameMap MACRO
     mClearRenderBuffer RENDER_BUFFER_LAYER_BULLETS
     mClearRenderBuffer RENDER_BUFFER_LAYER_FINALE
 
+    ; Check ending conditions
+    movzx edx, gamePlayerTank.hp
+    .IF edx <= 0
+        mov gameWinner, ROLE_ENEMY
+        mov gameState, GAME_STATE_END
+        mMainGameTurn_GameStateEnd_Pre
+        jmp mMainGameTurn_GameStateGameMap_EndTurn
+    .ENDIF
+    movzx edx, gameEnemyTankCurrentAmount
+    .IF edx == 0
+        mov gameWinner, ROLE_PLAYER
+        mov gameState, GAME_STATE_END
+        mMainGameTurn_GameStateEnd_Pre
+        jmp mMainGameTurn_GameStateGameMap_EndTurn
+    .ENDIF
+
     ; Bullets
     movzx ecx, gameBulletCurrentAmount
     cmp ecx, 0
@@ -130,6 +146,21 @@ mMainGameTurn_GameStateGameMap_Bullets:
     loop mMainGameTurn_GameStateGameMap_Bullets
 
 mMainGameTurn_GameStateGameMap_BulletsEnd:
+
+    ; Enemy tank
+    movzx ecx, gameEnemyTankCurrentAmount
+    cmp ecx, 0
+    je mMainGameTurn_GameStateGameMap_EnemyTanksEnd
+    xor edx, edx
+mMainGameTurn_GameStateGameMap_EnemyTanks:
+    INVOKE Shoot, ADDR gameEnemyTankList[edx], ADDR gamePlayerTank
+    .IF eax == FALSE
+        INVOKE GetDirection, ADDR gameEnemyTankList[edx], ADDR gamePlayerTank
+    .ENDIF
+    INVOKE ComputerTankMove, stdOutputHandle, ADDR gameEnemyTankList[edx], ADDR trashBus
+    add edx, TANK
+    loop mMainGameTurn_GameStateGameMap_EnemyTanks
+mMainGameTurn_GameStateGameMap_EnemyTanksEnd:
 
     ; Player tank
     call ReadKey
@@ -157,38 +188,9 @@ mMainGameTurn_GameStateGameMap_BulletsEnd:
         ax,
         ADDR trashBus
 
-    ; Enemy tank
-    ; FIXME: Enemys' bullets?
-    movzx ecx, gameEnemyTankCurrentAmount
-    cmp ecx, 0
-    je mMainGameTurn_GameStateGameMap_EnemyTanksEnd
-    xor edx, edx
-mMainGameTurn_GameStateGameMap_EnemyTanks:
-    INVOKE GetDirection, ADDR gameEnemyTankList[edx], ADDR gamePlayerTank
-    INVOKE ComputerTankMove, stdOutputHandle, ADDR gameEnemyTankList[edx], ADDR trashBus
-    add edx, TANK
-    loop mMainGameTurn_GameStateGameMap_EnemyTanks
-mMainGameTurn_GameStateGameMap_EnemyTanksEnd:
-
     ; Render
     INVOKE IntegrateRenderBufferFinaleAllDiscardable
     INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_FINALE
-
-    ; Check ending conditions
-    movzx edx, gamePlayerTank.hp
-    .IF edx <= 0
-        mov gameWinner, ROLE_ENEMY
-        mov gameState, GAME_STATE_END
-        mMainGameTurn_GameStateEnd_Pre
-        jmp mMainGameTurn_GameStateGameMap_EndTurn
-    .ENDIF
-    movzx edx, gameEnemyTankCurrentAmount
-    .IF edx == 0
-        mov gameWinner, ROLE_PLAYER
-        mov gameState, GAME_STATE_END
-        mMainGameTurn_GameStateEnd_Pre
-        jmp mMainGameTurn_GameStateGameMap_EndTurn
-    .ENDIF
 
 mMainGameTurn_GameStateGameMap_EndTurn:
     mov eax, TRUE

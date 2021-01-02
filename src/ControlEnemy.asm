@@ -49,7 +49,7 @@ ComputerTankMove_CheckDirection:
     	mov ax, 4B00h
         jmp ComputerTankMove_CallMoveTank
     .ELSE
-        call WaitMsg
+        ; call WaitMsg
         jmp ComputerTankMove_Return
     .ENDIF
 ComputerTankMove_CallMoveTank:
@@ -216,7 +216,6 @@ Detect PROC USES ax bx cx dx esi edi, thisTank: PTR Tank, playerTank: PTR Tank
     mov esi, thisTank
     mov edi, playerTank
 
-
     mov ax, (TANK PTR [esi]).position.x
     mov bx, (TANK PTR [esi]).position.y
     mov cx, (TANK PTR [edi]).position.x
@@ -266,15 +265,24 @@ Detect PROC USES ax bx cx dx esi edi, thisTank: PTR Tank, playerTank: PTR Tank
     ret
 Detect ENDP
 
-Shoot PROC USES eax, thisTank: PTR TANK, playerTank: PTR TANK
-    mov eax, 10
+;; Shoot
+;; Returns:
+;;     EAX: Whether shooted
+Shoot PROC USES ecx edx, thisTank: PTR TANK, playerTank: PTR TANK
+    mov eax, 20
     call RandomRange
-    cmp eax, 6
+    cmp eax, 1
     jb Shoot_Shoot
+    mov eax, FALSE
     jmp Shoot_Return
 Shoot_Shoot:
-    INVOKE Detect, thisTank, playerTank
-    ; TODO: 射一發子彈
+    ; INVOKE Detect, thisTank, playerTank
+    INVOKE NewBullet,
+        thisTank,
+        ADDR gameBulletCurrentAmount,
+        ADDR gameBulletList,
+        ADDR gameMapRecord
+    mov eax, TRUE
 
     ; .IF (((TANK PTR [esi]).position.X < (TANK PTR [edi]).position.X) AND ((TANK PTR [esi]).position.Y < (TANK PTR [edi]).position.Y))
     ;     .IF (((TANK PTR [edi]).position.X - (TANK PTR [esi]).position.X) < ((TANK PTR [edi]).position.Y - (TANK PTR [esi]).position.Y))

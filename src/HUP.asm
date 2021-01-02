@@ -98,7 +98,7 @@ RENDER_BUFFER_LAYER_BULLETS  EQU <2>  ; The bullets
 RENDER_BUFFER_LAYER_FINALE   EQU <3>  ; The final render buffer layer
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <100>  ; in milliseconds  ; TODO: Test value
+MAIN_GAME_TURN_INTERVAL EQU <200>  ; in milliseconds  ; TODO: Test value
 
 ; Texts
 CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
@@ -137,7 +137,7 @@ PLAYER_LIVES_INITIAL        EQU <3>
 PLAYER_SHOOT_INTERVAL       EQU <2000>
 PLAYER_SHOOT_CUMULATION_MAX EQU <3>
 ENEMY_TANK_AMOUNT_INITIAL   EQU <3>
-BULLET_AMOUNT_MAX           EQU <32>
+BULLET_AMOUNT_MAX           EQU <128>
 
 
 ; ==============
@@ -383,38 +383,38 @@ menuCreditsCmdImage CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,     
                                <>,                                                                       \
                                SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
                                
-loseResultCmdImage_Result   BYTE "                                                                                                                                "
-                            BYTE "                                                                                                                                "
-                            BYTE "                                                                                                                                "
-                            BYTE "                                                                                                                                "
-                            BYTE "                                                                                                                                "
-                            BYTE "                                                                                                                                "
-                            BYTE "                                                                                                                                "
-                            BYTE "                                                                                                                                "
-                            BYTE "                                                                                                            ..                  "
-                            BYTE "                                                                                                         `shddhs/.              "
-                            BYTE "         _____.___.                .____                         ._.                                     -dhdhhyoo/-.`          "
-                            BYTE "         \__  |   | ____  __ __    |    |    ____  ______ ____   | |                                      yhoo++//:-..-.`       "
-                            BYTE "          /   |   |/  _ \|  |  \   |    |   /  _ \/  ___// __ \  | |                                     `:-.--::-````.-.       "
-                            BYTE "          \____   (  <_> )  |  /   |    |__(  <_> )___ \\  ___/   \|                                    ``:ossys:`--.``         "
-                            BYTE "          / ______|\____/|____/    |_______ \____/____  >\___  >  __                                     `oommho/::+-`          "
-                            BYTE "          \/                               \/         \/     \/   \/                                      :+ddyo:-/.            "
-                            BYTE "                                                                                                          /hyoo::::-            "
-                            BYTE "                                                                                                           `-syhdmyo/-.`        "
-                            BYTE "                                                                                                          `-oshNdhhh+ossyhs:`   "
-                            BYTE "                       * [X] Retuen to The Start Menu                                                 .++oyyhsydhysyyyyhso-..   "
-                            BYTE "                                                                                                    `ymyoddyhddhhyydhyso+::--.  "
-                            BYTE "                       * [ESC] Close the Game                                                      `dmd-/mmdyyhddhhdhoy++s+:-.  "
-                            BYTE "                                                                                                   +mddo-ysyhhdddyhh++shy+//:`  "
-                            BYTE "                                                                                                  -hyhdh::dmmddddyyooo+oo////   "
-                            BYTE "                     HETLERIN und PANZER - Version 0.2                                           .dddddds-smmmdhsys+os+s./o..   "
-                            BYTE "                                                                                                `dmddddddo:sdddhoy++osdo://.    "
-                            BYTE "                                                                                                hmdyhhddmdosyhy/--+hhy+/+o:`    "
-                            BYTE "                                                                                                +mmh+ymddddhh++hdddhyo+o++.     "
-                            BYTE "                                                                                                dNmh/`/shy+:ohmhddhhs+oo+-      "
-                            BYTE "                                                                                               `mmmhs./shhdmmmmdhyso+o+:-       "
-                            BYTE "                                                                                               :mmmh/+ddmmmmddhyyo+o+++//       "
-                            BYTE "                                                                                               oysyssydmmmdhyysooo++:+o+o-      "
+loseResultCmdImage_characters BYTE "                                                                                                                                "
+                              BYTE "                                                                                                                                "
+                              BYTE "                                                                                                                                "
+                              BYTE "                                                                                                                                "
+                              BYTE "                                                                                                                                "
+                              BYTE "                                                                                                                                "
+                              BYTE "                                                                                                                                "
+                              BYTE "                                                                                                                                "
+                              BYTE "                                                                                                            ..                  "
+                              BYTE "                                                                                                         `shddhs/.              "
+                              BYTE "         _____.___.                .____                         ._.                                     -dhdhhyoo/-.`          "
+                              BYTE "         \__  |   | ____  __ __    |    |    ____  ______ ____   | |                                      yhoo++//:-..-.`       "
+                              BYTE "          /   |   |/  _ \|  |  \   |    |   /  _ \/  ___// __ \  | |                                     `:-.--::-````.-.       "
+                              BYTE "          \____   (  <_> )  |  /   |    |__(  <_> )___ \\  ___/   \|                                    ``:ossys:`--.``         "
+                              BYTE "          / ______|\____/|____/    |_______ \____/____  >\___  >  __                                     `oommho/::+-`          "
+                              BYTE "          \/                               \/         \/     \/   \/                                      :+ddyo:-/.            "
+                              BYTE "                                                                                                          /hyoo::::-            "
+                              BYTE "                                                                                                           `-syhdmyo/-.`        "
+                              BYTE "                                                                                                          `-oshNdhhh+ossyhs:`   "
+                              BYTE "                       * [X] Retuen to The Start Menu                                                 .++oyyhsydhysyyyyhso-..   "
+                              BYTE "                                                                                                    `ymyoddyhddhhyydhyso+::--.  "
+                              BYTE "                       * [ESC] Close the Game                                                      `dmd-/mmdyyhddhhdhoy++s+:-.  "
+                              BYTE "                                                                                                   +mddo-ysyhhdddyhh++shy+//:`  "
+                              BYTE "                                                                                                  -hyhdh::dmmddddyyooo+oo////   "
+                              BYTE "                     HETLERIN und PANZER - Version 0.2                                           .dddddds-smmmdhsys+os+s./o..   "
+                              BYTE "                                                                                                `dmddddddo:sdddhoy++osdo://.    "
+                              BYTE "                                                                                                hmdyhhddmdosyhy/--+hhy+/+o:`    "
+                              BYTE "                                                                                                +mmh+ymddddhh++hdddhyo+o++.     "
+                              BYTE "                                                                                                dNmh/`/shy+:ohmhddhhs+oo+-      "
+                              BYTE "                                                                                               `mmmhs./shhdmmmmdhyso+o+:-       "
+                              BYTE "                                                                                               :mmmh/+ddmmmmddhyyo+o+++//       "
+                              BYTE "                                                                                               oysyssydmmmdhyysooo++:+o+o-      "
 loseResultCmdImage  CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
                                <>,                                                                       \
                                SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
