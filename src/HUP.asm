@@ -382,6 +382,42 @@ menuCreditsCmdImage_characters BYTE "                                           
 menuCreditsCmdImage CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
                                <>,                                                                       \
                                SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+                               
+loseResultCmdImage_Result   BYTE "                                                                                                                                "
+                            BYTE "                                                                                                                                "
+                            BYTE "                                                                                                                                "
+                            BYTE "                                                                                                                                "
+                            BYTE "                                                                                                                                "
+                            BYTE "                                                                                                                                "
+                            BYTE "                                                                                                                                "
+                            BYTE "                                                                                                                                "
+                            BYTE "                                                                                                            ..                  "
+                            BYTE "                                                                                                         `shddhs/.              "
+                            BYTE "         _____.___.                .____                         ._.                                     -dhdhhyoo/-.`          "
+                            BYTE "         \__  |   | ____  __ __    |    |    ____  ______ ____   | |                                      yhoo++//:-..-.`       "
+                            BYTE "          /   |   |/  _ \|  |  \   |    |   /  _ \/  ___// __ \  | |                                     `:-.--::-````.-.       "
+                            BYTE "          \____   (  <_> )  |  /   |    |__(  <_> )___ \\  ___/   \|                                    ``:ossys:`--.``         "
+                            BYTE "          / ______|\____/|____/    |_______ \____/____  >\___  >  __                                     `oommho/::+-`          "
+                            BYTE "          \/                               \/         \/     \/   \/                                      :+ddyo:-/.            "
+                            BYTE "                                                                                                          /hyoo::::-            "
+                            BYTE "                                                                                                           `-syhdmyo/-.`        "
+                            BYTE "                                                                                                          `-oshNdhhh+ossyhs:`   "
+                            BYTE "                       * [X] Retuen to The Start Menu                                                 .++oyyhsydhysyyyyhso-..   "
+                            BYTE "                                                                                                    `ymyoddyhddhhyydhyso+::--.  "
+                            BYTE "                       * [ESC] Close the Game                                                      `dmd-/mmdyyhddhhdhoy++s+:-.  "
+                            BYTE "                                                                                                   +mddo-ysyhhdddyhh++shy+//:`  "
+                            BYTE "                                                                                                  -hyhdh::dmmddddyyooo+oo////   "
+                            BYTE "                     HETLERIN und PANZER - Version 0.2                                           .dddddds-smmmdhsys+os+s./o..   "
+                            BYTE "                                                                                                `dmddddddo:sdddhoy++osdo://.    "
+                            BYTE "                                                                                                hmdyhhddmdosyhy/--+hhy+/+o:`    "
+                            BYTE "                                                                                                +mmh+ymddddhh++hdddhyo+o++.     "
+                            BYTE "                                                                                                dNmh/`/shy+:ohmhddhhs+oo+-      "
+                            BYTE "                                                                                               `mmmhs./shhdmmmmdhyso+o+:-       "
+                            BYTE "                                                                                               :mmmh/+ddmmmmddhyyo+o+++//       "
+                            BYTE "                                                                                               oysyssydmmmdhyysooo++:+o+o-      "
+loseResultCmdImage  CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
+                               <>,                                                                       \
+                               SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
 
 mapCmdImage_characters BYTE "================================================================================================================================"
                        BYTE "|                     |                                                                                                        |"
