@@ -20,7 +20,6 @@ ComputerTankMove PROTO,
     thisTank: PTR Tank,
     countWord: PTR DWORD
 
-
 ; MoveRandom PROTO,
 ;     thisOutputHandle: DWORD,
 ;     thisTank: PTR Tank,

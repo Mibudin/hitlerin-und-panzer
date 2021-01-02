@@ -71,17 +71,17 @@ PrintBullet ENDP
 ;EraseBullet ENDP
 
 
-EraseBullet PROC USES eax ecx esi edi,
+EraseBullet PROC USES eax esi edi,
     thisBullet: PTR BULLET,
     thisGameMap: PTR BYTE
 
     mov esi, thisBullet
 
     ; erase bullet
-    INVOKE PushRenderBufferImageBlank,
-        RENDER_BUFFER_LAYER_BULLETS,
-        (BULLET PTR [esi]).position,
-        bulletSize
+    ; INVOKE PushRenderBufferImageBlank,
+    ;     RENDER_BUFFER_LAYER_BULLETS,
+    ;     (BULLET PTR [esi]).position,
+    ;     bulletSize
 
     ; record in map
     mov edi, thisGameMap
@@ -148,14 +148,14 @@ BulletMove_FlyUp:
     
     .IF ebx == ROLE_PLAYER
         .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY
-            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
+            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             jmp MoveBullet_return 
         .ENDIF    
     .ELSEIF ebx == ROLE_ENEMY
         .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER
-            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
+            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             ; dec gamePlayerTankLives
             jmp MoveBullet_return 
         .ENDIF
@@ -189,14 +189,14 @@ BulletMove_FlyRight:
     
     .IF ebx == ROLE_PLAYER
         .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY
-            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
+            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             jmp MoveBullet_return 
         .ENDIF    
     .ELSEIF ebx == ROLE_ENEMY
         .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER
-            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
+            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             ; dec gamePlayerTankLives
             jmp MoveBullet_return 
         .ENDIF
@@ -230,14 +230,14 @@ BulletMove_FlyDown:
     
     .IF ebx == ROLE_PLAYER
         .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY
-            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
+            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             jmp MoveBullet_return 
         .ENDIF    
     .ELSEIF ebx == ROLE_ENEMY
         .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER
-            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
+            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             ; dec gamePlayerTankLives
             jmp MoveBullet_return 
         .ENDIF
@@ -271,14 +271,14 @@ BulletMove_FlyLeft:
     
     .IF ebx == ROLE_PLAYER
         .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_ENEMY
-            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
+            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             jmp MoveBullet_return 
         .ENDIF    
     .ELSEIF ebx == ROLE_ENEMY
         .IF (BYTE PTR [edi + eax]) == GAME_MAP_CHAR_PLAYER
-            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             INVOKE DeleteTank, thisBullet, ourTank, enemyTankList, enemyTankAmount
+            INVOKE DeleteBullet, thisBullet, bulletAmount, bulletList
             ; dec gamePlayerTankLives
             jmp MoveBullet_return 
         .ENDIF
@@ -329,7 +329,7 @@ BulletMove ENDP
 ; BulletMove ENDP
 
 ;; NewBullet
-NewBullet PROC USES eax ecx esi edi,
+NewBullet PROC USES eax esi edi,
     thisTank: PTR TANK,
     bulletAmount: PTR BYTE,
     bulletList: PTR BULLET,
@@ -570,7 +570,7 @@ DeleteBullet ENDP
 
 ;; DeleteTank
 ;; delete tank
-;; FIXME:
+;; FIXME: Deleting tank error
 DeleteTank PROC USES eax ecx esi edi,
     thisBullet: PTR BULLET,
     ourTank: PTR TANK,
@@ -598,7 +598,7 @@ DeleteTank PROC USES eax ecx esi edi,
     jb DeleteTank_checkEnemies
 
     sub (tank PTR [edi]).hp, 1
-    jmp DeleteTank_return 
+    jmp DeleteTank_return
 DeleteTank_checkEnemies:
     mov edi, enemyTankAmount
     movzx ecx, (BYTE PTR [edi])

@@ -9,7 +9,7 @@ TITLE Tank (Tank.asm)
 
 ;; PrintTank
 ;; print tank
-PrintTank PROC USES eax ecx esi edi,
+PrintTank PROC USES eax ebx ecx esi edi,
     thisOutputHandle: DWORD,
     thisTank: PTR Tank,
 	gameMap: PTR BYTE,
@@ -143,7 +143,7 @@ PrintTank ENDP
 
 ;; EraseTank
 ;; clear the tank in order to move
-EraseTank PROC USES eax ecx esi,
+EraseTank PROC USES eax esi edi,
     thisOutputHandle: DWORD,
     thisTank: PTR TANK,
 	gameMap: PTR BYTE,
@@ -151,10 +151,10 @@ EraseTank PROC USES eax ecx esi,
 
     mov esi, thisTank
 
-    INVOKE PushRenderBufferImageBlank,
-        RENDER_BUFFER_LAYER_TANKS,
-        (TANK PTR [esi]).position,
-        tankSize
+    ; INVOKE PushRenderBufferImageBlank,
+    ;     RENDER_BUFFER_LAYER_TANKS,
+    ;     (TANK PTR [esi]).position,
+    ;     tankSize
 
     mov edi, GameMap
     INVOKE GetRenderBufferIndex, (TANK PTR [esi]).position
@@ -207,7 +207,7 @@ EraseTank ENDP
 
 ;; ChangeFaceTo
 ;; change direction 
-ChangeFaceTo PROC USES eax ecx esi,
+ChangeFaceTo PROC USES eax esi,
     thisTank: PTR TANK,
     newFaceTo: BYTE
 
@@ -446,6 +446,7 @@ MoveTank_SubX:
     ; .ENDIF
     jmp MoveTank_PrintMove
 MoveTank_PrintMove:
+    ; INVOKE PrintTank, thisOutputHandle, thisTank, gameMap, countWord
 MoveTank_Return:
     INVOKE PrintTank, thisOutputHandle, thisTank, gameMap, countWord
     ret

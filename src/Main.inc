@@ -129,14 +129,6 @@ mMainGameTurn_GameStateGameMap_Bullets:
     add edx, BULLET
     loop mMainGameTurn_GameStateGameMap_Bullets
 
-    ; Check player's lives
-    ; movzx edx, gamePlayerTankLives
-    movzx edx, gamePlayerTank.hp
-    .IF edx <= 0
-        mov gameState, GAME_STATE_END
-        jmp mMainGameTurn_GameStateGameMap_EndTurn
-    .ENDIF
-
 mMainGameTurn_GameStateGameMap_BulletsEnd:
 
     ; Player tank
@@ -161,17 +153,36 @@ mMainGameTurn_GameStateGameMap_EndPlayerKeyDetect:
 
     ; Enemy tank
     ; FIXME: Enemys' bullets?
-    mov ecx, ENEMY_TANK_AMOUNT_INITIAL
+    movzx ecx, gameEnemyTankCurrentAmount
+    cmp ecx, 0
+    je mMainGameTurn_GameStateGameMap_EnemyTanksEnd
     xor edx, edx
 mMainGameTurn_GameStateGameMap_EnemyTanks:
     INVOKE GetDirection, ADDR gameEnemyTankList[edx], ADDR gamePlayerTank
     INVOKE ComputerTankMove, stdOutputHandle, ADDR gameEnemyTankList[edx], ADDR trashBus
     add edx, TANK
     loop mMainGameTurn_GameStateGameMap_EnemyTanks
+mMainGameTurn_GameStateGameMap_EnemyTanksEnd:
 
     ; Render
     INVOKE IntegrateRenderBufferFinaleAllDiscardable
     INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_FINALE
+
+    ; Check ending conditions
+    movzx edx, gamePlayerTank.hp
+    .IF edx <= 0
+        mov gameWinner, ROLE_ENEMY
+        mov gameState, GAME_STATE_END
+        mMainGameTurn_GameStateEnd_Pre
+        jmp mMainGameTurn_GameStateGameMap_EndTurn
+    .ENDIF
+    movzx edx, gameEnemyTankCurrentAmount
+    .IF edx == 0
+        mov gameWinner, ROLE_PLAYER
+        mov gameState, GAME_STATE_END
+        mMainGameTurn_GameStateEnd_Pre
+        jmp mMainGameTurn_GameStateGameMap_EndTurn
+    .ENDIF
 
 mMainGameTurn_GameStateGameMap_EndTurn:
     mov eax, TRUE
@@ -179,6 +190,12 @@ ENDM
 
 ;; mMainGameTurn_GameStateEnd_Pre
 mMainGameTurn_GameStateEnd_Pre MACRO
+    movzx edx, gameWinner
+    .IF edx == ROLE_PLAYER
+        ; TODO: Player wins
+    .ELSE
+        ; TODO: Enemy wins
+    .ENDIF
 ENDM
 
 ;; mMainGameTurn_GameStateEnd

@@ -135,7 +135,7 @@ GAME_MAP_WALL_1_NUMBER        EQU <7>
 PLAYER_START_POSITION     EQU <<1, 1>>
 PLAYER_LIVES_INITIAL      EQU <3>
 ENEMY_TANK_AMOUNT_INITIAL EQU <3>
-BULLET_AMOUNT_MAX         EQU <20>
+BULLET_AMOUNT_MAX         EQU <32>
 
 
 ; ==============
@@ -433,6 +433,9 @@ gameEnemyTankCurrentAmount BYTE   ENEMY_TANK_AMOUNT_INITIAL
 gameBulletList             BULLET BULLET_AMOUNT_MAX DUP(<>)
 gameBulletCurrentAmount    BYTE   0
 ; gamePlayerTankLives        BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
+
+; The winner of the game
+gameWinner BYTE ?
 
 ; The common trash bus
 trashBus DWORD ?
