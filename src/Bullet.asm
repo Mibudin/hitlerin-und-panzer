@@ -570,7 +570,6 @@ DeleteBullet ENDP
 
 ;; DeleteTank
 ;; delete tank
-;; FIXME: Deleting tank error
 DeleteTank PROC USES eax ecx esi edi,
     thisBullet: PTR BULLET,
     ourTank: PTR TANK,
@@ -581,7 +580,7 @@ DeleteTank PROC USES eax ecx esi edi,
     mov edi, ourTank
 
     ; check if our tank be hit
-    mov ax, (tank PTR [edi]).position.x 
+    mov ax, (tank PTR [edi]).position.x
     cmp ax, (bullet PTR [esi]).position.x
     ja DeleteTank_checkEnemies
 
@@ -634,6 +633,7 @@ DeleteTank_deleteEnemyTank:
     dec ecx
     cmp ecx, 0
     je DeleteTank_DecreaseTheTankAmount
+    mov esi, enemyTankList
 DeleteTank_moveToLastTank:
     add esi, TANK
     loop DeleteTank_moveToLastTank

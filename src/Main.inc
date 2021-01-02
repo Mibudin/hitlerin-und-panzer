@@ -132,18 +132,24 @@ mMainGameTurn_GameStateGameMap_Bullets:
 mMainGameTurn_GameStateGameMap_BulletsEnd:
 
     ; Player tank
-    ; FIXME: Interval time?
     call ReadKey
-    jz mMainGameTurn_GameStateGameMap_EndPlayerKeyDetect
-    .IF ax == 3920h  ; SPACE
+    mov edx, gameTickCount
+    sub edx, gamePlayerTankLastShoot
+    mov cl, gamePlayerTankShootAmount
+    .IF cl > 0 && ax == 3920h  ; SPACE
+        dec gamePlayerTankShootAmount
         INVOKE NewBullet,
             ADDR gamePlayerTank,
             ADDR gameBulletCurrentAmount,
             ADDR gameBulletList,
             ADDR gameMapRecord
     .ENDIF
+    .IF edx >= PLAYER_SHOOT_INTERVAL && cl < PLAYER_SHOOT_CUMULATION_MAX
+        mov edx, gameTickCount
+        mov gamePlayerTankLastShoot, edx
+        inc gamePlayerTankShootAmount
+    .ENDIF
 
-mMainGameTurn_GameStateGameMap_EndPlayerKeyDetect:
     INVOKE MoveTank,
         stdOutputHandle,
         ADDR gamePlayerTank,

@@ -289,7 +289,7 @@ ChangeFaceTo ENDP
 
 ;; MoveTank
 ;; move tank
-MoveTank PROC USES eax edi esi, 
+MoveTank PROC USES eax ecx edi esi, 
     thisOutputHandle: DWORD, 
     thisTank: PTR Tank,
 	gameMap: PTR BYTE,

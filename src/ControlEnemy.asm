@@ -49,6 +49,7 @@ ComputerTankMove_CheckDirection:
     	mov ax, 4B00h
         jmp ComputerTankMove_CallMoveTank
     .ELSE
+        call WaitMsg
         jmp ComputerTankMove_Return
     .ENDIF
 ComputerTankMove_CallMoveTank:

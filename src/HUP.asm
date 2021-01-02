@@ -132,10 +132,12 @@ GAME_MAP_WALL_0_NUMBER        EQU <6>
 GAME_MAP_WALL_1_NUMBER        EQU <7>
 
 ; Game objects
-PLAYER_START_POSITION     EQU <<1, 1>>
-PLAYER_LIVES_INITIAL      EQU <3>
-ENEMY_TANK_AMOUNT_INITIAL EQU <3>
-BULLET_AMOUNT_MAX         EQU <32>
+PLAYER_START_POSITION       EQU <<1, 1>>
+PLAYER_LIVES_INITIAL        EQU <3>
+PLAYER_SHOOT_INTERVAL       EQU <2000>
+PLAYER_SHOOT_CUMULATION_MAX EQU <3>
+ENEMY_TANK_AMOUNT_INITIAL   EQU <3>
+BULLET_AMOUNT_MAX           EQU <32>
 
 
 ; ==============
@@ -268,7 +270,7 @@ tankCmdImageEnemyLeft  CMD_IMAGE <<3, 3>,                                       
 bulletCmdImage      CMD_IMAGE <<1, 1>, \
                                {'@'},  \
                                {0Eh}>
-bulletCmdImageEnemy CMD_IMAGE <<1, 1>, \  ; TODO: Enemy bullet differences?
+bulletCmdImageEnemy CMD_IMAGE <<1, 1>, \
                                {'%'},  \
                                {0Dh}>
 
@@ -426,6 +428,8 @@ bulletSize COORD <1, 1>
 
 ; Current game objects
 gamePlayerTank             TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER, PLAYER_LIVES_INITIAL>
+gamePlayerTankLastShoot    DWORD  0
+gamePlayerTankShootAmount  BYTE   PLAYER_SHOOT_CUMULATION_MAX
 gameEnemyTankList          TANK   <<100, 2>, FACE_UP, ROLE_ENEMY, 1>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
                            TANK   << 80, 1>, FACE_UP, ROLE_ENEMY, 1>
                            TANK   << 70, 2>, FACE_UP, ROLE_ENEMY, 1>

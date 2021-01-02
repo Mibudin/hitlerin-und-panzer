@@ -32,12 +32,12 @@ MainGameInit PROC
 MainGameInit ENDP
 
 ;; MainGameLoop
-MainGameLoop PROC USES eax ecx
+MainGameLoop PROC USES eax ebx
 MainGameLoop_Loop:
     call GetTickCount
-    mov ecx, eax
-    sub ecx, gameTickCount
-    cmp ecx, MAIN_GAME_TURN_INTERVAL
+    mov ebx, eax
+    sub ebx, gameTickCount
+    cmp ebx, MAIN_GAME_TURN_INTERVAL
     jb MainGameLoop_Loop
     mov gameTickCount, eax
 
