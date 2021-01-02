@@ -51,7 +51,7 @@ InitGameMapRecord PROC USES ecx esi edi
 InitGameMapRecord ENDP
 
 ;; InitTanks
-;; FIXME: Initialize enemy tanks
+;; TODO: Initialize enemy tanks
 InitTanks PROC USES eax ecx
 ;     mov ecx, ENEMY_TANK_AMOUNT
 

@@ -97,10 +97,19 @@ ENDM
 
 ;; mMainGameTurn_GameStateGameMap_Pre
 mMainGameTurn_GameStateGameMap_Pre MACRO
+    call Clrscr
     INVOKE PushRenderBufferImageDiscardable,
         RENDER_BUFFER_LAYER_GAME_MAP,
         ADDR mapCmdImage,
         stdRenderOrigin
+    INVOKE PushRenderBufferImageDiscardable,
+        RENDER_BUFFER_LAYER_GAME_MAP,
+        ADDR germanFlagCmdImage,
+        germanFlagCmdImage_position
+    INVOKE PushRenderBufferImageDiscardable,
+        RENDER_BUFFER_LAYER_GAME_MAP,
+        ADDR polandFlagCmdImage,
+        polandFlagCmdImage_position
 ENDM
 
 ;; mMainGameTurn_GameStateGameMap
@@ -198,19 +207,40 @@ ENDM
 
 ;; mMainGameTurn_GameStateEnd_Pre
 mMainGameTurn_GameStateEnd_Pre MACRO
+    call Clrscr
     movzx edx, gameWinner
     .IF edx == ROLE_PLAYER
-        ; TODO: Player wins
+        INVOKE PushRenderBufferImageDiscardable,
+            RENDER_BUFFER_LAYER_GAME_MAP,
+            ADDR winResultCmdImage,
+            stdRenderOrigin
     .ELSE
-        ; TODO: Enemy wins
+        INVOKE PushRenderBufferImageDiscardable,
+            RENDER_BUFFER_LAYER_GAME_MAP,
+            ADDR loseResultCmdImage,
+            stdRenderOrigin
     .ENDIF
+    INVOKE IntegrateRenderBufferFinaleAllDiscardable
+    INVOKE RenderDiscardable, RENDER_BUFFER_LAYER_FINALE
 ENDM
 
 ;; mMainGameTurn_GameStateEnd
-;; FIXME: Ending
 mMainGameTurn_GameStateEnd MACRO
-
-    mov eax, TRUE
+    call ReadKey
+    movzx edx, gameWinner
+    .IF edx == ROLE_PLAYER
+        .IF ax == 011Bh  ; ESC
+            mov eax, FALSE
+        .ELSE
+            mov eax, TRUE
+        .ENDIF
+    .ELSE
+        .IF ax == 011Bh  ; ESC
+            mov eax, FALSE
+        .ELSE
+            mov eax, TRUE
+        .ENDIF
+    .ENDIF
 ENDM
 
 

@@ -90,6 +90,11 @@ PushCmdImageCharacters PROTO,
     cmdImageCharacters:PTR BYTE,
     characterLength:DWORD
 
+PushCmdImageAttributes PROTO,
+    cmdImage:PTR CMD_IMAGE,
+    cmdImageAttributes:PTR WORD,
+    attributeLength:DWORD
+
 PushRenderBufferImage PROTO,
     layer:DWORD,
     cmdImage:PTR CMD_IMAGE,

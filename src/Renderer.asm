@@ -37,7 +37,19 @@ InitRenderer_ClearRenderBufferLayersAll:
         ADDR mapCmdImage,
         ADDR mapCmdImage_characters,
         LENGTH mapCmdImage.characters
+    INVOKE PushCmdImageAttributes,
+        ADDR germanFlagCmdImage,
+        ADDR germanFlagCmdImage_attributes,
+        LENGTH germanFlagCmdImage.attributes
+    INVOKE PushCmdImageAttributes,
+        ADDR polandFlagCmdImage,
+        ADDR polandFlagCmdImage_attributes,
+        LENGTH polandFlagCmdImage.attributes 
 
+    INVOKE PushCmdImageCharacters,
+        ADDR winResultCmdImage,
+        ADDR winResultCmdImage_characters,
+        LENGTH winResultCmdImage.characters
     INVOKE PushCmdImageCharacters,
         ADDR loseResultCmdImage,
         ADDR loseResultCmdImage_characters,
@@ -197,6 +209,22 @@ PushCmdImageCharacters PROC USES ecx esi edi,
 
     ret
 PushCmdImageCharacters ENDP
+
+;; PushCmdImageAttributes
+PushCmdImageAttributes PROC USES ecx esi edi,
+    cmdImage:PTR CMD_IMAGE,
+    cmdImageAttributes:PTR WORD,
+    attributeLength:DWORD
+
+    cld
+    mov ecx, attributeLength
+    mov esi, cmdImage
+    lea edi, (CMD_IMAGE PTR [esi]).attributes
+    mov esi, cmdImageAttributes
+    rep movsw
+
+    ret
+PushCmdImageAttributes ENDP
 
 ;; PushRenderBufferImage
 PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,

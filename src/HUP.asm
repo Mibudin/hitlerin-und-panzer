@@ -54,8 +54,8 @@ GAME_MAP_HEIGHT EQU <SCREEN_BUFFER_HEIGHT>
 ; Default:
 ;     In:  01F7h (0000 0001 1111 0111 b)
 ;     Out: 0003h (0000 0000 0000 0011 b)
-; In:  ???? ??0? ?0?0 00?1 => 0000 0001 1010 0011
-;     1 0x0001 ENABLE_PROCESSED_INPUT 
+; In:  ???? ??0? ?0?0 00?0 => 0000 0001 1010 0010
+;     0 0x0001 ENABLE_PROCESSED_INPUT 
 ;     ? 0x0002 ENABLE_LINE_INPUT 
 ;     0 0x0004 ENABLE_ECHO_INPUT 
 ;     0 0x0008 ENABLE_WINDOW_INPUT 
@@ -69,7 +69,7 @@ GAME_MAP_HEIGHT EQU <SCREEN_BUFFER_HEIGHT>
 ;     0 0x0004 ENABLE_VIRTUAL_TERMINAL_PROCESSING
 ;     0 0x0008 DISABLE_NEWLINE_AUTO_RETURN
 ;     0 0x0010 ENABLE_LVB_GRID_WORLDWIDE>
-CONSOLE_INPUT_MODE  EQU <0000000110100011b>
+CONSOLE_INPUT_MODE  EQU <0000000110100010b>
 CONSOLE_OUTPUT_MODE EQU <0000000000000001b>
 
 ; CMD color codes
@@ -132,7 +132,7 @@ GAME_MAP_WALL_0_NUMBER        EQU <6>
 GAME_MAP_WALL_1_NUMBER        EQU <7>
 
 ; Game objects
-PLAYER_START_POSITION       EQU <<1, 1>>
+PLAYER_START_POSITION       EQU <<21, 21>>
 PLAYER_LIVES_INITIAL        EQU <3>
 PLAYER_SHOOT_INTERVAL       EQU <2000>
 PLAYER_SHOOT_CUMULATION_MAX EQU <3>
@@ -274,6 +274,32 @@ bulletCmdImageEnemy CMD_IMAGE <<1, 1>, \
                                {'%'},  \
                                {0Dh}>
 
+germanFlagCmdImage_position COORD <8, 12>
+germanFlagCmdImage_attributes WORD 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0C0h, 0C0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0C0h, 0C0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0F0h, 0F0h,   0h,   0h, 0F0h, 0F0h, 0F0h, 0F0h,   0h,   0h, 0F0h, 0F0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0F0h, 0F0h, 0F0h, 0F0h,   0h,   0h,   0h,   0h, 0F0h, 0F0h, 0F0h, 0F0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0F0h, 0F0h, 0F0h, 0F0h,   0h,   0h,   0h,   0h, 0F0h, 0F0h, 0F0h, 0F0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0F0h, 0F0h,   0h,   0h, 0F0h, 0F0h, 0F0h, 0F0h,   0h,   0h, 0F0h, 0F0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0C0h, 0C0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0C0h, 0C0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h
+germanFlagCmdImage CMD_IMAGE <<16, 8>,                              \
+                              16 * 8 DUP(RENDER_BUFFER_BLANK_CHAR), \
+                              <>>
+
+polandFlagCmdImage_position COORD <104, 12>
+polandFlagCmdImage_attributes WORD 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h
+                              WORD 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h
+                              WORD 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h
+                              WORD 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h, 0F0h
+                              WORD 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h
+                              WORD 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h, 0C0h
+polandFlagCmdImage CMD_IMAGE <<16, 8>,                              \
+                              16 * 8 DUP(RENDER_BUFFER_BLANK_CHAR), \
+                              <>>
+
 ; TODO: Load from file?
 startMenuCmdImage_characters BYTE "                                                                                          ./-.       `` `..`       `-:`         "
                              BYTE "                                                                                           :+.  ``..```.``.-...   .++:`         "
@@ -327,7 +353,7 @@ menuRuleCmdImage_characters BYTE "                                              
                             BYTE "                                                                -//-     .m.         ..``        .`-dmMMNNNMNy-  ` `   ``-      "
                             BYTE "          - Have three panzers                                    `:oo-   yh`      `::```  ```  `--dmdhdmdh+`    ``    ` -      "
                             BYTE "          - Automatically move and fire through certain rules        `odyhmyd.     /:```:/+/+ooo-:::hMMNs/oy..--.`.`  `````     "
-                            BYTE "          - Have one life                                             :MNmddhm.  `/-```+oooo+/o+--+o+sNh.---+::/++:.` ` `.`     "
+                            BYTE "          - Have one life for each one                                :MNmddhm.  `/-```+oooo+/o+--+o+sNh.---+::/++:.` ` `.`     "
                             BYTE "                                                                       hMNhyhN/ .:.```-oooooo+/:-:///++dy..-d+++///o```````     "
                             BYTE "      - Victory Condition                                              .mMMmdNs-:` ```+ooooooo/`-++//+oomo.--d++/::+: `.```     "
                             BYTE "                                                                        .dMMmh++/. ``.+oo+++oo.-so++oooooy..-/h+ooo/-   ````    "
@@ -382,7 +408,43 @@ menuCreditsCmdImage_characters BYTE "                                           
 menuCreditsCmdImage CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
                                <>,                                                                       \
                                SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
-                               
+
+winResultCmdImage_characters BYTE "                                                                                                                                "
+                             BYTE "                                                                                                                                "
+                             BYTE "                                                                                                                                "
+                             BYTE "                                                                                                                                "
+                             BYTE "                                                                                                                                "
+                             BYTE "                                                                                                                                "
+                             BYTE "                                                                                                                                "
+                             BYTE "                                                                                                                                "
+                             BYTE "                                                                                   ```````````````                              "
+                             BYTE "                                                                                  `..-:/++++//:-.````                           "
+                             BYTE "         _____.___.               __      __.__         ._. ._. ._.           ```.://++oooossssso+:....                         "
+                             BYTE "         \__  |   | ____  __ __  /  \    /  \__| ____   | | | | | |         ````-////+++++oosssssooo:``.`                       "
+                             BYTE "          /   |   |/  _ \|  |  \ \   \/\/   /  |/    \  | | | | | |       `.```.://///--..-/+osso+///:.`..                      "
+                             BYTE "          \____   (  <_> )  |  /  \        /|  |   |  \  \|  \|  \|       .````-////:::////::/oo+/://::``.                      "
+                             BYTE "          / ______|\____/|____/    \__/\  / |__|___|  /  __  __  __       .```.://::/:.-o+/::/+o/:-:+//.`.`                     "
+                             BYTE "          \/                            \/          \/   \/  \/  \/       . `.-::://///////+++++o+:/+//:`-`                     "
+                             BYTE "                                                                          -..--:::/+++oooo++//:://:/++++:-                      "
+                             BYTE "                                                                         ..----:::////+++/+:.``````-/++++/:-`                   "
+                             BYTE "                                                                         -:--:-:-:/:://::/+/-......:::://::/+/:.`               "
+                             BYTE "                       * [ESC] Close the Game                            -:.-:::::////+//:--.-::--..::-::/++/:/++//-`           "
+                             BYTE "                                                                         .//:--:::/+++++++////++++:-/////:-:/::-/osso+:`    `  `"
+                             BYTE "                                                                          `..`.---:/+++++++++++++++/++//+/+/:--:+ossssso+.``````"
+                             BYTE "                                                                          ````..----/+++//+++++ooo+++///-`.-/+/+oooosss+-.``````"
+                             BYTE "                  HETLERIN und PANZER - Version 0.2                      .`````.://--::/+/::////////::/:.``.:///+++oo+-`````````"
+                             BYTE "                                                                          ``````.-/oo/::://:---..`..---.`.-://:-://:.```````````"
+                             BYTE "                                                                            ``````../yhhso/-----....`.-.:--..````..    `````````"
+                             BYTE "                                                                         ....`````..`./ymd.      `-+``.`````   ```      ````````"
+                             BYTE "                                                                             .......`...:+os+`    .:```                   ``````"
+                             BYTE "                                                                             .............-::`    -``  ``                 ``````"
+                             BYTE "                                                                                 ........```..`   ``````````               `````"
+                             BYTE "                                                                                   ...`````````` ```` ```````                  `"
+                             BYTE "                                                                                       `````.``````````  `````           `      "
+winResultCmdImage CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
+                             <>,                                                                       \
+                             SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+
 loseResultCmdImage_characters BYTE "                                                                                                                                "
                               BYTE "                                                                                                                                "
                               BYTE "                                                                                                                                "
@@ -404,9 +466,9 @@ loseResultCmdImage_characters BYTE "                                            
                               BYTE "                                                                                                          `-oshNdhhh+ossyhs:`   "
                               BYTE "                       * [ESC] Close the Game                                                         .++oyyhsydhysyyyyhso-..   "
                               BYTE "                                                                                                    `ymyoddyhddhhyydhyso+::--.  "
-                              BYTE "                  HETLERIN und PANZER - Version 0.2                                                `dmd-/mmdyyhddhhdhoy++s+:-.  "
+                              BYTE "                                                                                                   `dmd-/mmdyyhddhhdhoy++s+:-.  "
                               BYTE "                                                                                                   +mddo-ysyhhdddyhh++shy+//:`  "
-                              BYTE "                                                                                                  -hyhdh::dmmddddyyooo+oo////   "
+                              BYTE "                  HETLERIN und PANZER - Version 0.2                                               -hyhdh::dmmddddyyooo+oo////   "
                               BYTE "                                                                                                 .dddddds-smmmdhsys+os+s./o..   "
                               BYTE "                                                                                                `dmddddddo:sdddhoy++osdo://.    "
                               BYTE "                                                                                                hmdyhhddmdosyhy/--+hhy+/+o:`    "
@@ -415,9 +477,9 @@ loseResultCmdImage_characters BYTE "                                            
                               BYTE "                                                                                               `mmmhs./shhdmmmmdhyso+o+:-       "
                               BYTE "                                                                                               :mmmh/+ddmmmmddhyyo+o+++//       "
                               BYTE "                                                                                               oysyssydmmmdhyysooo++:+o+o-      "
-loseResultCmdImage  CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
-                               <>,                                                                       \
-                               SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
+loseResultCmdImage CMD_IMAGE <<SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>,                              \
+                              <>,                                                                       \
+                              SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
 
 mapCmdImage_characters BYTE "================================================================================================================================"
                        BYTE "|                     |                                                                                                        |"
@@ -466,9 +528,9 @@ bulletSize COORD <1, 1>
 gamePlayerTank             TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER, PLAYER_LIVES_INITIAL>
 gamePlayerTankLastShoot    DWORD  0
 gamePlayerTankShootAmount  BYTE   PLAYER_SHOOT_CUMULATION_MAX
-gameEnemyTankList          TANK   <<100, 2>, FACE_UP, ROLE_ENEMY, 1>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
-                           TANK   << 80, 1>, FACE_UP, ROLE_ENEMY, 1>
-                           TANK   << 70, 2>, FACE_UP, ROLE_ENEMY, 1>
+gameEnemyTankList          TANK   <<109, 9>, FACE_UP, ROLE_ENEMY, 1>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
+                           TANK   <<113, 9>, FACE_UP, ROLE_ENEMY, 1>
+                           TANK   <<117, 9>, FACE_UP, ROLE_ENEMY, 1>
 gameEnemyTankCurrentAmount BYTE   ENEMY_TANK_AMOUNT_INITIAL
 gameBulletList             BULLET BULLET_AMOUNT_MAX DUP(<>)
 gameBulletCurrentAmount    BYTE   0

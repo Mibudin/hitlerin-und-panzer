@@ -23,6 +23,7 @@ Main ENDP
 MainGameInit PROC
     call InitGame
 
+    mov gameState, GAME_STATE_START
     mMainGameTurn_GameStateStart_Pre
 
     ; mov gameState, GAME_STATE_TEST
