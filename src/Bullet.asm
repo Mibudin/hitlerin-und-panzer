@@ -571,3 +571,90 @@ DeleteBullet_RunCheckLoop:
     loop DeleteBullet_CheckBullet
     ret
 DeleteBullet ENDP
+
+; delete tank
+DeleteTank PROC USES esi,
+    thisBullet: PTR BULLET,
+    ourTank: PTR TANK,
+    enemyTankList: PTR TANK,
+    enmyTankAmount: PTR BYTE
+
+    mov esi, thisBullet
+    mov edi, ourTank
+
+    ; check if our tank be hit
+    mov ax, (tank PTR [edi]).position.x 
+    cmp ax, (bullet PTR [esi]).position.x
+    ja DeleteTank_checkEnemies
+
+    add ax, 2
+    cmp ax, (bullet PTR [esi]).position.X
+    jb DeleteTank_checkEnemies
+
+    mov ax, (tank PTR [edi]).position.Y
+    cmp ax, (bullet PTR [esi]).position.Y
+    ja DeleteTank_checkEnemies
+
+    add ax, 2
+    cmp ax, (bullet PTR [esi]).position.Y
+    jb DeleteTank_checkEnemies
+
+    sub (tank PTR [edi]).hp, 1
+    jmp DeleteTank_return 
+DeleteTank_checkEnemies:
+    mov edi, enemyTankAmount
+    movzx ecx, (BYTE PTR [edi])
+    
+    mov edi, enemyTankList
+    cmp ecx, 0
+    je DeleteTank_return
+DeleteTank_checkEnemy:
+    mov ax, (tank PTR [edi]).position.X
+    cmp ax, (bullet PTR [esi]).position.x
+    ja DeleteTank_nextTank
+
+    add ax, 2
+    cmp ax, (bullet PTR [esi]).position.X
+    jb DeleteTank_nextTank
+
+    mov al, (tank PTR [edi]).position.Y
+    cmp al, (bullet PTR [esi]).position.Y
+    ja DeleteTank_nextTank
+
+    add al, 2
+    cmp al, (bullet PTR [esi]).position.Y
+    jb DeleteTank_nextTank
+       
+    jmp DeleteTank_deleteEnemyTank
+DeleteTank_nextTank:
+    add edi, 7          ; struct tank is 7 byte
+    loop DeleteTank_checkEnemy
+DeleteTank_deleteEnemyTank:
+    mov esi, enemyTankAmount
+    movzx ecx, (BYTR PTR [esi])
+    cmp ecx, 0
+    je deleteEnemyTank2
+DeleteTank_moveToLastTank:
+    add esi, 7
+    loop DeleteTank_movToLastTank
+DeleteTank_deleteEnemyTank2:
+    mov ax, (Tank PTR [esi]).position.X
+    mov (Tank PTR [edi]).position.x, ax
+
+    mov ax, (Tank PTR [esi]).position.Y
+    mov (Tank PTR [edi]).position.y, ax
+
+    mov al, (Tank PTR [esi]).faceTo
+    mov (Tank PTR [edi]).faceTo, al
+
+    mov al, (Tank PTR [esi]).role
+    mov (Tank PTR [edi]).role, al
+
+    mov al, (Tank PTR [esi]).hp
+    mov (Tank PTR [edi]).hp, al
+
+    mov edi, enemyTankAmount
+    sub (BYTE PTR [edi]), 1 
+DeleteTank_return:
+    ret
+DeleteTank ENDP
