@@ -528,9 +528,9 @@ bulletSize COORD <1, 1>
 gamePlayerTank             TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER, PLAYER_LIVES_INITIAL>
 gamePlayerTankLastShoot    DWORD  0
 gamePlayerTankShootAmount  BYTE   PLAYER_SHOOT_CUMULATION_MAX
-gameEnemyTankList          TANK   <<109, 9>, FACE_UP, ROLE_ENEMY, 1>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
-                           TANK   <<113, 9>, FACE_UP, ROLE_ENEMY, 1>
-                           TANK   <<117, 9>, FACE_UP, ROLE_ENEMY, 1>
+gameEnemyTankList          TANK   <<117,  9>, FACE_UP, ROLE_ENEMY, 1>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
+                           TANK   << 97, 24>, FACE_UP, ROLE_ENEMY, 1>
+                           TANK   <<122, 27>, FACE_UP, ROLE_ENEMY, 1>
 gameEnemyTankCurrentAmount BYTE   ENEMY_TANK_AMOUNT_INITIAL
 gameBulletList             BULLET BULLET_AMOUNT_MAX DUP(<>)
 gameBulletCurrentAmount    BYTE   0
