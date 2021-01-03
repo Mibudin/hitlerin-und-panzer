@@ -595,6 +595,7 @@ DeleteTank PROC USES eax ecx esi edi,
     jb DeleteTank_checkEnemies
 
     sub (tank PTR [edi]).hp, 1
+    INVOKE UpdateFlagOnMap, ROLE_PLAYER
     jmp DeleteTank_return
 DeleteTank_checkEnemies:
     mov edi, enemyTankAmount
@@ -653,7 +654,8 @@ DeleteTank_deleteEnemyTank2:
 
 DeleteTank_DecreaseTheTankAmount:
     mov edi, enemyTankAmount
-    sub (BYTE PTR [edi]), 1 
+    sub (BYTE PTR [edi]), 1
+    INVOKE UpdateFlagOnMap, ROLE_ENEMY
 DeleteTank_return:
     ret
 DeleteTank ENDP

@@ -95,6 +95,12 @@ PushCmdImageAttributes PROTO,
     cmdImageAttributes:PTR WORD,
     attributeLength:DWORD
 
+UpdateFlag PROTO,
+    role:BYTE
+
+UpdateFlagOnMap PROTO,
+    role:BYTE
+
 PushRenderBufferImage PROTO,
     layer:DWORD,
     cmdImage:PTR CMD_IMAGE,

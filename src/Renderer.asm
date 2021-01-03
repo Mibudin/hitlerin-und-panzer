@@ -226,6 +226,54 @@ PushCmdImageAttributes PROC USES ecx esi edi,
     ret
 PushCmdImageAttributes ENDP
 
+;; UpdateFlag
+UpdateFlag PROC USES ax,
+    role:BYTE
+
+    mov al, role
+    .IF al == ROLE_PLAYER
+        mov ax, germanFlagCmdImage.imageSize.y
+        sub ax, 2
+        mov germanFlagCmdImage.imageSize.y, ax
+    .ELSE
+        mov ax, polandFlagCmdImage.imageSize.y
+        sub ax, 2
+        mov polandFlagCmdImage.imageSize.y, ax
+    .ENDIF
+
+    ret
+UpdateFlag ENDP
+
+;; UpdateFlagOnMap
+UpdateFlagOnMap PROC USES ax,
+    role:BYTE
+
+    mov al, role
+    .IF al == ROLE_PLAYER
+        INVOKE PushRenderBufferImageBlank,
+            RENDER_BUFFER_LAYER_GAME_MAP,
+            germanFlagCmdImage_position,
+            germanFlagCmdImage.imageSize
+        INVOKE UpdateFlag, ROLE_PLAYER
+        INVOKE PushRenderBufferImageDiscardable,
+            RENDER_BUFFER_LAYER_GAME_MAP,
+            ADDR germanFlagCmdImage,
+            germanFlagCmdImage_position
+    .ELSE
+        INVOKE PushRenderBufferImageBlank,
+            RENDER_BUFFER_LAYER_GAME_MAP,
+            polandFlagCmdImage_position,
+            polandFlagCmdImage.imageSize
+        INVOKE UpdateFlag, ROLE_ENEMY
+        INVOKE PushRenderBufferImageDiscardable,
+            RENDER_BUFFER_LAYER_GAME_MAP,
+            ADDR polandFlagCmdImage,
+            polandFlagCmdImage_position
+    .ENDIF
+
+    ret
+UpdateFlagOnMap ENDP
+
 ;; PushRenderBufferImage
 PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
     layer:DWORD,
