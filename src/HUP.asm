@@ -98,7 +98,7 @@ RENDER_BUFFER_LAYER_BULLETS  EQU <2>  ; The bullets
 RENDER_BUFFER_LAYER_FINALE   EQU <3>  ; The final render buffer layer
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <200>  ; in milliseconds  ; TODO: Test value
+MAIN_GAME_TURN_INTERVAL EQU <100>  ; in milliseconds  ; TODO: Test value
 
 ; Texts
 CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
