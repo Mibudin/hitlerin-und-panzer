@@ -227,19 +227,23 @@ PushCmdImageAttributes PROC USES ecx esi edi,
 PushCmdImageAttributes ENDP
 
 ;; UpdateFlag
-UpdateFlag PROC USES ax,
+UpdateFlag PROC USES ax esi,
     role:BYTE
 
     mov al, role
     .IF al == ROLE_PLAYER
-        mov ax, germanFlagCmdImage.imageSize.y
-        sub ax, 2
-        mov germanFlagCmdImage.imageSize.y, ax
+        mov esi, OFFSET germanFlagCmdImage.imageSize.y
     .ELSE
-        mov ax, polandFlagCmdImage.imageSize.y
-        sub ax, 2
-        mov polandFlagCmdImage.imageSize.y, ax
+        mov esi, OFFSET polandFlagCmdImage.imageSize.y
     .ENDIF
+    mov ax, [esi]
+    sub ax, 3
+    cmp ax, 0
+    jge UpdateFlag_PutBack
+    inc ax
+
+UpdateFlag_PutBack:
+    mov (WORD PTR [esi]), ax
 
     ret
 UpdateFlag ENDP
