@@ -240,7 +240,7 @@ UpdateFlag PROC USES ax esi,
     sub ax, 3
     cmp ax, 0
     jge UpdateFlag_PutBack
-    inc ax
+    xor ax, ax
 
 UpdateFlag_PutBack:
     mov (WORD PTR [esi]), ax

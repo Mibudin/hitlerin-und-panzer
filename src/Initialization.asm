@@ -26,6 +26,7 @@ InitConsole PROC USES eax ecx edx
     INVOKE SetConsoleMode, stdOutputHandle, CONSOLE_OUTPUT_MODE
 
     ; Set the screen and window
+    INVOKE FlushConsoleInputBuffer, stdInputHandle
     INVOKE SetConsoleScreenBufferSize, stdOutputHandle, screenBufferSize
     INVOKE SetConsoleWindowInfo, stdOutputHandle, TRUE, ADDR screenBufferInfo.srWindow
     call Clrscr
