@@ -60,10 +60,10 @@ InitRenderer ENDP
 
 ;; GetCutSize
 GetCutSize PROC USES ax edi,
-    innerPosition:COORD,
-    innerSize:COORD,
-    outerlimit:COORD,
-    renderSize:PTR COORD
+    innerPosition: COORD,
+    innerSize: COORD,
+    outerlimit: COORD,
+    renderSize: PTR COORD
 
     mov edi, renderSize
 
@@ -78,11 +78,11 @@ GetCutSize ENDP
 ;; GetRenderBufferIndex
 ;; To find the corresponging index to a coordinate of the render buffer
 ;; Parameters:
-;;     position:COORD: The coordination to be caculated
+;;     position (COORD): The coordination to be caculated
 ;; Returns:
 ;;     AX: The corresponging index of the render buffer
 GetRenderBufferIndex PROC,
-    position:COORD
+    position: COORD
 
     ; position.y * SCREEN_BUFFER_WIDTH + position.x
 
@@ -99,8 +99,8 @@ GetRenderBufferIndex ENDP
 
 ;; GetRenderBufferCoord
 GetRenderBufferCoord PROC USES ax cx esi,
-    index:WORD,
-    position:PTR COORD
+    index: WORD,
+    position: PTR COORD
 
     ; x = index - y * SCREEN_BUFFER_WIDTH
     ; y = index / SCREEN_BUFFER_WIDTH
@@ -123,8 +123,8 @@ GetRenderBufferCoord ENDP
 
 ;; CoverRenderBufferLayer
 CoverRenderBufferLayer PROC USES eax ecx edx esi edi,
-    sourceLayer:DWORD,
-    targetLayer:DWORD
+    sourceLayer: DWORD,
+    targetLayer: DWORD
 
     cld
     mGetRenderBufferLayerIndex eax, sourceLayer
@@ -145,8 +145,8 @@ CoverRenderBufferLayer ENDP
 
 ;; CoverRenderBufferLayerDiscardable
 CoverRenderBufferLayerDiscardable PROC USES eax ecx esi edi,
-    sourceLayer:DWORD,
-    targetLayer:DWORD
+    sourceLayer: DWORD,
+    targetLayer: DWORD
 
     cld
     mGetRenderBufferLayerIndex esi, sourceLayer
@@ -174,9 +174,9 @@ CoverRenderBufferLayerDiscardable ENDP
 
 ;; SetRenderBuffer
 SetRenderBuffer PROC USES ax ebx ecx edi,
-    layer:DWORD,
-    characterValue:BYTE,
-    attributeValue:WORD
+    layer: DWORD,
+    characterValue: BYTE,
+    attributeValue: WORD
 
     cld
     mGetRenderBufferLayerIndex ebx, layer
@@ -196,9 +196,9 @@ SetRenderBuffer ENDP
 
 ;; PushCmdImageCharacters
 PushCmdImageCharacters PROC USES ecx esi edi,
-    cmdImage:PTR CMD_IMAGE,
-    cmdImageCharacters:PTR BYTE,
-    characterLength:DWORD
+    cmdImage: PTR CMD_IMAGE,
+    cmdImageCharacters: PTR BYTE,
+    characterLength: DWORD
 
     cld
     mov ecx, characterLength
@@ -212,9 +212,9 @@ PushCmdImageCharacters ENDP
 
 ;; PushCmdImageAttributes
 PushCmdImageAttributes PROC USES ecx esi edi,
-    cmdImage:PTR CMD_IMAGE,
-    cmdImageAttributes:PTR WORD,
-    attributeLength:DWORD
+    cmdImage: PTR CMD_IMAGE,
+    cmdImageAttributes: PTR WORD,
+    attributeLength: DWORD
 
     cld
     mov ecx, attributeLength
@@ -228,7 +228,7 @@ PushCmdImageAttributes ENDP
 
 ;; UpdateFlag
 UpdateFlag PROC USES ax esi,
-    role:BYTE
+    role: BYTE
 
     mov al, role
     .IF al == ROLE_PLAYER
@@ -250,7 +250,7 @@ UpdateFlag ENDP
 
 ;; UpdateFlagOnMap
 UpdateFlagOnMap PROC USES ax,
-    role:BYTE
+    role: BYTE
 
     mov al, role
     .IF al == ROLE_PLAYER
@@ -280,10 +280,10 @@ UpdateFlagOnMap ENDP
 
 ;; PushRenderBufferImage
 PushRenderBufferImage PROC USES eax ebx ecx edx esi edi,
-    layer:DWORD,
-    cmdImage:PTR CMD_IMAGE,
-    position:COORD
-    LOCAL renderSize:COORD
+    layer: DWORD,
+    cmdImage: PTR CMD_IMAGE,
+    position: COORD
+    LOCAL renderSize: COORD
 
     cld
     mov edx, cmdImage
@@ -332,9 +332,9 @@ PushRenderBufferImage ENDP
 
 ;; PushRenderBufferImageBlank
 PushRenderBufferImageBlank PROC USES ax,
-    layer:DWORD,
-    position:COORD,
-    blankSize:COORD
+    layer: DWORD,
+    position: COORD,
+    blankSize: COORD
 
     mov ax, blankSize.x
     mov blankCmdImage.imageSize.x, ax
@@ -347,10 +347,10 @@ PushRenderBufferImageBlank ENDP
 
 ;; PushRenderBufferImageDiscardable
 PushRenderBufferImageDiscardable PROC USES eax ebx ecx edx esi edi,
-    layer:DWORD,
-    cmdImage:PTR CMD_IMAGE,
-    position:COORD
-    LOCAL renderSize:COORD
+    layer: DWORD,
+    cmdImage: PTR CMD_IMAGE,
+    position: COORD
+    LOCAL renderSize: COORD
 
     mov esi, cmdImage
     mGetRenderBufferLayerIndex edi, layer
@@ -429,8 +429,8 @@ IntegrateRenderBufferFinaleAllDiscardable ENDP
 
 ;; Render
 Render PROC USES eax ecx edx,
-    layer:DWORD
-    LOCAL outputCount:DWORD
+    layer: DWORD
+    LOCAL outputCount: DWORD
 
     mGetRenderBufferLayerIndex edx, layer
     INVOKE WriteConsoleOutputCharacter,
@@ -453,9 +453,9 @@ Render ENDP
 
 ;; RenderDiscardable
 RenderDiscardable PROC USES eax ebx ecx edx esi edi,
-    layer:DWORD
-    LOCAL outputCount:DWORD,
-          renderStart:COORD
+    layer: DWORD
+    LOCAL outputCount: DWORD,
+          renderStart: COORD
 
     cld
     mGetRenderBufferLayerIndex eax, layer

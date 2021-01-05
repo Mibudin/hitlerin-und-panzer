@@ -51,31 +51,6 @@ InitGameMapRecord PROC USES ecx esi edi
     ret
 InitGameMapRecord ENDP
 
-;; InitTanks
-;; TODO: Initialize enemy tanks
-InitTanks PROC USES eax ecx
-;     mov ecx, ENEMY_TANK_AMOUNT
-
-; InitTanks_SetEnemyTanks:
-;     mov eax, enemyField.top
-;     call RandomRange
-
-;     mov eax, enemyField.left
-;     call RandomRange
-
-;     mov eax, enemyField.bottom
-;     sub eax, enemyField.top
-;     call RandomRange
-
-;     mov eax, enemyField.right
-;     sub eax, enemyField.left
-;     call RandomRange
-
-;     loop InitTanks_SetEnemyTanks
-
-    ret
-InitTanks ENDP
-
 ;;  InitGame
 InitGame PROC
     call Randomize
@@ -86,7 +61,6 @@ InitGame PROC
     call InitRenderer
 
     call InitGameMapRecord
-    call InitTanks
 
     mov gameState, GAME_STATE_START
     mov gameTickCount, 0

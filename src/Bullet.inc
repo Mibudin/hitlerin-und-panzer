@@ -20,12 +20,12 @@ EraseBullet PROTO,
     thisGameMap: PTR BYTE
 
 BulletMove PROTO,
-    thisBullet: PTR bullet,
+    thisBullet: PTR BULLET,
     thisGameMap: PTR BYTE,
     bulletAmount: PTR BYTE,
     bulletList: PTR BULLET,
-    ourTank: PTR Tank, 
-    enemyTankList: PTR Tank, 
+    ourTank: PTR TANK, 
+    enemyTankList: PTR TANK, 
     enemyTankAmount: PTR BYTE
 
 NewBullet PROTO,
@@ -33,11 +33,6 @@ NewBullet PROTO,
     bulletAmount: PTR BYTE,
     bulletList: PTR BULLET,
     gameMap: PTR BYTE
-
-; BulletHit PROTO,
-;     thisBullet: PTR BULLET,
-;     thisBulletAmount: PTR BYTE, 
-;     thisGameMap: PTR BYTE
 
 WhatPositionIs PROTO,
     thisPosition: COORD,
