@@ -49,15 +49,18 @@ In a word, the final project of Assembly Language and System Programming class.
 
 The game of the MASM, by the MASM, for the MASM.
 
+***(This is just a work of fiction. Any similarity is purely coincidental)***
+
 
 ## Members
 
 HITLERIN und PANZER Projekt
 
-- 資工二Ａ 林緯翔 (108502003)
-- 資工二Ａ 洪裕翔 (108502520)
-- 資工二Ａ 劉子雍 (108502523)
-- 資工二Ａ 秦承業 (108502539)
+Member List:
+- [Peter130848](https://github.com/Peter130848)
+- [Sunny (Cing-Chen)](https://github.com/Cing-Chen)
+- [Mibudin (Mibudin)](https://github.com/Mibudin)
+- [qswdqswd](https://github.com/qswdqswd)
 
 
 ## File Structure
@@ -76,11 +79,22 @@ HITLERIN und PANZER Projekt
 ### Main Files
 | File           | Description            |
 | :------------- | :--------------------- |
+| `.\README.md`  | Read me file           |
 | `.\LICENSE`    | License file           |
 | `.\config.bat` | Configuration file     |
 | `.\make.bat`   | General compiling file |
 | `.\run.bat`    | Run game file          |
-| `.\README.md`  | Read me file           |
+
+
+## Environment
+
+Technically, the default compiling and excuting environment of this project is Windows NT with x86 or x86-64.
+
+In the duration of making this project, the default (and only) using operation system is Windows 10 with x86-64, which is also the only operation systems we have tested.
+
+Therefore, it is suggested that the operation system for this project should be same as that we used, **Windows 10 with x86-64**.
+
+The compiling and linking files used in this project are (maybe) all packed in the folder `.\make\`.
 
 
 ## Compile
@@ -89,10 +103,18 @@ In default, run this command in command-line (in the root directory of this proj
 ```
 make
 ```
-which will compile the deafult target source file.
+which will compile the deafult target source file. Or
+```
+make <filename>
+```
+which will compile the target source file spicified by `<filename>`.
 
 ### .\config.bat
-<!-- TODO: -->
+The configuration file `.\config.bat` is a bat script file with some important settings variables inside. These configure to compile, link, and excute the associated files of this project.
+
+Be careful when changing the values in this file, because most of them are needed to be in specific formats, about certain environments, or the file structure.
+
+The variables set in this file would be used locally by `.\make.bat` and `.\run.bat`.
 
 ### .\make.bat
 In most of situations, run the `.\make.bat` to generally compile the specified assembly file for this project.
@@ -118,17 +140,47 @@ In dafault, run this command in command-line (in the root directory of this proj
 ```
 run
 ```
-which will run the deafult target exuctable file.
+which will run the deafult target exuctable binary file. Or
+```
+run <filename>
+```
+which will run the target excutable binary file spicified by `<filename>`.
 
 ### .\run.bat
-<!-- TODO: -->
+In most of situations, run the `.\run.bat` to generally run the specified excutable binary file for this project.
 
 This script `.\make.bat` depends on the configuration file `.\config.bat`, like `.\make.bat`.
 
+This script has a optional parameter, the specific file name to be run. If it does not has a specific name as a prameter, it will run the default file configured in its file.
+
+In default, `.\run.bat` will open a new CMD cnosole program and its console window to run the file. When the program of the file exits, this script will also exit the new CMD console program and its console window automatically and immediately.
+
+
+## Play
+
+### Game Rules
+The Game Rule of *HITERLIN und PANZER*
+- Player's Panzer
+    - Have one panzer
+    - Control the direction with *[ARROW KEYS]*
+    - Fire a bullet with *[SPACE]*
+        (fire one per 2 seconds, accumulate three ones at most)
+    - Have three lives
+- Enemy's Panzers
+    - Have three panzers
+    - Automatically move and fire through certain rules
+    - Have one life for each one
+- Victory Condition
+    - Destroy all panzers of the enemy
+- Failure Condition
+    - Run out of all three lives
+
+### Operations
+Most of the operating ways are descripted in the game rule above or in the interfaces in this game.
+
+
 ---
 
-Copyright © 2020 HITLERIN und PANZER Projekt
+Copyright © 2020-2021 HITLERIN und PANZER Projekt
 
-Das letztes Projekt von Assembler-Kurs
-
-Von HITLERIN und PANZER Projekt
+Das letztes Projekt von Assembler-Kurs von HITLERIN und PANZER Projekt
