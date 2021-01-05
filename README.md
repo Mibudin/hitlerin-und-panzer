@@ -131,6 +131,9 @@ In `.\make\masm32\`, there are some default compiling files (in about latest) fo
 
 which are copied from the standard MASM files in minimum to run correctly.
 
+### Used Library
+In this project, the most important library is [Irvine32](https://github.com/Eazybright/Irvine32), which is also the only outer library we used inside. Without it, this project would never be developed perhaps.
+
 
 ## Excute
 
@@ -175,6 +178,14 @@ The Game Rule of *HITERLIN und PANZER*
 
 ### Operations
 Most of the operating ways are descripted in the game rule above or in the interfaces in this game.
+
+## Special Thanks
+
+Thanks to the two teachers of the course *Assembly Language and System Programming*, who taught us step-by-step to program using assembly language.
+
+Additionally, thanks to people who provided so many awesome resources that we can learn and use in the duration of developing this project.
+
+Last but not least, we, *HITLERIN und PANZER Projekt*, should appreciate to each other member who was the best partner ever while all of us were developing hard.
 
 
 ---
