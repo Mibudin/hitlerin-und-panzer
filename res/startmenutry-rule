@@ -1,0 +1,51 @@
+                                                                                          ./-.       `` `..`       `-:`         
+                                                                                           :+.  ``..```.``.-...   .++:`         
+      The Game Rule of `HITERLIN und PANZER`                                           `.```:- `..`` ````` `.`.. `.-``          
+                                                                                      `-``.-..`.``` ``````````````..--:`        
+      - Player's Panzer                                                               -`.++-```.```````````.```````.`-.         
+                                                                                      :```` ``.-.--`---/-`````-`.``..``         
+          - Have one panzer                                                          `:``````````...-:sNo..--./::.-:/`.`        
+          - Control the direction with [ARROW KEYS]                                  `-```` ``````..:hNmm/:--:.//-.-/.`-        
+          - Fire a bullet with [SPACE]                                               `.````  .-```../shNNmho+o:/+o``.- -`       
+            ( fire one per 2 seconds, accumulate three ones at most )                `````   sy```-:::syNMMMNs::+o `.. `-       
+          - Have three lives                                                         ````    -d/`..+NNNMMMMMNssmh. `.`  -       
+                                                                                       ```    `.``-:hNMMMMMMMNNN:`````  -`      
+      - Enemy's Panzers                                                  `o           `` `    `  `/NNMMNNNNMMMNo`````   ..      
+                                                                -//-     .m.         ..``        .`-dmMMNNNMNy-  ` `   ``-      
+          - Have three panzers                                    `:oo-   yh`      `::```  ```  `--dmdhdmdh+`    ``    ` -      
+          - Automatically move and fire through certain rules        `odyhmyd.     /:```:/+/+ooo-:::hMMNs/oy..--.`.`  `````     
+          - Have one life                                             :MNmddhm.  `/-```+oooo+/o+--+o+sNh.---+::/++:.` ` `.`     
+                                                                       hMNhyhN/ .:.```-oooooo+/:-:///++dy..-d+++///o```````     
+      - Victory Condition                                              .mMMmdNs-:` ```+ooooooo/`-++//+oomo.--d++/::+: `.```     
+                                                                        .dMMmh++/. ``.+oo+++oo.-so++oooooy..-/h+ooo/-   ````    
+          - Destroy all panzers of the enemy                            .+sdhd+ooo:`::/++++o+:-ossss++++++-...++oo+o-`    ``````
+                                                                        .:odhoooooo//:++/+++-:+oooo+ss+:+++-..-/++/+:.   `  ```-
+      - Failure Condition                                               `--++oooooo+//////:.:++++oo/ooo+::++-../++hh+`       ```
+                                                                         ..-:/++++oo:+///..:///++++/++oo//-/+../:+oo:`     ` `..
+          - Run out of all three lives                                  ..```:/++++o++/-`.-:::://///+++++::/:-::///:/         ..
+                                                                       ..``  `-/+++oo/. `:::::::::::////+/-:::://:.+/         `.
+                                                                      `.``     `:+++-`` .:///:::::-:://///:--:::-.:-`          `
+      * [X] Retuen to The Start Menu                                 `.``       ``..` ``--/-+o+/::-:::::/:---:--::-             
+                                                                     ```        ` ``   `-++/:+o+o/+/://:-::-.:.-::.             
+                                                                    ```` `      ````   `-/+o/:oo//+++ooo:++:.:::/:.             
+      HETLERIN und PANZER - Version 0.2                             ``` `      ``` `   `---/++/+/oo++/+:/++/-:////-             
+                                                                   ```  `      ``` `  ..::////::/+////:-::/:.::://+-            
+================
+
+H H III TTT L   EEE RRR III N N
+H H  I   T  L   E   R R  I  NNN
+HHH  I   T  L   EEE RR   I  N N
+H H  I   T  L   E   R R  I  N N
+H H III  T  LLL EEE R R III N N
+
+          d
+          d
+u u nnn ddd
+u u n n d d
+uuu n n ddd
+
+PPP  A  N N ZZZ EEE RRR
+P P A A NNN   Z E   R R
+PPP AAA N N  Z  EEE RR 
+P   A A N N Z   E   R R
+P   A A N N ZZZ EEE R R
