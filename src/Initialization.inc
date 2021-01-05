@@ -17,6 +17,4 @@ InitConsole PROTO
 
 InitGameMapRecord PROTO
 
-InitTanks PROTO
-
 InitGame PROTO

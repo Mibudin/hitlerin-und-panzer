@@ -76,6 +76,7 @@ MainGameTurn PROC USES ecx edx
     .ENDIF
 
 MainGameTurn_PostProcess:
+    ; Post process
 
 MainGameTurn_End:
     ret
@@ -83,7 +84,7 @@ MainGameTurn ENDP
 
 ;; MainGameExit
 MainGameExit PROC
-    ; TODO:
+    ; TODO: Main game exiting process
 
     ret
 MainGameExit ENDP

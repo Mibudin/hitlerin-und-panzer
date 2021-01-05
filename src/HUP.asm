@@ -72,17 +72,6 @@ GAME_MAP_HEIGHT EQU <SCREEN_BUFFER_HEIGHT>
 CONSOLE_INPUT_MODE  EQU <0000000110100010b>
 CONSOLE_OUTPUT_MODE EQU <0000000000000001b>
 
-; CMD color codes
-; (Combinable by the operation `OR`)
-COLOR_FB EQU <00000001b>  ; FOREGROUND_BLUE      EQU <00000001b>
-COLOR_FG EQU <00000010b>  ; FOREGROUND_GREEN     EQU <00000010b>
-COLOR_FR EQU <00000100b>  ; FOREGROUND_RED       EQU <00000100b>
-COLOR_FI EQU <00001000b>  ; FOREGROUND_INTENSITY EQU <00001000b>
-COLOR_BB EQU <00010000b>  ; BACKGROUND_BLUE      EQU <00010000b>
-COLOR_BG EQU <00100000b>  ; BACKGROUND_GREEN     EQU <00100000b>
-COLOR_BR EQU <01000000b>  ; BACKGROUND_RED       EQU <01000000b>
-COLOR_BI EQU <10000000b>  ; BACKGROUND_INTENSITY EQU <10000000b>
-
 ; Render settings
 RENDER_BUFFER_DISCARD    EQU <0h>                        ; Null character
 RENDER_BUFFER_CLEAR_CHAR EQU <RENDER_BUFFER_DISCARD>     ; Use space character to clear render buffer
@@ -98,10 +87,7 @@ RENDER_BUFFER_LAYER_BULLETS  EQU <2>  ; The bullets
 RENDER_BUFFER_LAYER_FINALE   EQU <3>  ; The final render buffer layer
 
 ; The main game logic
-MAIN_GAME_TURN_INTERVAL EQU <100>  ; in milliseconds  ; TODO: Test value
-
-; Texts
-CRLF_C EQU <0dh, 0ah>   ; CR and LF characters
+MAIN_GAME_TURN_INTERVAL EQU <100>  ; In milliseconds
 
 ; Panzer (Tank)
 FACE_UP    EQU <1>
@@ -134,7 +120,7 @@ GAME_MAP_WALL_1_NUMBER        EQU <7>
 ; Game objects
 PLAYER_START_POSITION       EQU <<21, 21>>
 PLAYER_LIVES_INITIAL        EQU <3>
-PLAYER_SHOOT_INTERVAL       EQU <2000>
+PLAYER_SHOOT_INTERVAL       EQU <2000>  ; In milliseconds
 PLAYER_SHOOT_CUMULATION_MAX EQU <3>
 ENEMY_TANK_AMOUNT_INITIAL   EQU <3>
 BULLET_AMOUNT_MAX           EQU <128>
@@ -156,13 +142,7 @@ CMD_IMAGE STRUCT
     attributes WORD  SCREEN_BUFFER_WIDTH * SCREEN_BUFFER_HEIGHT DUP(?)
 CMD_IMAGE ENDS
 
-TANK STRUCT 
-    ; firstLine   BYTE  ' ', 7Ch, ' '  ;  |
-    ; secondLine  BYTE  23h, 2Bh, 23h  ; #+#
-    ; thirdLine   BYTE  23h, 2Bh, 23h  ; #+#
-    ; firstColor  WORD  6h, 6h, 6h     ; brown
-    ; secondColor WORD  6h, 0ch, 6h    ; brown red brown
-    ; threeWhite  BYTE  3 DUP(' ')     ; for EraseTank
+TANK STRUCT
     position    COORD <1, 1>         ; left up
     faceTo      BYTE  FACE_UP        ; 1 : face up, 2 : face right, 3 : face down, 4 : face left
     role        BYTE  ROLE_PLAYER
@@ -170,9 +150,6 @@ TANK STRUCT
 TANK ENDS
 
 BULLET STRUCT
-    ; symbol    BYTE  '@'
-    ; white     BYTE  ' '
-    ; color     WORD  0Eh
     direction BYTE  FACE_UP
     role      BYTE  ROLE_PLAYER
     position  COORD <1, 1>
@@ -187,13 +164,9 @@ BULLET ENDS
 INCLUDE Main.inc             ; The main program file of this project. (Must be the first)
 INCLUDE Initialization.inc   ; The major initialization part of the game
 INCLUDE Renderer.inc         ; The major rendering part of the game
-; INCLUDE GameMapHandler.inc   ; The main handler of the game map
 INCLUDE Tank.inc             ; The main handler of the tanks
 INCLUDE Bullet.inc           ; The main handler of the bullets
 INCLUDE ControlEnemy.inc     ; The main handler of controling enemies
-; INCLUDE HomePage.inc         ; (Obsolete) The main handler of the home page
-; INCLUDE StartMenuHandler.inc ; The main handler of the start menu
-; INCLUDE FileLoader.inc       ; The main handler of loading files
 
 
 ; ================
@@ -205,8 +178,8 @@ INCLUDE ControlEnemy.inc     ; The main handler of controling enemies
 windowTitle BYTE "HITLERIN und PANZER - Version 0.2", 0
 
 ; The standard handles
-stdOutputHandle  DWORD ?
-stdInputHandle   DWORD ?
+stdOutputHandle DWORD ?
+stdInputHandle  DWORD ?
 
 ; The screen buffer and window data
 screenBufferSize COORD                      <SCREEN_BUFFER_WIDTH, SCREEN_BUFFER_HEIGHT>
@@ -300,7 +273,6 @@ polandFlagCmdImage CMD_IMAGE <<16, 8>,                              \
                               16 * 8 DUP(RENDER_BUFFER_BLANK_CHAR), \
                               <>>
 
-; TODO: Load from file?
 startMenuCmdImage_characters BYTE "                                                                                          ./-.       `` `..`       `-:`         "
                              BYTE "                                                                                           :+.  ``..```.``.-...   .++:`         "
                              BYTE "      H H  III  TTT  L    EEE  RRR  III  N N                                           `.```:- `..`` ````` `.`.. `.-``          "
@@ -517,9 +489,6 @@ mapCmdImage CMD_IMAGE <<GAME_MAP_WIDTH, GAME_MAP_HEIGHT>,                       
                        <>,                                                             \
                        GAME_MAP_WIDTH * GAME_MAP_HEIGHT DUP(RENDER_BUFFER_BLANK_ATTR)>
 
-; Game map field
-enemySpawnField SMALL_RECT <6, 96, 25, 126>  ; TODO: Random spawn enemy?
-
 ; Object sizes
 tankSize   COORD <3, 3>
 bulletSize COORD <1, 1>
@@ -528,66 +497,18 @@ bulletSize COORD <1, 1>
 gamePlayerTank             TANK   <PLAYER_START_POSITION, FACE_UP, ROLE_PLAYER, PLAYER_LIVES_INITIAL>
 gamePlayerTankLastShoot    DWORD  0
 gamePlayerTankShootAmount  BYTE   PLAYER_SHOOT_CUMULATION_MAX
-gameEnemyTankList          TANK   <<117,  9>, FACE_UP, ROLE_ENEMY, 1>  ; ENEMY_TANK_AMOUNT_INITIAL = 3  ; TODO: Initialize enemy tanks
+gameEnemyTankList          TANK   <<117,  9>, FACE_UP, ROLE_ENEMY, 1>  ; ENEMY_TANK_AMOUNT_INITIAL = 3
                            TANK   << 97, 24>, FACE_UP, ROLE_ENEMY, 1>
                            TANK   <<122, 27>, FACE_UP, ROLE_ENEMY, 1>
 gameEnemyTankCurrentAmount BYTE   ENEMY_TANK_AMOUNT_INITIAL
 gameBulletList             BULLET BULLET_AMOUNT_MAX DUP(<>)
 gameBulletCurrentAmount    BYTE   0
-; gamePlayerTankLives        BYTE   PLAYER_LIVES_INITIAL  ; TODO: Player lives
 
 ; The winner of the game
 gameWinner BYTE ?
 
 ; The common trash bus
 trashBus DWORD ?
-
-; Home page texts
-; StartS  BYTE "					        Press SPACE to start", 0
-; RuleS   BYTE "					    Press R to see the game rule", 0
-; MemberS BYTE "					     Press M to see member list", 0
-
-; CloseRS BYTE "	   	Press X to close the game rule", 0
-; CloseMS BYTE "					     Press X to close member list", 0
-
-; GameRuleS1_1 BYTE "	   	- Player's Panzer", 0
-; GameRuleS1_2 BYTE "		  	- Have one panzer", 0
-; GameRuleS1_3 BYTE "		  	- Control the direction with ARROW KEYS", 0
-; GameRuleS1_4 BYTE "		   	- Fire a bullet with SPACE ( fire one per 2 seconds, accumulate three ones at most )", 0
-; GameRuleS1_5 BYTE "		   	- Have three lives", 0
-
-; GameRuleS2_1 BYTE "	   	- Enemy's Panzers",0 
-; GameRuleS2_2 BYTE "		   	- Have three panzers", 0
-; GameRuleS2_3 BYTE "		   	- Automatically move and fire through certain rules", 0
-; GameRuleS2_4 BYTE "		   	- Have one life", 0
-
-; GameRuleS3_1 BYTE "	   	- Victory Condition", 0
-; GameRuleS3_2 BYTE "		   	- Destroy all panzers of the enemy", 0
-
-; GameRuleS4_1 BYTE "	  	- Failure Condition", 0
-; GameRuleS4_2 BYTE "		   	- Run out of all three lives", 0
-
-; MemberListS1 BYTE "					     HONG, YU-XIANG", 0				; 洪裕翔
-; MemberListS2 BYTE "					     LIU, ZI-YONG", 0				; 劉子雍
-; MemberListS3 BYTE "					     PETER", 0						; 林緯翔
-; MemberListS4 BYTE "					     QIN, CHENG-YE", 0				; 秦承業
-
-; TODO: Test
-; testString BYTE CRLF_C
-;            BYTE "~~~ HITLERIN und PANZER ~~~", CRLF_C
-;            BYTE CRLF_C
-;            BYTE "Battle City x Waifu x Console x MASM", CRLF_C
-;            BYTE CRLF_C, 0
-
-; testImageChars BYTE "123456789"
-; testImageAttrs WORD 9 DUP(49)
-
-; testImage CMD_IMAGE <<5, 6>, "123456789012345678901234567890", 30 DUP(49)>
-; testPosition COORD <4, 7>
-
-; testTank TANK <>
-; testTankEnemy1 TANK <<100, 20>, ?, ROLE_ENEMY>
-; testTankEnemy2 TANK <<80, 1>, ?, ROLE_ENEMY>
 
 
 ; ================
@@ -602,13 +523,9 @@ ProgramEntry:
 INCLUDE Main.asm             ; The main program file of this project. (Must be the first)
 INCLUDE Initialization.asm   ; The major initialization part of the game
 INCLUDE Renderer.asm         ; The major rendering part of the game
-; INCLUDE GameMapHandler.asm   ; The main handler of the game map
 INCLUDE Tank.asm             ; The main handler of the tanks
 INCLUDE Bullet.asm           ; The main handler of the bullets
 INCLUDE ControlEnemy.asm     ; The main handler of controling enemies
-; INCLUDE HomePage.asm         ; (Obsolete) The main handler of the home page
-; INCLUDE StartMenuHandler.asm ; The main handler of the start menu
-; INCLUDE FileLoader.asm       ; The main handler of loading files
 
 ; The end of the program entry
 END ProgramEntry

@@ -60,68 +60,68 @@ ENDM
 InitRenderer PROTO
 
 GetCutSize PROTO,
-    innerPosition:COORD,
-    innerSize:COORD,
-    outerlimit:COORD,
-    renderSize:PTR COORD
+    innerPosition: COORD,
+    innerSize: COORD,
+    outerlimit: COORD,
+    renderSize: PTR COORD
 
 GetRenderBufferIndex PROTO,
-    position:COORD
+    position: COORD
 
 GetRenderBufferCoord PROTO,
-    index:WORD,
-    position:PTR COORD
+    index: WORD,
+    position: PTR COORD
 
 CoverRenderBufferLayer PROTO,
-    sourceLayer:DWORD,
-    targetLayer:DWORD
+    sourceLayer: DWORD,
+    targetLayer: DWORD
 
 CoverRenderBufferLayerDiscardable PROTO,
-    sourceLayer:DWORD,
-    targetLayer:DWORD
+    sourceLayer: DWORD,
+    targetLayer: DWORD
 
 SetRenderBuffer PROTO,
-    layer:DWORD,
-    characterValue:BYTE,
-    attributeValue:WORD
+    layer: DWORD,
+    characterValue: BYTE,
+    attributeValue: WORD
 
 PushCmdImageCharacters PROTO,
-    cmdImage:PTR CMD_IMAGE,
-    cmdImageCharacters:PTR BYTE,
-    characterLength:DWORD
+    cmdImage: PTR CMD_IMAGE,
+    cmdImageCharacters: PTR BYTE,
+    characterLength: DWORD
 
 PushCmdImageAttributes PROTO,
-    cmdImage:PTR CMD_IMAGE,
-    cmdImageAttributes:PTR WORD,
-    attributeLength:DWORD
+    cmdImage: PTR CMD_IMAGE,
+    cmdImageAttributes: PTR WORD,
+    attributeLength: DWORD
 
 UpdateFlag PROTO,
-    role:BYTE
+    role: BYTE
 
 UpdateFlagOnMap PROTO,
-    role:BYTE
+    role: BYTE
 
 PushRenderBufferImage PROTO,
-    layer:DWORD,
-    cmdImage:PTR CMD_IMAGE,
-    position:COORD
+    layer: DWORD,
+    cmdImage: PTR CMD_IMAGE,
+    position: COORD
 
 PushRenderBufferImageBlank PROTO,
-    layer:DWORD,
-    position:COORD,
-    blankSize:COORD
+    layer: DWORD,
+    position: COORD,
+    blankSize: COORD
 
 PushRenderBufferImageDiscardable PROTO,
-    layer:DWORD,
-    cmdImage:PTR CMD_IMAGE,
-    position:COORD
+    layer: DWORD,
+    cmdImage: PTR CMD_IMAGE,
+    position: COORD
 
 IntegrateRenderBufferFinaleAll PROTO
 
 IntegrateRenderBufferFinaleAllDiscardable PROTO
 
 Render PROTO,
-    layer:DWORD
+    layer: DWORD
 
 RenderDiscardable PROTO,
-    layer:DWORD
+    layer: DWORD

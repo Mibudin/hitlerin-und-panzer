@@ -41,7 +41,6 @@ mMainGameTurn_GameStateStart_Pre MACRO
 ENDM
 
 ;; mMainGameTurn_GameStateStart
-;; TODO: More beautiful?
 mMainGameTurn_GameStateStart MACRO
     call ReadKey
     movzx edx, startMenuState
@@ -113,8 +112,6 @@ mMainGameTurn_GameStateGameMap_Pre MACRO
 ENDM
 
 ;; mMainGameTurn_GameStateGameMap
-;; TODO: Move to ending
-;; TODO: Tanks, bullets, lives
 mMainGameTurn_GameStateGameMap MACRO
     ; Clear render buffer layers
     mClearRenderBuffer RENDER_BUFFER_LAYER_TANKS

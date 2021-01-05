@@ -13,23 +13,23 @@ TITLE Tank (Tank.inc)
 
 PrintTank PROTO,
     thisOutputHandle: DWORD,
-    thisTank: PTR Tank,
+    thisTank: PTR TANK,
 	gameMap: PTR BYTE,
     countWord: PTR DWORD
 
 EraseTank PROTO,
     thisOutputHandle: DWORD,
-    thisTank: PTR Tank,
+    thisTank: PTR TANK,
 	gameMap: PTR BYTE,
     countWord: PTR DWORD
 
 ChangeFaceTo PROTO,
-    thisTank: PTR Tank,
+    thisTank: PTR TANK,
     newFaceTo: BYTE
 
 MoveTank PROTO, 
     thisOutputHandle: DWORD, 
-    thisTank: PTR Tank,
+    thisTank: PTR TANK,
     gameMap: PTR BYTE,
     direction: WORD, 
     countWord: PTR DWORD
